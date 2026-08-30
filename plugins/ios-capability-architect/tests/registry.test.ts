@@ -10,6 +10,10 @@ describe("capability registry", () => {
       expect(record.last_verified_at).toMatch(/^\d{4}-\d{2}-\d{2}$/);
       expect(record.official_documentation.length).toBeGreaterThan(0);
       expect(record.on_device_level).toMatch(/^(fully_on_device|primarily_on_device|hybrid|cloud_required|unknown)$/);
+      expect(record.knowledge_state.fields.minimum_os_version).not.toBe("unknown");
+      expect(record.knowledge_state.fields.sdk_availability).not.toBe("unknown");
+      expect(record.knowledge_state.fields.stable_or_beta).toBe("verified_value");
+      expect(record.stable_or_beta).not.toBe("unknown");
     }
   });
 
@@ -34,9 +38,23 @@ describe("capability registry", () => {
     const coreML = await findRecord("core-ml");
 
     expect(healthKit?.knowledge_state.completeness).toBe("partial");
+    expect(healthKit?.knowledge_state.fields.minimum_os_version).toBe("verified_value");
+    expect(healthKit?.knowledge_state.fields.stable_or_beta).toBe("verified_value");
     expect(healthKit?.knowledge_state.fields.user_permissions).toBe("verified_value");
     expect(healthKit?.knowledge_state.fields.managed_entitlements).toBe("unknown");
     expect(coreML?.knowledge_state.fields.cloud_dependency).toBe("verified_none");
+  });
+
+  it("preserves reviewed platform availability instead of inferred defaults", async () => {
+    const activityKit = await findRecord("activitykit");
+    const healthKit = await findRecord("healthkit");
+    const storeKit2 = await findRecord("storekit-2");
+
+    expect(activityKit?.platforms).toEqual(["iOS", "iPadOS"]);
+    expect(activityKit?.minimum_os_version).toEqual({ iOS: "16.1", iPadOS: "16.1" });
+    expect(healthKit?.minimum_os_version.iPadOS).toBe("17.0");
+    expect(healthKit?.minimum_os_version.macOS).toBeNull();
+    expect(storeKit2?.minimum_os_version.iOS).toBe("15.0");
   });
 
   it("derives typed, deduplicated relationships from legacy relationship arrays", async () => {

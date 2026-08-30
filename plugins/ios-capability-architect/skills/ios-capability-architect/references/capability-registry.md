@@ -6,6 +6,8 @@ Every normalized record contains:
 
 `id`, `name`, `aliases`, `category`, `entity_type`, `summary`, `supported_use_cases`, `unsupported_use_cases`, `related_frameworks`, `related_capabilities`, `related_entitlements`, `related_extensions`, `platforms`, `minimum_os_version`, `sdk_availability`, `stable_or_beta`, `deprecated_status`, `supported_devices`, `hardware_requirements`, `region_restrictions`, `language_restrictions`, `on_device_level`, `network_requirement`, `cloud_dependency`, `user_permissions`, `info_plist_keys`, `xcode_capabilities`, `entitlements`, `managed_entitlements`, `background_modes`, `privacy_manifest_requirements`, `required_reason_apis`, `app_review_considerations`, `security_considerations`, `implementation_notes`, `limitations`, `recommended_alternatives`, `official_documentation`, `release_notes`, `last_verified_at`, and `keywords`.
 
+`minimum_os_version` is the first release where the profiled use cases work, not merely where the framework links. A `null` platform value means the SDK exposes the framework there but the profiled capability is unavailable; consult `sdk_availability`, device requirements, and limitations. Apple's documentation sometimes applies the `iPadOS` label to API availability inherited from releases before the iPadOS 13 naming split, so interpret those values as platform lineage and check feature-specific restrictions.
+
 Authoring rules:
 
 1. Use a stable lowercase identifier.

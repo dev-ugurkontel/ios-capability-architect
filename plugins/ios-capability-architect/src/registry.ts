@@ -15,7 +15,18 @@ import {
 type RawRecord = Omit<Partial<CapabilityRecord>, "knowledge_state" | "relationships"> &
   Pick<
     CapabilityRecord,
-    "id" | "name" | "category" | "entity_type" | "summary" | "platforms" | "keywords" | "official_documentation"
+    | "id"
+    | "name"
+    | "category"
+    | "entity_type"
+    | "summary"
+    | "platforms"
+    | "minimum_os_version"
+    | "sdk_availability"
+    | "stable_or_beta"
+    | "official_documentation"
+    | "last_verified_at"
+    | "keywords"
   >;
 
 interface RawRegistry {
@@ -94,24 +105,14 @@ function buildRelationships(raw: RawRecord): CapabilityRelationship[] {
 }
 
 function normalizeRecord(raw: RawRecord): CapabilityRecord {
-  const sourceDates = [...raw.official_documentation, ...(raw.release_notes ?? [])].map((source) => source.verified_at);
-  const lastVerifiedAt = raw.last_verified_at ?? sourceDates.sort().at(-1);
-  if (!lastVerifiedAt) {
-    throw new Error(`Record ${raw.id} has no source verification date`);
-  }
-
   return {
     ...emptyArrays,
     relationships: buildRelationships(raw),
-    minimum_os_version: {},
-    sdk_availability: "Verify availability against the current stable SDK before implementation.",
-    stable_or_beta: "unknown",
     deprecated_status: null,
     on_device_level: "unknown",
     network_requirement: "Depends on the selected API and feature configuration.",
     cloud_dependency: null,
     ...raw,
-    last_verified_at: lastVerifiedAt,
     knowledge_state: buildKnowledgeState(raw)
   } satisfies CapabilityRecord;
 }
@@ -245,6 +246,8 @@ export async function getRegistryCoverage(): Promise<RegistryCoverage> {
     catalog_only_technology_count: catalog.length - profiled,
     profile_coverage_percent: Number(((profiled / catalog.length) * 100).toFixed(1)),
     verified_profile_count: profiles.length,
+    complete_profile_count: profiles.filter((profile) => profile.knowledge_state.completeness === "complete").length,
+    partial_profile_count: profiles.filter((profile) => profile.knowledge_state.completeness === "partial").length,
     official_index_sources: [...taxonomy.official_index_sources]
   };
 }
