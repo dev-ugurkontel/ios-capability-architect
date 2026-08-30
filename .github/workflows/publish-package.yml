@@ -62,10 +62,19 @@ jobs:
           npm pack --workspace plugins/ios-capability-architect --pack-destination release-assets
           npm run --silent release:sbom > "release-assets/ios-capability-architect-$RELEASE_TAG.sbom.cdx.json"
           package_path=$(find release-assets -maxdepth 1 -name '*.tgz' -print -quit)
-          printf 'package_path=%s\n' "$package_path" >> "$GITHUB_OUTPUT"
+          {
+            printf 'package_path=%s\n' "$package_path"
+            printf 'package_name=%s\n' "$package_name"
+            printf 'package_version=%s\n' "$package_version"
+          } >> "$GITHUB_OUTPUT"
           (cd release-assets && shasum -a 256 ./*.tgz ./*.json > SHA256SUMS)
       - name: Publish GitHub npm package
-        run: npm publish "./${{ steps.assets.outputs.package_path }}" --registry=https://npm.pkg.github.com
+        run: |
+          if npm view "${{ steps.assets.outputs.package_name }}@${{ steps.assets.outputs.package_version }}" version --registry=https://npm.pkg.github.com >/dev/null 2>&1; then
+            echo "GitHub package version already exists; continuing with release assets"
+          else
+            npm publish "./${{ steps.assets.outputs.package_path }}" --registry=https://npm.pkg.github.com
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Attach package, checksum, and SBOM to the GitHub release
