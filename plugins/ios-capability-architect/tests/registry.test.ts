@@ -46,6 +46,68 @@ describe("capability registry", () => {
     expect((await findRecord("foundation"))?.on_device_level).toBe("hybrid");
   });
 
+  it("loads reviewed networking, persistence, and security profiles without flattening conditional setup", async () => {
+    const expected = [
+      "urlsession",
+      "core-data",
+      "cloudkit",
+      "keychain-services",
+      "authenticationservices",
+      "cryptokit"
+    ];
+    for (const id of expected) {
+      const record = await findRecord(id);
+      expect(record).toMatchObject({ id, stable_or_beta: "stable", last_verified_at: "2026-08-30" });
+      expect(record?.official_documentation.length).toBeGreaterThan(0);
+      expect(record?.sdk_availability).toContain("Xcode 26.6 and SDK 26.5");
+      expect(record?.sdk_availability).toContain("Xcode 27 was not locally installed");
+      expect(record?.knowledge_state.completeness).toBe("partial");
+      expect(record?.knowledge_state.fields.region_restrictions).toBe("unknown");
+    }
+
+    const urlSession = await findRecord("urlsession");
+    expect(urlSession?.minimum_os_version["Mac Catalyst"]).toBe("13.1");
+    expect(urlSession?.background_modes).toEqual([]);
+    expect(urlSession?.managed_entitlements).toContainEqual(expect.stringContaining("multicast"));
+
+    const coreData = await findRecord("core-data");
+    expect(coreData?.minimum_os_version["Mac Catalyst"]).toBe("13.0");
+    expect(coreData?.cloud_dependency).toContain("Optional CloudKit");
+    expect(coreData?.xcode_capabilities).toContainEqual(expect.stringContaining("only for CloudKit-backed stores"));
+    expect(coreData?.background_modes).toContainEqual(expect.stringContaining("remote-notification only"));
+
+    const cloudKit = await findRecord("cloudkit");
+    expect(cloudKit?.on_device_level).toBe("cloud_required");
+    expect(cloudKit?.entitlements).toContain("com.apple.developer.icloud-services");
+    expect(cloudKit?.entitlements).toContain("com.apple.developer.icloud-container-identifiers");
+    expect(cloudKit?.entitlements).toContainEqual(expect.stringContaining("aps-environment"));
+    expect(cloudKit?.entitlements.join(" ")).not.toContain("ubiquity-kvstore-identifier");
+    expect(cloudKit?.background_modes).toContainEqual(expect.stringContaining("fetch only"));
+
+    const keychain = await findRecord("keychain-services");
+    expect(keychain?.minimum_os_version["Mac Catalyst"]).toBe("13.1");
+    expect(keychain?.knowledge_state.fields.user_permissions).toBe("verified_none");
+    expect(keychain?.xcode_capabilities).toContainEqual(expect.stringContaining("only when items are shared"));
+    expect(keychain?.info_plist_keys).toContainEqual(expect.stringContaining("only when Face ID"));
+
+    const authenticationServices = await findRecord("authenticationservices");
+    expect(authenticationServices?.minimum_os_version.iOS).toBe("12.0");
+    expect(authenticationServices?.entitlements).toContainEqual(expect.stringContaining("only for Sign in with Apple"));
+    expect(authenticationServices?.entitlements).toContainEqual(expect.stringContaining("webcredentials"));
+    expect(authenticationServices?.entitlements).toContainEqual(
+      expect.stringContaining("autofill-credential-provider")
+    );
+
+    const cryptoKit = await findRecord("cryptokit");
+    expect(cryptoKit?.on_device_level).toBe("fully_on_device");
+    expect(cryptoKit?.xcode_capabilities).toEqual([]);
+    expect(cryptoKit?.info_plist_keys).toContainEqual(expect.stringContaining("ITSAppUsesNonExemptEncryption"));
+    expect(cryptoKit?.limitations).toContainEqual(expect.stringContaining("does not provide durable key storage"));
+
+    expect((await findTechnologyCatalogEntry("Secure Enclave"))?.coverage_status).toBe("catalogued");
+    expect((await findTechnologyCatalogEntry("Sign in with Apple"))?.coverage_status).toBe("catalogued");
+  });
+
   it("looks up catalog technologies by exact id or normalized name only", async () => {
     expect((await findTechnologyCatalogEntry("MapKit"))?.id).toBe("technology.mapkit");
     expect((await findTechnologyCatalogEntry("technology.mapkit"))?.name).toBe("MapKit");
