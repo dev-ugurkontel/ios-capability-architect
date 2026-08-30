@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Open-source Codex plugin for evidence-backed Apple-platform capability architecture.",
   "license": "MIT",
-  "author": "Ugur Kontel",
+  "author": "Fillbyte",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/fillbyte/ios-capability-architect.git"
@@ -19,21 +19,23 @@
   ],
   "scripts": {
     "build": "npm run build --workspace plugins/ios-capability-architect",
-    "check": "npm run format:check && npm run validate:release-metadata && npm run lint && npm run typecheck && npm run validate:registry",
+    "check": "npm run format:check && npm run validate:release-metadata && npm run validate:submission && npm run lint && npm run typecheck && npm run validate:registry",
     "format": "prettier --write . && npm run format:release-metadata",
     "format:check": "prettier --check .",
     "format:release-metadata": "node scripts/validate-release-metadata.mjs --write",
     "lint": "eslint . --max-warnings 0",
     "release:sbom": "node scripts/generate-release-sbom.mjs",
     "smoke:mcp": "npm run smoke:mcp --workspace plugins/ios-capability-architect",
+    "smoke:skills": "npm run smoke:skills --workspace plugins/ios-capability-architect",
     "test": "npm run test --workspace plugins/ios-capability-architect",
     "test:coverage": "npm run test:coverage --workspace plugins/ios-capability-architect",
     "typecheck": "npm run typecheck --workspace plugins/ios-capability-architect",
     "validate:plugin": "npm run validate:plugin --workspace plugins/ios-capability-architect",
     "validate:release-metadata": "node scripts/validate-release-metadata.mjs",
+    "validate:submission": "node scripts/validate-submission-pack.mjs",
     "validate:registry": "npm run validate:registry --workspace plugins/ios-capability-architect",
     "verify:docs": "npm run verify:docs --workspace plugins/ios-capability-architect",
-    "verify": "npm run check && npm run validate:plugin && npm run test:coverage && npm run build && npm run smoke:mcp"
+    "verify": "npm run check && npm run validate:plugin && npm run test:coverage && npm run build && npm run smoke:mcp && npm run smoke:skills"
   },
   "packageManager": "npm@11.17.0",
   "engines": {

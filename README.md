@@ -1,5 +1,10 @@
 # iOS Capability Architect
 
+[![CI](https://github.com/fillbyte/ios-capability-architect/actions/workflows/ci.yml/badge.svg)](https://github.com/fillbyte/ios-capability-architect/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/fillbyte/ios-capability-architect/actions/workflows/codeql.yml/badge.svg)](https://github.com/fillbyte/ios-capability-architect/actions/workflows/codeql.yml)
+[![Release](https://img.shields.io/github/v/release/fillbyte/ios-capability-architect)](https://github.com/fillbyte/ios-capability-architect/releases)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 `iOS Capability Architect` is a production-oriented Codex and ChatGPT plugin that turns an Apple-platform app idea into a verified capability map, architecture, configuration audit, implementation sequence, and test plan. It can also compare selected capabilities with an existing local project's source configuration, exposing missing plist keys, entitlements, background modes, privacy-manifest review, and deployment-target conflicts before release.
 
 The repository is a Codex marketplace containing one skills-plus-MCP plugin. Its MCP server is local, read-only, and deterministic: it analyzes ideas and queries a versioned registry without sending user content to a backend.
@@ -113,10 +118,16 @@ Contributors working from a checkout can pass the repository path instead of the
 
 ## Release artifacts and npm package
 
-Each GitHub release includes the packed npm tarball, a CycloneDX SBOM, and `SHA256SUMS`. The release assets are the simplest unauthenticated way to inspect or archive the exact published package. Verify a downloaded asset before use:
+Each GitHub release includes the packed npm tarball, a public skills-only archive, a CycloneDX SBOM, and `SHA256SUMS`. The skills archive contains the canonical skill, its references and evidence data, and a dependency-free local CLI; it contains no MCP server or hosted-service credential. Release assets are the simplest unauthenticated way to inspect or archive the exact published package. Verify downloaded assets before use:
 
 ```bash
 shasum -a 256 -c SHA256SUMS
+```
+
+Release workflows also create GitHub build-provenance attestations for every attached asset. Online consumers with GitHub CLI can independently bind a downloaded file to this repository and release workflow:
+
+```bash
+gh attestation verify <downloaded-asset> -R fillbyte/ios-capability-architect
 ```
 
 New releases are published as `@fillbyte/ios-capability-architect` on GitHub Packages. GitHub's npm registry requires an authenticated npm client, including for this public package. Configure the `@fillbyte` scope for `https://npm.pkg.github.com`, provide a GitHub token with `read:packages` through your environment or user-level npm configuration, and never commit that token or a credential-bearing `.npmrc` file. Releases published before the Fillbyte transfer remain under the legacy `@dev-ugurkontel` scope; see [package-scope-migration.md](docs/package-scope-migration.md).
@@ -208,20 +219,21 @@ See [security.md](plugins/ios-capability-architect/docs/security.md) for the thr
 
 ## Distribution and publishing
 
-The source repository, tagged GitHub releases, release checksums, CycloneDX SBOM, and scoped GitHub npm package are public distribution surfaces. Release Please maintains version changes and changelog entries; publishing a GitHub release triggers source verification, npm package publication, and release-asset attachment.
+The source repository, tagged GitHub releases, skills-only archives, release checksums, CycloneDX SBOM, and scoped GitHub npm package are public distribution surfaces. Release Please maintains version changes and changelog entries; publishing a GitHub release triggers source verification, npm package publication, and release-asset attachment.
 
-Publishing into OpenAI's reviewed plugin directory remains a separate process:
+Publishing into OpenAI's reviewed plugin directory remains a separate process. The reviewer-ready field source, tests, attestations, icon, and release notes live in [docs/openai-submission](docs/openai-submission):
 
-1. Replace or confirm public developer, support, privacy-policy, terms, and listing metadata.
-2. Decide whether to submit skills-only or host the MCP server remotely. The bundled stdio server is local/desktop-oriented.
-3. For a remote MCP submission, implement production HTTPS transport and the authentication policy required by the service; no authentication is needed for the current local read-only registry.
-4. Prepare starter prompts, representative test cases, country availability, and policy attestations.
-5. Verify the developer or business identity and obtain the required OpenAI organization role.
-6. Submit through the OpenAI plugin submission portal, complete review, then explicitly publish the approved version.
+1. Build and validate the skills-only archive with `npm run verify`.
+2. Confirm public developer, support, privacy-policy, terms, listing metadata, and release checksums.
+3. Verify the Fillbyte business identity and the submitter's required OpenAI organization role.
+4. Upload the exact released skills archive, enter the maintained starter prompts and tests, and confirm availability and policy attestations.
+5. Submit through the OpenAI plugin submission portal, complete review, then explicitly publish the approved version.
+
+The initial public submission is deliberately skills-only. The bundled stdio MCP remains the richer local Codex edition; a remote MCP cannot interpret a user's local project path and would require a materially different privacy-preserving evidence-transfer design.
 
 Deploying a remote MCP service, creating external service accounts, or changing DNS is intentionally outside this repository release process.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), [SUPPORT.md](SUPPORT.md), and [GOVERNANCE.md](GOVERNANCE.md) for contribution and maintenance policy.
+See [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), [PRIVACY.md](PRIVACY.md), [TERMS.md](TERMS.md), [SUPPORT.md](SUPPORT.md), [GOVERNANCE.md](GOVERNANCE.md), and [CITATION.cff](CITATION.cff) for contribution, usage, and maintenance policy.
 
 ## License
 

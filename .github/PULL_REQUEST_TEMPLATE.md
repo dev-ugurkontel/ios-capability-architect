@@ -29,6 +29,7 @@ Use `Not applicable` with a short explanation when a field does not apply. Do no
 - [ ] I ran `npm run verify:docs`, or documented why the network-dependent check was not run.
 - [ ] I added or updated regression tests for observable behavior changes.
 - [ ] I rebuilt the committed MCP bundle after source changes.
+- [ ] I rebuilt and smoke-tested the public skills-only archive when engine, skill, CLI, or submission files changed.
 - [ ] I reviewed the diff for secrets, personal data, unrelated changes, and generated artifacts.
 
 ## Notes for reviewers

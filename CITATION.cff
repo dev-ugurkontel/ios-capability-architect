@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: If this project supports your work, cite the software repository and the exact release you used.
+title: iOS Capability Architect
+type: software
+authors:
+  - family-names: Kontel
+    given-names: Ugur
+repository-code: https://github.com/fillbyte/ios-capability-architect
+url: https://github.com/fillbyte/ios-capability-architect
+license: MIT
+abstract: Evidence-backed Apple-platform capability architecture, configuration auditing, and implementation planning for Codex and ChatGPT.
+keywords:
+  - iOS
+  - Swift
+  - SwiftUI
+  - Apple platforms
+  - MCP
+  - Codex

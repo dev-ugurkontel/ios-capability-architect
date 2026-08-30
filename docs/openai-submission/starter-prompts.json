@@ -1,0 +1,7 @@
+[
+  "Architect an offline-first iOS health journal and identify every permission, entitlement, privacy, background, and real-device testing requirement.",
+  "Audit this existing iOS project's capability configuration for HealthKit, notifications, and privacy manifests, then separate detected evidence from manual checks.",
+  "Compare the public Apple technologies for an on-device text feature and recommend a stable fallback for unsupported devices.",
+  "Design a WidgetKit and Live Activities feature without conflating extension targets, App Groups, push updates, and background execution.",
+  "Review this deprecated Apple API usage and produce a migration plan using only public documented replacements."
+]
