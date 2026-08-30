@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented in this file. The project follows [Semantic Versioning](https://semver.org/) and uses Conventional Commit messages to drive release automation.
 
+## [0.2.1](https://github.com/dev-ugurkontel/ios-capability-architect/compare/v0.2.0...v0.2.1) (2026-08-30)
+
+
+### Bug Fixes
+
+* **packaging:** migrate distribution to Fillbyte ([#12](https://github.com/dev-ugurkontel/ios-capability-architect/issues/12)) ([c23a72f](https://github.com/dev-ugurkontel/ios-capability-architect/commit/c23a72f9d9993bf7527396c5162df15c9c259082))
+
 ## [0.2.0](https://github.com/dev-ugurkontel/ios-capability-architect/compare/ios-capability-architect-v0.1.0...ios-capability-architect-v0.2.0) (2026-08-30)
 
 ### Features
