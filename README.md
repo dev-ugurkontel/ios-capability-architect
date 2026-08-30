@@ -108,7 +108,7 @@ The `verify:docs` command performs allowlisted conditional GETs against `develop
 The committed single-file runtime at `bundle/server.mjs` has no runtime `node_modules` dependency. Install the versioned public marketplace directly from GitHub:
 
 ```bash
-codex plugin marketplace add fillbyte/ios-capability-architect --ref v0.7.0 # x-release-please-version
+codex plugin marketplace add fillbyte/ios-capability-architect --ref v0.8.0 # x-release-please-version
 codex plugin add ios-capability-architect@ios-capability-architect
 ```
 
