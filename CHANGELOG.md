@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented in this file. The project follows [Semantic Versioning](https://semver.org/) and uses Conventional Commit messages to drive release automation.
 
+## [0.4.1](https://github.com/fillbyte/ios-capability-architect/compare/v0.4.0...v0.4.1) (2026-08-30)
+
+
+### Bug Fixes
+
+* **cli:** resolve symlinked executable entrypoints ([#26](https://github.com/fillbyte/ios-capability-architect/issues/26)) ([84865bd](https://github.com/fillbyte/ios-capability-architect/commit/84865bdf95b47369920d31b97bc1dc93fc7623c2))
+
 ## [0.4.0](https://github.com/fillbyte/ios-capability-architect/compare/v0.3.0...v0.4.0) (2026-08-30)
 
 
