@@ -1,6 +1,6 @@
 {
   "name": "ios-capability-architect-workspace",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
   "description": "Open-source Codex plugin for evidence-backed Apple-platform capability architecture.",
