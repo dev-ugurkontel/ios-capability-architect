@@ -235,6 +235,18 @@ export async function loadTechnologyCatalog(): Promise<TechnologyCatalogEntry[]>
   return [...byName.values()].sort((left, right) => left.name.localeCompare(right.name, "en-US"));
 }
 
+export async function findTechnologyCatalogEntry(idOrName: string): Promise<TechnologyCatalogEntry | undefined> {
+  const query = idOrName.trim();
+  if (!query) return undefined;
+  const normalizedQuery = normalizedCatalogKey(query);
+  const catalog = await loadTechnologyCatalog();
+  return catalog.find(
+    (entry) =>
+      entry.id.toLocaleLowerCase("en-US") === query.toLocaleLowerCase("en-US") ||
+      normalizedCatalogKey(entry.name) === normalizedQuery
+  );
+}
+
 export async function getRegistryCoverage(): Promise<RegistryCoverage> {
   const taxonomy = rawTaxonomyData as RawTaxonomy;
   const [catalog, profiles] = await Promise.all([loadTechnologyCatalog(), loadRegistry()]);

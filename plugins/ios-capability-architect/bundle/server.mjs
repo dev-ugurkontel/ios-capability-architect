@@ -35739,6 +35739,49 @@ var relationshipTypes = [
   "related_entitlement",
   "related_extension"
 ];
+var catalogOnlyUnverifiedProfileFields = [
+  "aliases",
+  "category",
+  "entity_type",
+  "summary",
+  "supported_use_cases",
+  "unsupported_use_cases",
+  "related_frameworks",
+  "related_capabilities",
+  "related_entitlements",
+  "related_extensions",
+  "relationships",
+  "platforms",
+  "minimum_os_version",
+  "sdk_availability",
+  "stable_or_beta",
+  "deprecated_status",
+  "supported_devices",
+  "hardware_requirements",
+  "region_restrictions",
+  "language_restrictions",
+  "on_device_level",
+  "network_requirement",
+  "cloud_dependency",
+  "user_permissions",
+  "info_plist_keys",
+  "xcode_capabilities",
+  "entitlements",
+  "managed_entitlements",
+  "background_modes",
+  "privacy_manifest_requirements",
+  "required_reason_apis",
+  "app_review_considerations",
+  "security_considerations",
+  "implementation_notes",
+  "limitations",
+  "recommended_alternatives",
+  "official_documentation",
+  "release_notes",
+  "last_verified_at",
+  "keywords",
+  "knowledge_state"
+];
 
 // src/schema.ts
 var documentationReferenceSchema = external_exports.object({
@@ -35888,6 +35931,37 @@ var resolveCapabilitiesInputSchema = external_exports.object({
 var getProfileInputSchema = external_exports.object({
   capability_id_or_name: external_exports.string().min(1)
 });
+var getAppleTechnologyInputSchema = external_exports.object({
+  technology_id_or_name: external_exports.string().trim().min(1).max(200)
+});
+var technologyCatalogEntrySchema = external_exports.object({
+  id: external_exports.string().min(1),
+  name: external_exports.string().min(1),
+  category_ids: external_exports.array(external_exports.string().min(1)).min(1),
+  category_names: external_exports.array(external_exports.string().min(1)).min(1),
+  coverage_status: external_exports.enum(["catalogued", "profiled"]),
+  profile_ids: external_exports.array(external_exports.string().min(1)),
+  source_urls: external_exports.array(external_exports.url()).min(1)
+});
+var getAppleTechnologyResultSchema = external_exports.discriminatedUnion("kind", [
+  external_exports.object({
+    kind: external_exports.literal("reviewed_profile"),
+    catalog_entry: technologyCatalogEntrySchema,
+    profile: capabilityRecordSchema
+  }),
+  external_exports.object({
+    kind: external_exports.literal("catalog_only"),
+    catalog_entry: technologyCatalogEntrySchema,
+    recommendation_eligible: external_exports.literal(false),
+    verified_scope: external_exports.tuple([
+      external_exports.literal("catalog identity"),
+      external_exports.literal("taxonomy categories"),
+      external_exports.literal("catalog provenance URLs")
+    ]),
+    unverified_profile_fields: external_exports.array(external_exports.string()).min(1),
+    next_step: external_exports.literal("Review current official Apple documentation before making an architecture recommendation.")
+  })
+]);
 var compareOptionsInputSchema = external_exports.object({
   capability_ids: external_exports.array(external_exports.string()).min(2).max(6),
   criteria: external_exports.array(
@@ -37233,6 +37307,15 @@ async function loadTechnologyCatalog() {
   }
   return [...byName.values()].sort((left, right) => left.name.localeCompare(right.name, "en-US"));
 }
+async function findTechnologyCatalogEntry(idOrName) {
+  const query = idOrName.trim();
+  if (!query) return void 0;
+  const normalizedQuery = normalizedCatalogKey(query);
+  const catalog = await loadTechnologyCatalog();
+  return catalog.find(
+    (entry) => entry.id.toLocaleLowerCase("en-US") === query.toLocaleLowerCase("en-US") || normalizedCatalogKey(entry.name) === normalizedQuery
+  );
+}
 async function getRegistryCoverage() {
   const taxonomy = taxonomy_default;
   const [catalog, profiles] = await Promise.all([loadTechnologyCatalog(), loadRegistry()]);
@@ -37675,26 +37758,77 @@ function analyzeAppIdea(input2) {
   }
   return envelope({ requirements, assumptions, constraints, open_questions: openQuestions.slice(0, 3) });
 }
+var resolverStopwords = /* @__PURE__ */ new Set([
+  "a",
+  "an",
+  "and",
+  "app",
+  "application",
+  "apple",
+  "data",
+  "device",
+  "for",
+  "from",
+  "feature",
+  "in",
+  "ios",
+  "local",
+  "of",
+  "offline",
+  "on",
+  "on device",
+  "or",
+  "privacy",
+  "processing",
+  "support",
+  "supports",
+  "system",
+  "the",
+  "to",
+  "use",
+  "uses",
+  "using",
+  "user",
+  "with"
+]);
+function phraseTokens(value) {
+  return value.normalize("NFKD").toLocaleLowerCase("en-US").split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+}
+function normalizedPhrase(value) {
+  return phraseTokens(value).join(" ");
+}
+function containsWholePhrase(haystack, needle) {
+  const haystackTokens = phraseTokens(haystack);
+  const needleTokens = phraseTokens(needle);
+  if (needleTokens.length === 0) return false;
+  return haystackTokens.some(
+    (_, index) => needleTokens.every((token, offset) => haystackTokens[index + offset] === token)
+  );
+}
+function requirementTerms(requirement) {
+  const keywordTerms = requirement.keywords.map(normalizedPhrase);
+  const descriptionTerms = phraseTokens(requirement.description);
+  return [.../* @__PURE__ */ new Set([...keywordTerms, ...descriptionTerms])].filter(
+    (term) => term.length > 2 && !resolverStopwords.has(term)
+  );
+}
 function scoreRecord(requirement, record2) {
-  const haystack = [
+  const searchableValues = [
     record2.id,
     record2.name,
     record2.summary,
     ...record2.aliases,
     ...record2.keywords,
     ...record2.supported_use_cases
-  ].join(" ").toLocaleLowerCase("en-US");
-  const tokens = [
-    ...requirement.keywords,
-    ...requirement.description.toLocaleLowerCase("en-US").split(/[^\p{L}\p{N}-]+/u)
-  ].filter((token) => token.length > 2);
-  const matches = [...new Set(tokens.filter((token) => haystack.includes(token.toLocaleLowerCase("en-US"))))];
+  ];
+  const matches = requirementTerms(requirement).filter(
+    (term) => searchableValues.some((value) => containsWholePhrase(value, term))
+  );
   let score = matches.length;
   const reasons = matches.length > 0 ? [`Matched: ${matches.slice(0, 5).join(", ")}`] : [];
   const kindBoosts = {
     notification: ["user-notifications"],
     background: ["background-tasks", "healthkit-background-delivery", "core-location"],
-    on_device: ["core-ml", "foundation-models"],
     monetization: ["storekit-2"],
     privacy: ["privacy-manifest", "required-reason-apis"],
     platform: ["widgetkit", "activitykit", "app-intents", "app-groups"]
@@ -37704,6 +37838,27 @@ function scoreRecord(requirement, record2) {
     reasons.push(`Primary match for ${requirement.kind}`);
   }
   return { score, reasons };
+}
+async function findCatalogResearchLeads(requirements, maximumResultsPerRequirement) {
+  const catalogOnlyEntries = (await loadTechnologyCatalog()).filter((entry) => entry.coverage_status === "catalogued");
+  return requirements.flatMap(
+    (requirement) => catalogOnlyEntries.flatMap((entry) => {
+      const identityPhrases = [entry.name, entry.id.replace(/^technology\./, "")];
+      const keywordPhrases = requirement.keywords.map(normalizedPhrase);
+      const matchedTerm = identityPhrases.find((identity) => {
+        const normalizedIdentity = normalizedPhrase(identity);
+        return keywordPhrases.includes(normalizedIdentity) || containsWholePhrase(requirement.description, identity);
+      });
+      return matchedTerm ? [
+        {
+          requirement_id: requirement.id,
+          matched_term: matchedTerm,
+          catalog_entry: entry,
+          recommendation_eligible: false
+        }
+      ] : [];
+    }).sort((left, right) => left.catalog_entry.name.localeCompare(right.catalog_entry.name, "en-US")).slice(0, maximumResultsPerRequirement)
+  );
 }
 async function resolveCapabilities(input2) {
   const records = (await loadRegistry()).filter(
@@ -37718,15 +37873,53 @@ async function resolveCapabilities(input2) {
       record: record2
     }))
   );
-  return envelope(
-    { matches },
-    matches.length === 0 ? ["No verified registry match was found; refine the requirements instead of inventing a technology."] : matches.some((match) => match.record.stable_or_beta === "unknown") ? ["Some matches have an unknown lifecycle. Verify their current SDK status before implementation."] : []
+  const catalogResearchLeads = await findCatalogResearchLeads(
+    input2.requirements,
+    input2.maximum_results_per_requirement
   );
+  const warnings = [];
+  if (matches.length === 0 && catalogResearchLeads.length === 0) {
+    warnings.push(
+      "No verified registry match or exact catalog research lead was found; refine the requirements instead of inventing a technology."
+    );
+  }
+  if (catalogResearchLeads.length > 0) {
+    warnings.push(
+      "Catalog research leads are discovery hints only and are not eligible for architecture recommendations until an official-source profile is reviewed."
+    );
+  }
+  if (matches.some((match) => match.record.stable_or_beta === "unknown")) {
+    warnings.push("Some matches have an unknown lifecycle. Verify their current SDK status before implementation.");
+  }
+  return envelope({ matches, catalog_research_leads: catalogResearchLeads }, warnings);
 }
 async function getCapabilityProfile(idOrName) {
   const record2 = await findRecord(idOrName);
   if (!record2) throw new Error(`Unknown capability: ${idOrName}`);
   return envelope(record2);
+}
+async function getAppleTechnology(idOrName) {
+  const catalogEntry = await findTechnologyCatalogEntry(idOrName);
+  if (!catalogEntry) throw new Error(`Unknown Apple technology: ${idOrName}`);
+  if (catalogEntry.coverage_status === "profiled") {
+    const profileId = catalogEntry.profile_ids[0];
+    const profile = (await loadRegistry()).find((record2) => record2.id === profileId);
+    if (!profile) throw new Error(`Catalog profile invariant failed for Apple technology: ${idOrName}`);
+    return envelope({ kind: "reviewed_profile", catalog_entry: catalogEntry, profile });
+  }
+  return envelope(
+    {
+      kind: "catalog_only",
+      catalog_entry: catalogEntry,
+      recommendation_eligible: false,
+      verified_scope: ["catalog identity", "taxonomy categories", "catalog provenance URLs"],
+      unverified_profile_fields: [...catalogOnlyUnverifiedProfileFields],
+      next_step: "Review current official Apple documentation before making an architecture recommendation."
+    },
+    [
+      "This catalog-only result is discovery evidence, not an architecture, configuration, or availability recommendation."
+    ]
+  );
 }
 async function compareImplementationOptions(capabilityIds, criteria) {
   const records = await resolveIds(capabilityIds);
@@ -38092,6 +38285,17 @@ server.registerTool(
     annotations: readOnlyAnnotations
   },
   async ({ capability_id_or_name }) => result(await getCapabilityProfile(capability_id_or_name))
+);
+server.registerTool(
+  "get_apple_technology",
+  {
+    title: "Get an Apple technology",
+    description: "Look up one exact Apple technology catalog entry. Returns either a reviewed capability profile or an explicitly non-recommendable catalog-only research result without inventing architecture evidence.",
+    inputSchema: getAppleTechnologyInputSchema,
+    outputSchema: { ...outputSchema, data: getAppleTechnologyResultSchema },
+    annotations: readOnlyAnnotations
+  },
+  async ({ technology_id_or_name }) => result(await getAppleTechnology(technology_id_or_name))
 );
 server.registerTool(
   "compare_implementation_options",

@@ -163,6 +163,72 @@ export interface TechnologyCatalogEntry {
   source_urls: string[];
 }
 
+export const catalogOnlyUnverifiedProfileFields = [
+  "aliases",
+  "category",
+  "entity_type",
+  "summary",
+  "supported_use_cases",
+  "unsupported_use_cases",
+  "related_frameworks",
+  "related_capabilities",
+  "related_entitlements",
+  "related_extensions",
+  "relationships",
+  "platforms",
+  "minimum_os_version",
+  "sdk_availability",
+  "stable_or_beta",
+  "deprecated_status",
+  "supported_devices",
+  "hardware_requirements",
+  "region_restrictions",
+  "language_restrictions",
+  "on_device_level",
+  "network_requirement",
+  "cloud_dependency",
+  "user_permissions",
+  "info_plist_keys",
+  "xcode_capabilities",
+  "entitlements",
+  "managed_entitlements",
+  "background_modes",
+  "privacy_manifest_requirements",
+  "required_reason_apis",
+  "app_review_considerations",
+  "security_considerations",
+  "implementation_notes",
+  "limitations",
+  "recommended_alternatives",
+  "official_documentation",
+  "release_notes",
+  "last_verified_at",
+  "keywords",
+  "knowledge_state"
+] as const satisfies ReadonlyArray<keyof CapabilityRecord>;
+
+export type AppleTechnologyResult =
+  | {
+      kind: "reviewed_profile";
+      catalog_entry: TechnologyCatalogEntry;
+      profile: CapabilityRecord;
+    }
+  | {
+      kind: "catalog_only";
+      catalog_entry: TechnologyCatalogEntry;
+      recommendation_eligible: false;
+      verified_scope: ["catalog identity", "taxonomy categories", "catalog provenance URLs"];
+      unverified_profile_fields: Array<(typeof catalogOnlyUnverifiedProfileFields)[number]>;
+      next_step: "Review current official Apple documentation before making an architecture recommendation.";
+    };
+
+export interface CatalogResearchLead {
+  requirement_id: string;
+  matched_term: string;
+  catalog_entry: TechnologyCatalogEntry;
+  recommendation_eligible: false;
+}
+
 export interface RegistryCoverage {
   category_count: number;
   catalogued_technology_count: number;

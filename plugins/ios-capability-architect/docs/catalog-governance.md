@@ -17,6 +17,20 @@ Review is evidence provenance, not a claim that every tracked field is known. Om
 
 The registry coverage response publishes `complete_profile_count` and `partial_profile_count` separately so consumers cannot mistake dated source review for field-level completeness.
 
+## Discovery and recommendation boundary
+
+Catalog retrieval is intentionally broader than reviewed architecture matching. `resolve_ios_capabilities` can surface unprofiled discoveries only in a separate `catalog_research_leads` collection, with the originating requirement and matched phrase; these leads never enter its capability `matches`. `search_apple_technology_catalog` and `get_apple_technology` can also return catalog-only identities so an agent can discover a relevant Apple technology without fabricating a capability profile. The CLI equivalents are `catalog` and `technology`.
+
+For a catalog-only result:
+
+1. Preserve `coverage_status: catalogued`, `recommendation_eligible: false`, `verified_scope`, `unverified_profile_fields`, `next_step`, and the tool warning in every downstream summary.
+2. Describe the result as a research lead, never as a verified match or recommendation.
+3. Perform live research against current, technology-specific official Apple documentation before evaluating availability, permissions, entitlements, platform behavior, privacy, App Review risk, or architectural fit.
+4. Cite the technology-specific sources and record the actual verification date. A generic Apple Technologies index URL is discovery provenance, not implementation evidence.
+5. Keep the item outside profile-dependent comparison, availability, audit, architecture, and planning tools until it is promoted through reviewed source edits and registry validation.
+
+Live research can support an answer without changing the committed registry, but it does not silently promote the catalog record. If the evidence is insufficient or conflicting, keep the technology `catalogued`, label the claim `unverified`, and prefer a conservative recommendation.
+
 ## Deterministic pull-request gate
 
 Every ordinary test run rebuilds the report from `taxonomy.json`, `capabilities.json`, and `apple-technologies.snapshot.json`, then compares it byte-for-byte at the JSON data level with `catalog-coverage.json`. This makes category removals, canonical-ID changes, profile promotion, and evidence-status changes visible in review.

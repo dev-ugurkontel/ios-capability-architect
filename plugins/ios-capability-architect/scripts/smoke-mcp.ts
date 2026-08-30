@@ -28,11 +28,12 @@ try {
     throw new Error(`Expected MCP server version ${expectedVersion}, received ${client.getServerVersion()?.version}`);
   }
   const tools = await client.listTools();
-  if (tools.tools.length !== 14) throw new Error(`Expected 14 tools, received ${tools.tools.length}`);
+  if (tools.tools.length !== 15) throw new Error(`Expected 15 tools, received ${tools.tools.length}`);
   const expected = [
     "analyze_app_idea",
     "resolve_ios_capabilities",
     "get_capability_profile",
+    "get_apple_technology",
     "compare_implementation_options",
     "check_availability",
     "audit_permissions_and_entitlements",
@@ -57,6 +58,16 @@ try {
   const structuredContent = response.structuredContent as Record<string, unknown> | undefined;
   if (structuredContent?.schema_version !== "1.0") throw new Error("Missing structured output envelope");
 
+  const technologyResponse = await client.callTool({
+    name: "get_apple_technology",
+    arguments: { technology_id_or_name: "MapKit" }
+  });
+  if (technologyResponse.isError) throw new Error("get_apple_technology returned an MCP error");
+  const technologyEnvelope = technologyResponse.structuredContent as { data?: { kind?: string } } | undefined;
+  if (technologyEnvelope?.data?.kind !== "catalog_only") {
+    throw new Error("MapKit did not return the expected catalog-only result");
+  }
+
   const auditResponse = await client.callTool({
     name: "audit_ios_project_configuration",
     arguments: { project_root: pluginRoot, capability_ids: ["swiftdata"], platform: "iOS" }
@@ -72,6 +83,7 @@ try {
         server_version: expectedVersion,
         tool_count: tools.tools.length,
         profile_smoke: "healthkit",
+        technology_smoke: "MapKit",
         project_audit_smoke: "swiftdata",
         structured_output: true
       },
