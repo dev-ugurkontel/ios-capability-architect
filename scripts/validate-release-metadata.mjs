@@ -36,11 +36,13 @@ if (!write) {
   );
 }
 
-const [rootPackage, pluginPackage, packageLock, releaseManifest] = await Promise.all([
+const [rootPackage, pluginPackage, packageLock, releaseManifest, releasePleaseConfig, rootReadme] = await Promise.all([
   readJson("package.json"),
   readJson("plugins/ios-capability-architect/package.json"),
   readJson("package-lock.json"),
-  readJson(".release-please-manifest.json")
+  readJson(".release-please-manifest.json"),
+  readJson("release-please-config.json"),
+  readFile("README.md", "utf8")
 ]);
 
 const version = rootPackage.version;
@@ -57,6 +59,17 @@ const versionSurfaces = new Map([
 for (const [surface, surfaceVersion] of versionSurfaces) {
   assert(surfaceVersion === version, `${surface} version ${surfaceVersion ?? "<missing>"} does not match ${version}`);
 }
+
+const installReference = rootReadme.match(
+  /codex plugin marketplace add fillbyte\/ios-capability-architect --ref v(\d+\.\d+\.\d+) # x-release-please-version/
+);
+assert(installReference, "README.md must contain the release-managed marketplace installation reference");
+assert(installReference[1] === version, `README.md install reference ${installReference[1]} does not match ${version}`);
+const extraFiles = releasePleaseConfig.packages?.["."]?.["extra-files"] ?? [];
+assert(
+  extraFiles.some((entry) => entry?.type === "generic" && entry.path === "README.md"),
+  "release-please-config.json must update README.md through the generic updater"
+);
 
 const changelog = await readFile("CHANGELOG.md", "utf8");
 assert(changelog.endsWith("\n"), "CHANGELOG.md must end with a newline");
