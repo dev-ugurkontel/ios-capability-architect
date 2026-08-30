@@ -39,7 +39,7 @@ jobs:
           npm run --silent release:sbom > release-assets/ios-capability-architect-${{ github.event.release.tag_name }}.sbom.cdx.json
           package_path=$(find release-assets -maxdepth 1 -name '*.tgz' -print -quit)
           printf 'package_path=%s\n' "$package_path" >> "$GITHUB_OUTPUT"
-          shasum -a 256 release-assets/* > release-assets/SHA256SUMS
+          (cd release-assets && shasum -a 256 *.tgz *.json > SHA256SUMS)
       - name: Publish GitHub npm package
         run: npm publish "./${{ steps.assets.outputs.package_path }}" --registry=https://npm.pkg.github.com
         env:
