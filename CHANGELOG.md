@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented in this file. The project follows [Semantic Versioning](https://semver.org/) and uses Conventional Commit messages to drive release automation.
 
+## [0.3.0](https://github.com/fillbyte/ios-capability-architect/compare/v0.2.2...v0.3.0) (2026-08-30)
+
+
+### Features
+
+* **plugin:** audit existing iOS project configuration ([#20](https://github.com/fillbyte/ios-capability-architect/issues/20)) ([a12e500](https://github.com/fillbyte/ios-capability-architect/commit/a12e50090272ceeb70ddba0d1caf09818c6bfdf5))
+
+
+### Bug Fixes
+
+* **release:** keep generated bundle stable across version bumps ([#22](https://github.com/fillbyte/ios-capability-architect/issues/22)) ([fab76f5](https://github.com/fillbyte/ios-capability-architect/commit/fab76f5a732d1f7f1a4174d6e326da4ee18226f0))
+
 ## [0.2.2](https://github.com/fillbyte/ios-capability-architect/compare/v0.2.1...v0.2.2) (2026-08-30)
 
 
