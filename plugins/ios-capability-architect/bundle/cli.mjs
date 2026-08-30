@@ -6,6 +6,7 @@ var __export = (target, all) => {
 };
 
 // src/cli.ts
+import { realpathSync } from "node:fs";
 import { resolve as resolve2 } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
@@ -21248,8 +21249,8 @@ async function runCli(args, streams = defaultStreams) {
     return 1;
   }
 }
-var entryPath = process.argv[1] ? resolve2(process.argv[1]) : void 0;
-if (entryPath && fileURLToPath(import.meta.url) === entryPath) {
+var entryPath = process.argv[1] ? realpathSync(resolve2(process.argv[1])) : void 0;
+if (entryPath && realpathSync(fileURLToPath(import.meta.url)) === entryPath) {
   process.exitCode = await runCli(process.argv.slice(2));
 }
 export {
