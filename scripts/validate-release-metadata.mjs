@@ -1,5 +1,6 @@
 import { readFile, writeFile } from "node:fs/promises";
 import process from "node:process";
+import { URL } from "node:url";
 
 const repositoryUrl = "https://github.com/fillbyte/ios-capability-architect";
 const semverPattern = /^\d+\.\d+\.\d+(?:\+[0-9A-Za-z.-]+)?$/;
@@ -61,7 +62,12 @@ const changelog = await readFile("CHANGELOG.md", "utf8");
 assert(changelog.endsWith("\n"), "CHANGELOG.md must end with a newline");
 assert(!changelog.includes("\r"), "CHANGELOG.md must use LF line endings");
 assert(changelog.startsWith("# Changelog\n\n"), "CHANGELOG.md must start with the canonical heading");
-assert(!changelog.includes("https://github.com/dev-ugurkontel/"), "CHANGELOG.md contains a legacy repository URL");
+
+const changelogLinks = [...changelog.matchAll(/\]\((https?:\/\/[^)\s]+)\)/g)].map((match) => new URL(match[1]));
+assert(
+  changelogLinks.every((url) => !(url.hostname === "github.com" && url.pathname.startsWith("/dev-ugurkontel/"))),
+  "CHANGELOG.md contains a legacy repository URL"
+);
 
 const releaseHeadingPattern = new RegExp(
   `^## \\[(\\d+\\.\\d+\\.\\d+(?:\\+[0-9A-Za-z.-]+)?)\\]\\(${repositoryUrl.replaceAll("/", "\\/")}\\/compare\\/([^)]*)\\) \\((\\d{4}-\\d{2}-\\d{2})\\)$`,
