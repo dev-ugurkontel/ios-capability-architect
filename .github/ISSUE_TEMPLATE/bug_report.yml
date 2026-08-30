@@ -1,0 +1,59 @@
+name: Bug report
+description: Report a reproducible defect in the plugin, MCP server, scripts, or bundle.
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping improve the project. Remove secrets and private app data before submitting.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Preflight
+      options:
+        - label: I searched existing issues and pull requests.
+          required: true
+        - label: I reproduced this with the latest release or default branch.
+          required: true
+        - label: This is not a security vulnerability.
+          required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+      placeholder: v0.1.0 or full commit SHA
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include macOS, Node.js, npm, and Codex host versions when applicable.
+      placeholder: macOS 15.x; Node.js 24.x; npm 11.x; Codex version ...
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Provide exact commands, MCP tool input, or a small sanitized example.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include sanitized error output or logs if available.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Add relevant links, screenshots, or suspected regressions.

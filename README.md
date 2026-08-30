@@ -53,7 +53,7 @@ Official platform sources:
     └── docs/
 ```
 
-The skill supplies the full system workflow and output contract. The MCP server supplies eleven focused, read-only tools. The registry loader expands conservative defaults, validates every normalized field with Zod, and refuses duplicate or malformed records. The recommendation engine is deliberately deterministic; the model provides product reasoning while the server supplies verified facts and structured audits.
+The skill supplies the full system workflow and output contract. The MCP server supplies thirteen focused, read-only tools. The registry loader expands conservative defaults, validates every normalized field with Zod, and refuses duplicate or malformed records. The recommendation engine is deliberately deterministic; the model provides product reasoning while the server supplies verified facts and structured audits.
 
 See [architecture.md](plugins/ios-capability-architect/docs/architecture.md), [tool-contracts.md](plugins/ios-capability-architect/docs/tool-contracts.md), and [platform-verification.md](plugins/ios-capability-architect/docs/platform-verification.md).
 
@@ -62,7 +62,8 @@ See [architecture.md](plugins/ios-capability-architect/docs/architecture.md), [t
 - Node.js 24 is the current LTS baseline used by this repository.
 - SwiftUI is the default UI recommendation; UIKit is introduced only for an API or compatibility need.
 - Stable Apple SDK behavior is the default. iOS 27 and Xcode 27 capabilities remain beta on the verification date and are isolated from stable records.
-- The bundled registry is a verified starter set, not a closed catalog. Missing technology must produce an explicit gap and live official-source research, never an invented match.
+- The committed discovery catalog currently names 193 technologies across 32 categories, while 18 evidence-backed profiles power recommendations. The measured catalog-to-profile coverage is 10.4%; this is intentionally reported instead of claiming a permanently complete Apple catalog.
+- Catalog-only technologies must produce an explicit evidence gap and official-source research, never an invented recommendation.
 - Tool outputs are architectural advice, not proof that a specific App ID has an entitlement or that App Review will approve a design.
 - Runtime `#available`, hardware, region, language, authorization, and service-availability checks remain mandatory in the iOS app.
 
@@ -78,14 +79,13 @@ Requirements:
 Install and verify:
 
 ```bash
-npm install
+npm ci
 npm run build
 npm run check
 npm run validate:registry
 npm test
 npm run verify:docs
-python3 /Users/ugurkontel/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py \
-  /Users/ugurkontel/Documents/GitHub/agent-plugins/plugins/ios-capability-architect
+npm run validate:plugin
 ```
 
 The `verify:docs` command performs allowlisted conditional GETs against `developer.apple.com`, writes an ignored `data/link-verification-report.json`, and fails when a source is unreachable or invalid. A successful link check proves reachability, not semantic correctness; source changes still require human review.
@@ -95,7 +95,7 @@ The `verify:docs` command performs allowlisted conditional GETs against `develop
 The committed single-file runtime at `bundle/server.mjs` has no runtime `node_modules` dependency. Rebuild it after source changes; ordinary installation can use the committed bundle directly:
 
 ```bash
-codex plugin marketplace add /Users/ugurkontel/Documents/GitHub/agent-plugins
+codex plugin marketplace add .
 codex plugin add ios-capability-architect@personal
 ```
 
@@ -115,6 +115,8 @@ If the `personal` marketplace name already exists on another machine, rename thi
 - `generate_ios_architecture`
 - `generate_implementation_plan`
 - `search_official_apple_docs`
+- `search_apple_technology_catalog`
+- `get_registry_coverage`
 - `refresh_capability_registry`
 
 All tools have `readOnlyHint: true`, `destructiveHint: false`, `idempotentHint: true`, and `openWorldHint: false`. The last tool returns only a refresh plan; it cannot change the registry.
@@ -123,9 +125,18 @@ All tools have `readOnlyHint: true`, `destructiveHint: false`, `idempotentHint: 
 
 The normalized `CapabilityRecord` contains all fields requested by the product brief, including entity type, framework/capability/entitlement relations, OS and SDK availability, beta/deprecation status, devices and hardware, region/language restrictions, on-device level, network/cloud needs, permissions, Info.plist keys, capabilities, entitlements, managed entitlements, background modes, privacy manifests, required-reason APIs, review and security considerations, alternatives, official sources, release notes, and verification date.
 
-Starter records cover the seven acceptance scenarios and their supporting technologies. Extend the registry by adding evidence-backed records to `plugins/ios-capability-architect/data/capabilities.json`; omitted raw fields normalize conservatively. Run the full validation suite before merging.
+The 18 reviewed records cover the seven acceptance scenarios and their supporting technologies. Extend the recommendation registry by adding evidence-backed records to `plugins/ios-capability-architect/data/capabilities.json`; omitted stability normalizes to `unknown`, not `stable`. Run the full validation suite before merging.
 
-`plugins/ios-capability-architect/data/taxonomy.json` models the broader requested Apple ecosystem—language/UI, persistence, security, AI, system intelligence, location, health, background work, widgets, commerce, media, nearby devices, networking extensions, Home/Matter, spatial computing, personal information, parental controls, web, files, extensions, privacy, testing, delivery, gaming, automotive, managed deployment, localization, and accessibility. Taxonomy examples are discovery aids, not verified recommendation records; promote one to `capabilities.json` only with official evidence.
+`plugins/ios-capability-architect/data/taxonomy.json` models the broader Apple ecosystem, including the current official iOS provisioning-capability list and emerging technology families. Its 193 deduplicated entries are discovery aids, not verified recommendation records; promote one to `capabilities.json` only with official evidence. `get_registry_coverage` keeps that distinction machine-visible.
+
+## Engineering quality
+
+- TypeScript 7 strict mode, typed ESLint, Prettier, and `@/` plus `@data/` aliases share one resolver contract across TypeScript, Vitest, tsx, and esbuild.
+- The only distribution artifact is `bundle/server.mjs`; `tsc` performs type checking without emitting a second, potentially incompatible runtime tree.
+- Vitest enforces 85% line/function/statement and 75% branch coverage. Current measured coverage exceeds those thresholds.
+- CI runs locked installs, formatting, linting, type checks, registry/plugin validation, coverage, deterministic bundle rebuild, MCP smoke tests, and production dependency audit.
+- Scheduled workflows verify official Apple links and run CodeQL. Dependabot and Release Please maintain dependencies and releases.
+- Bundling preserves third-party legal notices in `bundle/server.mjs.LEGAL.txt`.
 
 ## Documentation refresh and cache strategy
 

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/ugurkontel/agent-plugins/security/advisories/new
+    about: Report vulnerabilities privately. Do not disclose exploit details in a public issue.
+  - name: Support guidance
+    url: https://github.com/ugurkontel/agent-plugins/blob/main/SUPPORT.md
+    about: Read the support scope and required diagnostic information before opening an issue.

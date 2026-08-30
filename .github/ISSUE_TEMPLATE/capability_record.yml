@@ -1,0 +1,72 @@
+name: Capability correction or addition
+description: Propose an evidence-backed Apple capability record change.
+title: "[Capability]: "
+labels: ["capability-data", "needs-evidence"]
+body:
+  - type: markdown
+    attributes:
+      value: A resolving URL is not sufficient evidence. Cite the exact official documentation supporting each material claim.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Evidence checklist
+      options:
+        - label: I searched the verified registry, taxonomy, issues, and pull requests.
+          required: true
+        - label: I used official Apple sources for platform claims.
+          required: true
+        - label: I identified beta, deprecated, managed, region-limited, or hardware-dependent behavior.
+          required: true
+  - type: input
+    id: technology
+    attributes:
+      label: Technology or capability
+      placeholder: Nearby Interaction
+    validations:
+      required: true
+  - type: dropdown
+    id: change
+    attributes:
+      label: Change type
+      options:
+        - New verified record
+        - Correction
+        - Deprecation or replacement
+        - Availability change
+        - Privacy, entitlement, or review change
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Current behavior or gap
+    validations:
+      required: true
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Proposed record behavior
+      description: Separate frameworks, permissions, Info.plist keys, capabilities, entitlements, managed entitlements, background modes, and extensions.
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Availability and constraints
+      description: Include OS/SDK, device, hardware, region, language, account, authorization, network, and beta/deprecation status.
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Official Apple sources
+      description: Provide direct links and state which claim each source supports.
+    validations:
+      required: true
+  - type: input
+    id: verified
+    attributes:
+      label: Verification date
+      placeholder: YYYY-MM-DD
+    validations:
+      required: true
