@@ -1,7 +1,7 @@
 name: Feature proposal
 description: Propose a new tool, workflow, integration, or substantial behavior change.
 title: "[Proposal]: "
-labels: ["enhancement", "needs-triage"]
+labels: ["enhancement"]
 body:
   - type: checkboxes
     id: checks

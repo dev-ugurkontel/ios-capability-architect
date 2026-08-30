@@ -33,11 +33,15 @@ Security response and conduct enforcement may be handled privately until disclos
 - Generated bundle changes must be traceable to reviewed source changes.
 - Maintainers may close stale or out-of-scope proposals with a clear explanation.
 
+Repository branch protection is the enforcement source of truth. The default branch currently requires current status checks, signed and linear history, resolved review conversations, and protection from force-push and deletion. `CODEOWNERS` routes sensitive changes to the responsible maintainer; whether owner approval is mandatory is controlled by the live branch-protection settings.
+
 ## Releases
 
 Releases follow Semantic Versioning once the public API is declared stable. Until 1.0, minor versions may include deliberate contract changes, but every breaking change must be documented. Release notes summarize behavior, schema, registry, compatibility, privacy, and security changes.
 
-Only maintainers publish releases. Plugin marketplace submission, remote hosting, credentials, and production deployment are separate privileged operations and are never implied by merging code.
+Maintainers authorize a release by reviewing and merging the Release Please pull request. Automation then creates the tagged GitHub release, verifies the tagged source, publishes the scoped GitHub npm package, and attaches the tarball, checksums, and SBOM. A failed publication job does not justify moving or recreating an existing tag; fix the pipeline and use GitHub's explicit rerun mechanism or publish a subsequent version according to the incident decision.
+
+Plugin marketplace submission, remote hosting, credentials, and production deployment are separate privileged operations and are never implied by merging ordinary code.
 
 ## Amendments
 

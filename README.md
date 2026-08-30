@@ -99,9 +99,21 @@ codex plugin marketplace add dev-ugurkontel/ios-capability-architect --ref v0.1.
 codex plugin add ios-capability-architect@ios-capability-architect
 ```
 
-Then start a new Codex task so the skill and MCP tool inventory are loaded from the installed package.
+The command pins the first stable release as a reproducible example. To install a newer version, replace it with the exact non-prerelease tag shown on the [Releases page](https://github.com/dev-ugurkontel/ios-capability-architect/releases). Then start a new Codex task so the skill and MCP tool inventory are loaded from the installed package.
 
 Contributors working from a checkout can pass the repository path instead of the GitHub source. Do not hand-edit Codex `config.toml`.
+
+## Release artifacts and npm package
+
+Each GitHub release includes the packed npm tarball, a CycloneDX SBOM, and `SHA256SUMS`. The release assets are the simplest unauthenticated way to inspect or archive the exact published package. Verify a downloaded asset before use:
+
+```bash
+shasum -a 256 -c SHA256SUMS
+```
+
+The same tarball is published as `@dev-ugurkontel/ios-capability-architect` on GitHub Packages. GitHub's npm registry requires an authenticated npm client, including for this public package. Configure the `@dev-ugurkontel` scope for `https://npm.pkg.github.com`, provide a GitHub token with `read:packages` through your environment or user-level npm configuration, and never commit that token or a credential-bearing `.npmrc` file.
+
+Release Please owns version and changelog updates after the `v0.1.0` baseline. Conventional `feat`, `fix`, and breaking-change commits merged after the latest tag determine the next release pull request. Merging that release pull request publishes the GitHub release; the release event then verifies and publishes the package and attaches its provenance artifacts.
 
 ## Tool surface
 
@@ -136,7 +148,7 @@ The 18 reviewed records cover the seven acceptance scenarios and their supportin
 - Vitest enforces 85% line/function/statement and 75% branch coverage. Current measured coverage exceeds those thresholds.
 - CI runs locked installs, formatting, linting, type checks, registry/plugin validation, coverage, deterministic bundle rebuild, MCP smoke tests, and production dependency audit.
 - Scheduled workflows verify official Apple links and run CodeQL. Dependabot and Release Please maintain dependencies and releases.
-- Bundling preserves third-party legal notices in `bundle/server.mjs.LEGAL.txt`.
+- Bundling generates `bundle/THIRD_PARTY_NOTICES.txt` from the locked production dependency graph and fails if a bundled dependency has no discoverable license text.
 
 ## Documentation refresh and cache strategy
 
@@ -199,6 +211,8 @@ Publishing into OpenAI's reviewed plugin directory remains a separate process:
 6. Submit through the OpenAI plugin submission portal, complete review, then explicitly publish the approved version.
 
 Deploying a remote MCP service, creating external service accounts, or changing DNS is intentionally outside this repository release process.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md), [SUPPORT.md](SUPPORT.md), and [GOVERNANCE.md](GOVERNANCE.md) for contribution and maintenance policy.
 
 ## License
 

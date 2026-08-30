@@ -30,14 +30,11 @@ Install and run the local quality gates:
 
 ```bash
 npm ci
-npm run build
-npm run check
-npm run validate:registry
-npm test
+npm run verify
 npm run verify:docs
 ```
 
-The last command accesses only the allowlisted Apple Developer documentation host. It verifies reachability, not the meaning of a source; factual changes still require human review.
+`npm run verify` runs formatting, lint, type, registry, plugin-layout, coverage, build, and MCP smoke checks. The final documentation command accesses only the allowlisted Apple Developer documentation host. It verifies reachability, not the meaning of a source; factual changes still require human review.
 
 ## Adding or changing a capability record
 
@@ -77,6 +74,8 @@ feat(registry): add verified Nearby Interaction profile
 fix(engine): exclude beta records by default
 docs(contributing): clarify entitlement evidence rules
 ```
+
+The release pipeline derives versions and changelog entries from these commits. Use `feat!:` or a `BREAKING CHANGE:` footer only for an intentional contract break with migration guidance. Sign commits when practical; the protected default branch requires signed history, linear merges, current required checks, and resolved review conversations.
 
 A pull request should:
 

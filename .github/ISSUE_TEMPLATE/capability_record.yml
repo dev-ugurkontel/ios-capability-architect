@@ -1,7 +1,7 @@
 name: Capability correction or addition
 description: Propose an evidence-backed Apple capability record change.
 title: "[Capability]: "
-labels: ["capability-data", "needs-evidence"]
+labels: ["documentation", "enhancement"]
 body:
   - type: markdown
     attributes:
