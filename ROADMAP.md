@@ -10,28 +10,52 @@ This roadmap communicates direction, not delivery guarantees. Accepted issues an
 - Strengthen regression coverage for tool schemas, protocol behavior, and acceptance scenarios.
 - Document reproducible plugin packaging and local installation.
 
-## Now: registry depth and maintainability
+## Completed: first project-aware vertical slice
 
-- Expand evidence-backed profiles across Apple frameworks, services, extensions, and entitlement classes.
+- Add a bounded, read-only project configuration audit for `project.yml`, `project.pbxproj`, plist, entitlements, xcconfig, Swift Package, and privacy-manifest surfaces.
+- Compare source configuration with selected reviewed capability profiles without returning file contents or following symbolic links.
+- Report detected, missing, incompatible, manual-review, and unknown states separately.
+- Cover present configuration, missing configuration, deployment-target conflicts, and path-boundary behavior with automated tests.
+
+## Now: make project audits release-decision quality
+
+- Inspect generated Xcode build settings in addition to source configuration, while preserving a clear source-of-truth/generated-output distinction.
+- Model targets and build configurations so findings identify the exact app or extension target instead of only the containing file.
+- Parse `PrivacyInfo.xcprivacy` declarations semantically and compare required-reason categories with linked dependencies.
+- Produce a machine-readable remediation plan with reviewable patch suggestions; keep mutation opt-in and outside the read-only MCP tool.
+- Add real-project fixtures for XcodeGen, native `.xcodeproj`, Swift Package dependencies, widgets, Live Activities, HealthKit, and managed entitlements.
+- Establish a 100-scenario evaluation set and publish false-positive, false-negative, unsupported, and evidence-gap rates.
+
+Completion signal: an audit of every committed fixture identifies the correct target-level configuration and produces no unsupported certainty claim.
+
+## Next: registry depth and maintainability
+
+- Expand from 18 reviewed profiles to at least 60 high-usage profiles selected by public Apple-platform workflows, not arbitrary catalog order.
+- Prioritize APNs, CloudKit, Keychain, AuthenticationServices, App Attest, camera and media, maps and weather, Bluetooth and NFC, Wallet and Apple Pay, testing, accessibility, and extension families.
 - Add machine-readable provenance and change-review metadata without implying automatic factual verification.
 - Improve availability modeling for devices, hardware, regions, languages, accounts, managed entitlements, and beta SDKs.
 - Add safe tooling that identifies stale sources and produces a review queue without rewriting claims automatically.
-- Publish contributor guidance for researching and reviewing capability records.
+- Publish contributor guidance and fixtures for researching, reviewing, and superseding capability records.
 
-## Next: distribution assurance
+Completion signal: reviewed profiles cover at least 30% of the committed technology catalog and the public evaluation set passes without catalog-only recommendations.
 
-- Exercise upgrade and rollback procedures across consecutive tagged releases.
-- Add reproducible verification guidance for release tarballs, checksums, and SBOMs.
-- Review GitHub Packages authentication ergonomics and keep unauthenticated release artifacts available.
-- Track release-pipeline failures and document recovery decisions without rewriting published tags.
+## Then: distribution and adoption
 
-## Later: ecosystem integration
+- Evaluate and submit a skills-only public package before introducing a hosted service.
+- Prepare public marketplace metadata, starter prompts, test cases, country availability, policy attestations, privacy terms, and release automation.
+- Publish a five-minute end-to-end example that starts with an app idea, audits a real project, and produces a verified remediation plan.
+- Exercise install, upgrade, rollback, and uninstall procedures across consecutive tagged releases.
+- Keep unauthenticated GitHub release artifacts available even while GitHub Packages requires npm authentication.
+- Publish benchmark results that compare generic planning with registry-backed, project-aware auditing.
 
-- Evaluate a skills-only public package and a reviewed remote MCP transport independently.
-- Define privacy-preserving deployment and authentication requirements before any hosted service exists.
+Completion signal: a new user can install a reviewed package, complete the example without repository knowledge, and reproduce the documented output.
+
+## Later: hosted and ecosystem integration
+
+- Evaluate a reviewed remote MCP transport only after the skills-only package demonstrates demand.
+- Define privacy-preserving deployment, authentication, rate limits, observability, retention, and incident-response requirements before hosting exists.
 - Add versioned registry exports for external auditing and reproducible analysis.
-- Explore additional Apple platforms when their behavior can be represented without weakening iOS guidance.
-- Prepare public marketplace metadata, test cases, policy attestations, and release automation.
+- Expand iPadOS, watchOS, tvOS, macOS, and visionOS guidance only with platform-specific evidence and evaluation coverage.
 
 ## Non-goals
 

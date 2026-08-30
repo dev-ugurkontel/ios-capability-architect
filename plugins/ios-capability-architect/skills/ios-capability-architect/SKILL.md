@@ -45,11 +45,12 @@ When the bundled MCP tools are available:
    - Apple-managed entitlement;
    - background mode;
    - app-extension target.
-6. Call `audit_privacy_and_app_review` whenever health, location, children, identity, finance, biometrics, photos, contacts, microphone, camera, tracking, or other sensitive data is involved.
-7. Call `generate_ios_architecture` and `generate_implementation_plan` only after capability selection is coherent.
-8. Use `get_capability_profile` or `compare_implementation_options` for focused follow-up analysis.
-9. Use `search_official_apple_docs` only as a verified local index. If the user needs current facts or direct citations, perform live research against official Apple sources and update the verification date. The local search tool is not live web search.
-10. Treat `refresh_capability_registry` as a dry-run inventory. It cannot mutate the registry. Registry changes require reviewed source edits, link verification, tests, and version control.
+6. When the user provides or is working inside an existing local Apple project, call `audit_ios_project_configuration` with the selected capability IDs. Treat `not_detected` as an actionable source finding, not proof about the generated target or provisioning portal. Keep `manual_review` and `unknown` findings visible.
+7. Call `audit_privacy_and_app_review` whenever health, location, children, identity, finance, biometrics, photos, contacts, microphone, camera, tracking, or other sensitive data is involved.
+8. Call `generate_ios_architecture` and `generate_implementation_plan` only after capability selection is coherent.
+9. Use `get_capability_profile` or `compare_implementation_options` for focused follow-up analysis.
+10. Use `search_official_apple_docs` only as a verified local index. If the user needs current facts or direct citations, perform live research against official Apple sources and update the verification date. The local search tool is not live web search.
+11. Treat `refresh_capability_registry` as a dry-run inventory. It cannot mutate the registry. Registry changes require reviewed source edits, link verification, tests, and version control.
 
 If the MCP server is unavailable, follow the same workflow using the registry reference and current official Apple documentation. Say which claims could not be tool-verified.
 
@@ -70,6 +71,18 @@ Extract:
 - minimum OS and device targets.
 
 Map only relevant technologies. Do not dump the entire catalog.
+
+## Existing-project audit
+
+When project files are in scope:
+
+1. Identify the source of truth: native Xcode project, XcodeGen, xcconfig, Swift package, or a combination.
+2. Resolve the intended capability profiles before scanning configuration.
+3. Audit the selected local root with `audit_ios_project_configuration`.
+4. Report findings by target/configuration when the evidence supports it; otherwise name the containing source file and state the limitation.
+5. Separate detected source configuration from generated-project, signing, provisioning, managed-entitlement, and runtime verification.
+6. Never quote file contents from the audit result or treat a missing text match as proof that an externally generated setting is absent.
+7. Recommend source-of-truth changes first. Regenerate and inspect produced build settings only when the project workflow supports it.
 
 For every requirement, explain why the primary technology fits, the constraints under which it fits, and when an alternative is better. Compare alternatives on implementation complexity, minimum OS, on-device behavior, privacy, performance, energy, hardware, entitlement status, review risk, maintenance, and testability.
 

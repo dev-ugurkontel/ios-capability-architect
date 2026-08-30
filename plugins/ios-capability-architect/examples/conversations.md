@@ -1,5 +1,18 @@
 # Example conversations
 
+## Existing project audit
+
+User: This XcodeGen project should use HealthKit and background delivery. Audit the current project configuration before I ship it.
+
+Expected behavior:
+
+- Resolves HealthKit and background-delivery profiles before inspecting files.
+- Calls `audit_ios_project_configuration` against the selected project root.
+- Distinguishes detected source values from missing values, unknown evidence, and manual Apple approval checks.
+- Names the source files containing evidence without returning file contents.
+- Requires generated-project, signing, provisioning, physical-device, and runtime verification after source fixes.
+- Proposes changes in `project.yml` when it is the source of truth instead of hand-editing the generated `.xcodeproj`.
+
 ## Health and sleep
 
 User: I want an iPhone app that analyzes sleep patterns on device and sends a notification when the trend changes.

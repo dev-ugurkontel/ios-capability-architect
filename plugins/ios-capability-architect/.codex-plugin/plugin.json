@@ -26,6 +26,7 @@
     ],
     "defaultPrompt": [
       "Architect my iOS app idea with verified Apple APIs.",
+      "Audit my existing iOS project's capabilities and configuration.",
       "Audit this iOS design's permissions and entitlements.",
       "Compare on-device Apple technologies for this feature."
     ],
