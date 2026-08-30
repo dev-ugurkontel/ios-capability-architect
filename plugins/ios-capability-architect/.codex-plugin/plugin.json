@@ -1,6 +1,6 @@
 {
   "name": "ios-capability-architect",
-  "version": "0.1.0+codex.20260830115435",
+  "version": "0.2.0+codex.20260830122829",
   "description": "Map iOS product ideas to verified Apple frameworks, capabilities, permissions, entitlements, architecture, and implementation plans.",
   "author": {
     "name": "Ugur Kontel"
