@@ -1,4 +1,5 @@
-# Default ownership for repository-wide changes.
+# The individual maintainer account remains the owner after transfer to Fillbyte.
+# GitHub organizations are not valid CODEOWNERS without a specific team.
 * @dev-ugurkontel
 
 # Capability evidence and runtime contracts require maintainer review.

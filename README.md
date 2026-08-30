@@ -95,11 +95,11 @@ The `verify:docs` command performs allowlisted conditional GETs against `develop
 The committed single-file runtime at `bundle/server.mjs` has no runtime `node_modules` dependency. Install the versioned public marketplace directly from GitHub:
 
 ```bash
-codex plugin marketplace add dev-ugurkontel/ios-capability-architect --ref v0.1.0
+codex plugin marketplace add fillbyte/ios-capability-architect --ref ios-capability-architect-v0.2.0
 codex plugin add ios-capability-architect@ios-capability-architect
 ```
 
-The command pins the first stable release as a reproducible example. To install a newer version, replace it with the exact non-prerelease tag shown on the [Releases page](https://github.com/dev-ugurkontel/ios-capability-architect/releases). Then start a new Codex task so the skill and MCP tool inventory are loaded from the installed package.
+The command pins the latest release available before the repository transfer as a reproducible example. To install a newer version, replace it with the exact non-prerelease tag shown on the [Releases page](https://github.com/fillbyte/ios-capability-architect/releases). Then start a new Codex task so the skill and MCP tool inventory are loaded from the installed package.
 
 Contributors working from a checkout can pass the repository path instead of the GitHub source. Do not hand-edit Codex `config.toml`.
 
@@ -111,9 +111,9 @@ Each GitHub release includes the packed npm tarball, a CycloneDX SBOM, and `SHA2
 shasum -a 256 -c SHA256SUMS
 ```
 
-The same tarball is published as `@dev-ugurkontel/ios-capability-architect` on GitHub Packages. GitHub's npm registry requires an authenticated npm client, including for this public package. Configure the `@dev-ugurkontel` scope for `https://npm.pkg.github.com`, provide a GitHub token with `read:packages` through your environment or user-level npm configuration, and never commit that token or a credential-bearing `.npmrc` file.
+New releases are published as `@fillbyte/ios-capability-architect` on GitHub Packages. GitHub's npm registry requires an authenticated npm client, including for this public package. Configure the `@fillbyte` scope for `https://npm.pkg.github.com`, provide a GitHub token with `read:packages` through your environment or user-level npm configuration, and never commit that token or a credential-bearing `.npmrc` file. Releases published before the Fillbyte transfer remain under the legacy `@dev-ugurkontel` scope; see [package-scope-migration.md](docs/package-scope-migration.md).
 
-Release Please owns version and changelog updates after the `v0.1.0` baseline. Conventional `feat`, `fix`, and breaking-change commits merged after the latest tag determine the next release pull request. Merging that release pull request publishes the GitHub release; the release event then verifies and publishes the package and attaches its provenance artifacts.
+Release Please owns version and changelog updates after the `0.2.0` baseline. Conventional `feat`, `fix`, and breaking-change commits merged after the latest tag determine the next release pull request. Merging that release pull request publishes the GitHub release; the release event then verifies and publishes the package and attaches its provenance artifacts.
 
 ## Tool surface
 

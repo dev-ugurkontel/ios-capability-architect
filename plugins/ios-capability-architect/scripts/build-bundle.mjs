@@ -33,7 +33,7 @@ const dependencies = JSON.parse(dependencyQuery)
   .filter(
     (dependency) =>
       dependency.name !== "ios-capability-architect-workspace" &&
-      dependency.name !== "@dev-ugurkontel/ios-capability-architect"
+      dependency.name !== "@fillbyte/ios-capability-architect"
   )
   .filter(
     (dependency, index, all) =>

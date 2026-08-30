@@ -4,6 +4,8 @@
 
 iOS Capability Architect provides evidence-backed, conservative, and actionable mappings from Apple-platform product ideas to frameworks, permissions, entitlements, architecture, and delivery plans.
 
+The project is stewarded in the Fillbyte GitHub organization. Copyright and authorship remain attributed to their respective individual contributors.
+
 ## Roles
 
 ### Contributors

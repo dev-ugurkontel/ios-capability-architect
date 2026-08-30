@@ -8,12 +8,12 @@
   "author": "Ugur Kontel",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dev-ugurkontel/ios-capability-architect.git"
+    "url": "git+https://github.com/fillbyte/ios-capability-architect.git"
   },
   "bugs": {
-    "url": "https://github.com/dev-ugurkontel/ios-capability-architect/issues"
+    "url": "https://github.com/fillbyte/ios-capability-architect/issues"
   },
-  "homepage": "https://github.com/dev-ugurkontel/ios-capability-architect#readme",
+  "homepage": "https://github.com/fillbyte/ios-capability-architect#readme",
   "workspaces": [
     "plugins/*"
   ],
