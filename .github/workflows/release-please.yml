@@ -26,6 +26,8 @@ jobs:
     permissions:
       contents: write
       packages: write
+      id-token: write
+      attestations: write
     uses: ./.github/workflows/publish-package.yml
     with:
       tag: ${{ needs.release.outputs.tag_name }}
