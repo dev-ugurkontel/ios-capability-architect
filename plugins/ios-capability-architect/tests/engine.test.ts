@@ -6,6 +6,7 @@ import {
   compareImplementationOptions,
   generateArchitecture,
   generateImplementationPlan,
+  getAppleTechnology,
   getCapabilityProfile,
   refreshCapabilityRegistry,
   reportRegistryCoverage,
@@ -64,6 +65,73 @@ describe("read-only architecture tools", () => {
     expect(resolved.data.matches.some((match) => match.capability_id === "uiwebview")).toBe(false);
   });
 
+  it("keeps exact catalog research leads separate from reviewed capability matches", async () => {
+    const resolved = await resolveCapabilities({
+      requirements: [
+        {
+          id: "req-maps",
+          kind: "product_goal",
+          description: "Render a route with MapKit",
+          keywords: ["MapKit"],
+          confidence: "explicit"
+        }
+      ],
+      include_beta: false,
+      maximum_results_per_requirement: 4
+    });
+
+    expect(resolved.data.catalog_research_leads).toHaveLength(1);
+    expect(resolved.data.catalog_research_leads[0]?.requirement_id).toBe("req-maps");
+    expect(resolved.data.catalog_research_leads[0]?.matched_term).toBe("MapKit");
+    expect(resolved.data.catalog_research_leads[0]?.recommendation_eligible).toBe(false);
+    expect(resolved.data.catalog_research_leads[0]?.catalog_entry.id).toBe("technology.mapkit");
+    expect(resolved.data.catalog_research_leads[0]?.catalog_entry.coverage_status).toBe("catalogued");
+    expect(resolved.data.matches.some((match) => match.capability_id === "technology.mapkit")).toBe(false);
+  });
+
+  it("does not create matches or research leads from stopwords and substrings", async () => {
+    const resolved = await resolveCapabilities({
+      requirements: [
+        {
+          id: "req-garden",
+          kind: "product_goal",
+          description: "An app for the user with system support",
+          keywords: ["app", "user", "system", "support"],
+          confidence: "explicit"
+        }
+      ],
+      include_beta: false,
+      maximum_results_per_requirement: 4
+    });
+
+    expect(resolved.data.matches).toEqual([]);
+    expect(resolved.data.catalog_research_leads).toEqual([]);
+  });
+
+  it("discriminates reviewed profiles from catalog-only technologies", async () => {
+    const reviewed = await getAppleTechnology("HealthKit");
+
+    expect(reviewed.data).toMatchObject({
+      kind: "reviewed_profile",
+      catalog_entry: { coverage_status: "profiled" },
+      profile: { id: "healthkit" }
+    });
+    for (const technology of ["MapKit", "CryptoKit", "ARKit"]) {
+      const catalogOnly = await getAppleTechnology(technology);
+      expect(catalogOnly.data).toMatchObject({
+        kind: "catalog_only",
+        recommendation_eligible: false
+      });
+      expect(catalogOnly.data).not.toHaveProperty("profile");
+      expect(catalogOnly.data).not.toHaveProperty("minimum_os_version");
+      expect(catalogOnly.data).not.toHaveProperty("sdk_availability");
+      expect(catalogOnly.data).not.toHaveProperty("entitlements");
+      if (catalogOnly.data.kind === "catalog_only") {
+        expect(catalogOnly.data.unverified_profile_fields).toContain("minimum_os_version");
+      }
+    }
+  });
+
   it("reports unknown configuration fields instead of treating empty arrays as verified absence", async () => {
     const audit = await auditPermissionsAndEntitlements(["core-ml"]);
 
@@ -105,5 +173,6 @@ describe("read-only architecture tools", () => {
 
   it("rejects unknown profiles", async () => {
     await expect(getCapabilityProfile("not-a-real-capability")).rejects.toThrow("Unknown capability");
+    await expect(getAppleTechnology("not-a-real-technology")).rejects.toThrow("Unknown Apple technology");
   });
 });

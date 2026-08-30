@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { findRecord, loadRegistry, resetRegistryCache, searchRecords, searchTechnologyCatalog } from "@/registry.js";
+import {
+  findRecord,
+  findTechnologyCatalogEntry,
+  loadRegistry,
+  loadTechnologyCatalog,
+  resetRegistryCache,
+  searchRecords,
+  searchTechnologyCatalog
+} from "@/registry.js";
 
 describe("capability registry", () => {
   it("loads unique fully-normalized records", async () => {
@@ -21,6 +29,20 @@ describe("capability registry", () => {
     expect((await findRecord("healthkit"))?.id).toBe("healthkit");
     expect((await findRecord("Core ML"))?.id).toBe("core-ml");
     expect((await findRecord("Dynamic Island"))?.id).toBe("activitykit");
+  });
+
+  it("looks up catalog technologies by exact id or normalized name only", async () => {
+    expect((await findTechnologyCatalogEntry("MapKit"))?.id).toBe("technology.mapkit");
+    expect((await findTechnologyCatalogEntry("technology.mapkit"))?.name).toBe("MapKit");
+    expect(await findTechnologyCatalogEntry("Map")).toBeUndefined();
+  });
+
+  it("resolves every committed catalog technology by its exact id", async () => {
+    const catalog = await loadTechnologyCatalog();
+    expect(catalog).toHaveLength(193);
+    for (const entry of catalog) {
+      expect(await findTechnologyCatalogEntry(entry.id)).toEqual(entry);
+    }
   });
 
   it("returns defensive copies and handles empty searches", async () => {

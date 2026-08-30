@@ -9,6 +9,8 @@ import {
   auditInputSchema,
   checkAvailabilityInputSchema,
   compareOptionsInputSchema,
+  getAppleTechnologyInputSchema,
+  getAppleTechnologyResultSchema,
   getProfileInputSchema,
   implementationPlanInputSchema,
   officialDocsSearchInputSchema,
@@ -27,6 +29,7 @@ import {
   compareImplementationOptions,
   generateArchitecture,
   generateImplementationPlan,
+  getAppleTechnology,
   getCapabilityProfile,
   refreshCapabilityRegistry,
   reportRegistryCoverage,
@@ -113,6 +116,19 @@ server.registerTool(
     annotations: readOnlyAnnotations
   },
   async ({ capability_id_or_name }) => result(await getCapabilityProfile(capability_id_or_name))
+);
+
+server.registerTool(
+  "get_apple_technology",
+  {
+    title: "Get an Apple technology",
+    description:
+      "Look up one exact Apple technology catalog entry. Returns either a reviewed capability profile or an explicitly non-recommendable catalog-only research result without inventing architecture evidence.",
+    inputSchema: getAppleTechnologyInputSchema,
+    outputSchema: { ...outputSchema, data: getAppleTechnologyResultSchema },
+    annotations: readOnlyAnnotations
+  },
+  async ({ technology_id_or_name }) => result(await getAppleTechnology(technology_id_or_name))
 );
 
 server.registerTool(

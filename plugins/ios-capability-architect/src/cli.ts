@@ -11,6 +11,7 @@ import {
   checkAvailability,
   generateArchitecture,
   generateImplementationPlan,
+  getAppleTechnology,
   getCapabilityProfile,
   reportRegistryCoverage,
   resolveCapabilities,
@@ -27,6 +28,7 @@ Commands:
   analyze             Extract requirements and constraints from an app idea.
   resolve             Analyze an idea and match verified capability profiles.
   profile             Return one verified capability profile.
+  technology          Return one exact catalog technology as a reviewed profile or research-only entry.
   availability        Check capability availability for a declared target.
   audit-requirements  Separate permissions, plist keys, and entitlements.
   audit-project       Compare selected capabilities with local project configuration.
@@ -162,6 +164,9 @@ export async function runCli(args: string[], streams: CliStreams = defaultStream
       }
       case "profile":
         result = await getCapabilityProfile(positionals[1] ?? requireCapabilities()[0]!);
+        break;
+      case "technology":
+        result = await getAppleTechnology(positionals[1] ?? requireValue(values.query, "technology name or --query"));
         break;
       case "availability":
         result = await checkAvailability({

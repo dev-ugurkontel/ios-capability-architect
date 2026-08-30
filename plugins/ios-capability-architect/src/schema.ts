@@ -175,6 +175,40 @@ export const getProfileInputSchema = z.object({
   capability_id_or_name: z.string().min(1)
 });
 
+export const getAppleTechnologyInputSchema = z.object({
+  technology_id_or_name: z.string().trim().min(1).max(200)
+});
+
+export const technologyCatalogEntrySchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  category_ids: z.array(z.string().min(1)).min(1),
+  category_names: z.array(z.string().min(1)).min(1),
+  coverage_status: z.enum(["catalogued", "profiled"]),
+  profile_ids: z.array(z.string().min(1)),
+  source_urls: z.array(z.url()).min(1)
+});
+
+export const getAppleTechnologyResultSchema = z.discriminatedUnion("kind", [
+  z.object({
+    kind: z.literal("reviewed_profile"),
+    catalog_entry: technologyCatalogEntrySchema,
+    profile: capabilityRecordSchema
+  }),
+  z.object({
+    kind: z.literal("catalog_only"),
+    catalog_entry: technologyCatalogEntrySchema,
+    recommendation_eligible: z.literal(false),
+    verified_scope: z.tuple([
+      z.literal("catalog identity"),
+      z.literal("taxonomy categories"),
+      z.literal("catalog provenance URLs")
+    ]),
+    unverified_profile_fields: z.array(z.string()).min(1),
+    next_step: z.literal("Review current official Apple documentation before making an architecture recommendation.")
+  })
+]);
+
 export const compareOptionsInputSchema = z.object({
   capability_ids: z.array(z.string()).min(2).max(6),
   criteria: z

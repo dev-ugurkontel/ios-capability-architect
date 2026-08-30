@@ -43,6 +43,19 @@ describe("skills-only CLI", () => {
     expect(result.data.id).toBe("healthkit");
   });
 
+  it("returns an exact catalog-only technology without promoting it to a profile", async () => {
+    const output = capture();
+    await expect(runCli(["technology", "MapKit"], output.streams)).resolves.toBe(0);
+    const result = JSON.parse(output.stdout()) as {
+      data: { kind: string; recommendation_eligible: boolean; catalog_entry: { id: string } };
+    };
+    expect(result.data).toMatchObject({
+      kind: "catalog_only",
+      recommendation_eligible: false,
+      catalog_entry: { id: "technology.mapkit" }
+    });
+  });
+
   it("runs the bounded project audit", async () => {
     const output = capture();
     await expect(
@@ -71,6 +84,23 @@ describe("skills-only CLI", () => {
     };
     expect(result.analysis.data.requirements.length).toBeGreaterThan(1);
     expect(result.resolution.data.matches.every((match) => match.record.stable_or_beta !== "beta")).toBe(true);
+  });
+
+  it("keeps an exact catalog-only technology out of reviewed recommendations", async () => {
+    const output = capture();
+    await expect(runCli(["resolve", "--idea", "An app using ARKit", "--limit", "5"], output.streams)).resolves.toBe(0);
+    const result = JSON.parse(output.stdout()) as {
+      resolution: {
+        data: {
+          matches: unknown[];
+          catalog_research_leads: Array<{ catalog_entry: { id: string }; recommendation_eligible: boolean }>;
+        };
+      };
+    };
+    expect(result.resolution.data.matches).toEqual([]);
+    expect(result.resolution.data.catalog_research_leads).toHaveLength(1);
+    expect(result.resolution.data.catalog_research_leads[0]?.recommendation_eligible).toBe(false);
+    expect(result.resolution.data.catalog_research_leads[0]?.catalog_entry.id).toBe("technology.arkit");
   });
 
   it("exposes availability, configuration, and privacy audits", async () => {
