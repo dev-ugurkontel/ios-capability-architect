@@ -1,6 +1,7 @@
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { lstat, readFile, readdir, stat } from "node:fs/promises";
+import { lstat, mkdtemp, readFile, readdir, rm, stat, symlink } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import process from "node:process";
 import { fileURLToPath, URL } from "node:url";
@@ -88,6 +89,18 @@ const profile = JSON.parse(
 );
 if (profile.data.id !== "healthkit") throw new Error("Packaged CLI profile smoke test failed");
 
+const symlinkRoot = await mkdtemp(join(tmpdir(), "ios-capability-architect-cli-"));
+try {
+  const symlinkPath = join(symlinkRoot, "ios-capability-architect");
+  await symlink(join(skillRoot, "scripts", "ios-capability-architect.mjs"), symlinkPath);
+  const symlinkCoverage = JSON.parse(execFileSync("node", [symlinkPath, "coverage"], { encoding: "utf8" }));
+  if (symlinkCoverage.schema_version !== "1.0" || symlinkCoverage.data.profiled_technology_count < 1) {
+    throw new Error("Packaged CLI symlink smoke test failed");
+  }
+} finally {
+  await rm(symlinkRoot, { recursive: true, force: true });
+}
+
 const archive = await readFile(archivePath);
 process.stdout.write(
   `${JSON.stringify(
@@ -98,7 +111,7 @@ process.stdout.write(
       expanded_bytes: inventory.bytes,
       archive_bytes: archive.length,
       sha256: createHash("sha256").update(archive).digest("hex"),
-      cli_smoke: ["coverage", "profile:healthkit"]
+      cli_smoke: ["coverage", "profile:healthkit", "symlink:coverage"]
     },
     null,
     2
