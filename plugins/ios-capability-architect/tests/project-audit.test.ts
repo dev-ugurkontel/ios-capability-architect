@@ -410,6 +410,163 @@ describe("iOS project configuration audit", () => {
     }
   });
 
+  it("detects core-system profile configuration by exact plist and entitlement tokens", async () => {
+    const root = await temporaryProject();
+    await writeFile(
+      join(root, "project.yml"),
+      [
+        "options:",
+        "  deploymentTarget:",
+        "    iOS: '18.0'",
+        "capabilities:",
+        "  WeatherKit: true",
+        "  Fall Detection Notifications: true",
+        "  Multicast Networking: true",
+        "  App Sandbox: true"
+      ].join("\n")
+    );
+    await writeFile(
+      join(root, "App.entitlements"),
+      [
+        "<plist><dict>",
+        "<key>com.apple.developer.weatherkit</key><true/>",
+        "<key>com.apple.developer.health.fall-detection</key><true/>",
+        "<key>com.apple.developer.networking.multicast</key><true/>",
+        "<key>com.apple.security.network.client</key><true/>",
+        "<key>com.apple.security.network.server</key><true/>",
+        "<key>com.apple.security.personal-information.calendars</key><true/>",
+        "<key>com.apple.security.personal-information.addressbook</key><true/>",
+        "<key>com.apple.developer.contacts.notes</key><true/>",
+        "</dict></plist>"
+      ].join("\n")
+    );
+    await writeFile(
+      join(root, "Info.plist"),
+      [
+        "<plist><dict>",
+        "<key>NSMotionUsageDescription</key><string>Use motion.</string>",
+        "<key>NSFallDetectionUsageDescription</key><string>Use fall events.</string>",
+        "<key>NSFaceIDUsageDescription</key><string>Confirm access.</string>",
+        "<key>NSLocalNetworkUsageDescription</key><string>Connect to a device.</string>",
+        "<key>NSBonjourServices</key><array><string>_example._tcp</string></array>",
+        "<key>WKAppBoundDomains</key><array><string>example.com</string></array>",
+        "<key>NSCameraUsageDescription</key><string>Capture from the page.</string>",
+        "<key>NSMicrophoneUsageDescription</key><string>Capture from the page.</string>",
+        "<key>NSLocationWhenInUseUsageDescription</key><string>Local weather.</string>",
+        "<key>NSLocationUsageDescription</key><string>Local weather on Mac.</string>",
+        "<key>NSAppTransportSecurity</key><dict/>",
+        "<key>NSCalendarsWriteOnlyAccessUsageDescription</key><string>Add events.</string>",
+        "<key>NSCalendarsFullAccessUsageDescription</key><string>Manage events.</string>",
+        "<key>NSRemindersFullAccessUsageDescription</key><string>Manage reminders.</string>",
+        "<key>NSCalendarsUsageDescription</key><string>Legacy calendar support.</string>",
+        "<key>NSRemindersUsageDescription</key><string>Legacy reminders support.</string>",
+        "<key>NSContactsUsageDescription</key><string>Select contacts.</string>",
+        "</dict></plist>"
+      ].join("\n")
+    );
+    await writeFile(
+      join(root, "PrivacyInfo.xcprivacy"),
+      "<plist><dict><key>NSPrivacyCollectedDataTypes</key><array/></dict></plist>"
+    );
+
+    const audit = await auditProjectConfiguration({
+      project_root: root,
+      capability_ids: [
+        "core-motion",
+        "weatherkit",
+        "local-authentication",
+        "core-spotlight",
+        "network",
+        "webkit",
+        "eventkit",
+        "contacts"
+      ],
+      platform: "iOS"
+    });
+    const statusFor = (capabilityId: string, requirement: string) =>
+      audit.data.findings.find(
+        (finding) => finding.capability_id === capabilityId && finding.requirement === requirement
+      )?.status;
+
+    expect(statusFor("weatherkit", "com.apple.developer.weatherkit")).toBe("detected");
+    expect(
+      statusFor("core-motion", "NSMotionUsageDescription only when accessing permission-gated motion or fitness data")
+    ).toBe("detected");
+    expect(
+      statusFor(
+        "core-motion",
+        "com.apple.developer.health.fall-detection only when receiving CMFallDetectionManager events"
+      )
+    ).toBe("detected");
+    expect(
+      statusFor(
+        "network",
+        "com.apple.developer.networking.multicast only for multicast, broadcast, or arbitrary Bonjour operations on entitlement-gated platforms"
+      )
+    ).toBe("detected");
+    expect(
+      statusFor("webkit", "WKAppBoundDomains only when limiting privileged app-to-web interaction to declared domains")
+    ).toBe("detected");
+    expect(
+      statusFor(
+        "eventkit",
+        "NSCalendarsWriteOnlyAccessUsageDescription only for write-only event access on iOS or iPadOS 17 or later, Mac Catalyst 17 or later, macOS 14 or later, visionOS 1 or later, or watchOS 10 or later"
+      )
+    ).toBe("detected");
+    expect(
+      statusFor(
+        "contacts",
+        "com.apple.developer.contacts.notes only when reading or writing the contact note field on iOS or iPadOS 13 or later, macOS 13 or later, or visionOS 1 or later; it is unavailable on watchOS"
+      )
+    ).toBe("detected");
+    expect(audit.data.summary.not_detected).toBe(0);
+    expect(audit.data.findings.filter(({ severity }) => severity === "error")).toEqual([]);
+  });
+
+  it("keeps optional core-system setup manual while WeatherKit's required entitlement remains an error", async () => {
+    const root = await temporaryProject();
+    await writeFile(join(root, "project.pbxproj"), "IPHONEOS_DEPLOYMENT_TARGET = 18.0;\n");
+
+    const audit = await auditProjectConfiguration({
+      project_root: root,
+      capability_ids: [
+        "core-motion",
+        "weatherkit",
+        "local-authentication",
+        "core-spotlight",
+        "network",
+        "webkit",
+        "eventkit",
+        "contacts"
+      ],
+      platform: "iOS"
+    });
+
+    expect(audit.data.findings).toContainEqual(
+      expect.objectContaining({
+        capability_id: "weatherkit",
+        requirement: "com.apple.developer.weatherkit",
+        status: "not_detected",
+        severity: "error"
+      })
+    );
+
+    const configurationCategories = new Set([
+      "entitlement",
+      "xcode_capability",
+      "managed_entitlement",
+      "info_plist_key",
+      "background_mode"
+    ]);
+    const nonWeatherErrors = audit.data.findings.filter(
+      (finding) =>
+        finding.capability_id !== "weatherkit" &&
+        configurationCategories.has(finding.category) &&
+        finding.severity === "error"
+    );
+    expect(nonWeatherErrors).toEqual([]);
+  });
+
   it("keeps incomplete registry evidence visible in project findings", async () => {
     const root = await temporaryProject();
     await writeFile(join(root, "project.pbxproj"), "IPHONEOS_DEPLOYMENT_TARGET = 18.0;\n");

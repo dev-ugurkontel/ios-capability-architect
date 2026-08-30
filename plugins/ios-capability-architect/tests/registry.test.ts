@@ -122,7 +122,8 @@ describe("capability registry", () => {
     ];
     for (const id of expected) {
       const record = await findRecord(id);
-      expect(record).toMatchObject({ id, stable_or_beta: "stable", last_verified_at: "2026-08-30" });
+      expect(record).toMatchObject({ id, stable_or_beta: "stable" });
+      expect(record?.last_verified_at).toBe(["avfoundation", "photokit"].includes(id) ? "2026-08-31" : "2026-08-30");
       expect(record?.official_documentation.length).toBeGreaterThan(0);
       expect(record?.sdk_availability).toContain("Xcode 26.6 and SDK 26.5");
       expect(record?.sdk_availability).toContain("Xcode 27 was not locally installed");
@@ -140,6 +141,17 @@ describe("capability registry", () => {
     expect(avFoundation?.minimum_os_version.iOS).toBe("2.2");
     expect(avFoundation?.info_plist_keys).toContainEqual(expect.stringContaining("NSCameraUsageDescription only"));
     expect(avFoundation?.info_plist_keys).toContainEqual(expect.stringContaining("NSMicrophoneUsageDescription only"));
+    expect(avFoundation?.related_capabilities).toContain("Hardened Runtime");
+    expect(avFoundation?.entitlements).toContainEqual(
+      expect.stringContaining(
+        "com.apple.security.device.camera only for camera capture from a macOS app using App Sandbox or Hardened Runtime"
+      )
+    );
+    expect(avFoundation?.entitlements).toContainEqual(
+      expect.stringContaining(
+        "com.apple.security.device.audio-input only for audio-input capture from a macOS app using App Sandbox or Hardened Runtime"
+      )
+    );
 
     const photoKit = await findRecord("photokit");
     expect(photoKit?.minimum_os_version.watchOS).toBe("10.0");
@@ -148,6 +160,12 @@ describe("capability registry", () => {
       expect.stringContaining("NSPhotoLibraryAddUsageDescription only for")
     );
     expect(photoKit?.recommended_alternatives).toContainEqual(expect.stringContaining("PhotosUI"));
+    expect(photoKit?.related_capabilities).toContain("Hardened Runtime");
+    expect(photoKit?.entitlements).toContainEqual(
+      expect.stringContaining(
+        "com.apple.security.personal-information.photos-library only for photo-library access from a macOS app using App Sandbox or Hardened Runtime"
+      )
+    );
     expect((await findTechnologyCatalogEntry("PhotosUI"))?.coverage_status).toBe("catalogued");
 
     const vision = await findRecord("vision");
@@ -198,6 +216,120 @@ describe("capability registry", () => {
 
     for (const adjacent of ["AVFoundation capture", "PhotosUI", "VisionKit", "Maps", "DeviceCheck"]) {
       expect((await findTechnologyCatalogEntry(adjacent))?.coverage_status).toBe("catalogued");
+    }
+  });
+
+  it("loads reviewed core-system profiles without collapsing member or adjacent-technology boundaries", async () => {
+    const expected = [
+      "core-motion",
+      "weatherkit",
+      "local-authentication",
+      "core-spotlight",
+      "network",
+      "webkit",
+      "eventkit",
+      "contacts"
+    ];
+    for (const id of expected) {
+      const record = await findRecord(id);
+      expect(record).toMatchObject({ id, stable_or_beta: "stable", last_verified_at: "2026-08-31" });
+      expect(record?.official_documentation.length).toBeGreaterThan(0);
+      expect(record?.sdk_availability).toContain("Xcode 26.6 and SDK 26.5");
+      expect(record?.sdk_availability).toContain("Xcode 27 was not locally installed");
+      expect(record?.knowledge_state.completeness).toBe("partial");
+      expect(record?.knowledge_state.fields.privacy_manifest_requirements).toBe("verified_value");
+      expect(record?.knowledge_state.fields.required_reason_apis).toBe("verified_none");
+    }
+
+    const coreMotion = await findRecord("core-motion");
+    expect(coreMotion?.platforms).not.toContain("tvOS");
+    expect(coreMotion?.minimum_os_version["Mac Catalyst"]).toBe("13.1");
+    expect(coreMotion?.info_plist_keys).toContainEqual(expect.stringContaining("NSMotionUsageDescription only"));
+    expect(coreMotion?.info_plist_keys).toContainEqual(expect.stringContaining("NSFallDetectionUsageDescription only"));
+    expect(coreMotion?.xcode_capabilities).toContainEqual(expect.stringContaining("Fall Detection Notifications only"));
+    expect(coreMotion?.entitlements).toContainEqual(
+      expect.stringContaining("com.apple.developer.health.fall-detection only")
+    );
+    expect(coreMotion?.managed_entitlements).toContainEqual(expect.stringContaining("Apple approval"));
+    expect(coreMotion?.background_modes).toEqual([]);
+
+    const weatherKit = await findRecord("weatherkit");
+    expect(weatherKit?.on_device_level).toBe("cloud_required");
+    expect(weatherKit?.minimum_os_version.watchOS).toBe("9.0");
+    expect(weatherKit?.xcode_capabilities).toEqual(["WeatherKit"]);
+    expect(weatherKit?.entitlements).toEqual(["com.apple.developer.weatherkit"]);
+    expect(weatherKit?.user_permissions).toContainEqual(expect.stringContaining("only when"));
+
+    const localAuthentication = await findRecord("local-authentication");
+    expect(localAuthentication?.minimum_os_version.watchOS).toBe("3.0");
+    expect(localAuthentication?.platforms).not.toContain("tvOS");
+    expect(localAuthentication?.info_plist_keys).toContainEqual(expect.stringContaining("NSFaceIDUsageDescription"));
+    expect(localAuthentication?.entitlements).toEqual([]);
+
+    const coreSpotlight = await findRecord("core-spotlight");
+    expect(coreSpotlight?.on_device_level).toBe("fully_on_device");
+    expect(coreSpotlight?.platforms).not.toContain("tvOS");
+    expect(coreSpotlight?.platforms).not.toContain("watchOS");
+    expect(coreSpotlight?.minimum_os_version["Mac Catalyst"]).toBe("13.1");
+    expect(coreSpotlight?.minimum_os_version.macOS).toBe("10.11");
+    expect(coreSpotlight?.related_extensions).toEqual(["Spotlight Index Extension"]);
+    expect(coreSpotlight?.user_permissions).toEqual([]);
+    expect(coreSpotlight?.entitlements).toEqual([]);
+
+    const network = await findRecord("network");
+    expect(network?.minimum_os_version.watchOS).toBe("5.0");
+    expect(network?.info_plist_keys).toContainEqual(expect.stringContaining("NSLocalNetworkUsageDescription only"));
+    expect(network?.info_plist_keys).toContainEqual(expect.stringContaining("macOS 15 or later"));
+    expect(network?.limitations).toContainEqual(expect.stringContaining("doesn't apply to tvOS or watchOS"));
+    expect(network?.managed_entitlements).toContainEqual(expect.stringContaining("Multicast Networking"));
+    expect(network?.info_plist_keys.join(" ")).not.toContain("NSAppTransportSecurity");
+    expect(network?.background_modes).toEqual([]);
+
+    const webKit = await findRecord("webkit");
+    expect(webKit?.minimum_os_version.iOS).toBe("8.0");
+    expect(webKit?.platforms).not.toContain("tvOS");
+    expect(webKit?.platforms).not.toContain("watchOS");
+    expect(webKit?.info_plist_keys).toContainEqual(expect.stringContaining("WKAppBoundDomains only"));
+    expect(webKit?.background_modes).toEqual([]);
+    expect(webKit?.recommended_alternatives).toContainEqual(expect.stringContaining("SFSafariViewController"));
+
+    const eventKit = await findRecord("eventkit");
+    expect(eventKit?.info_plist_keys).toContainEqual(
+      expect.stringContaining(
+        "NSCalendarsWriteOnlyAccessUsageDescription only for write-only event access on iOS or iPadOS 17 or later"
+      )
+    );
+    expect(eventKit?.info_plist_keys).toContainEqual(
+      expect.stringContaining("NSCalendarsFullAccessUsageDescription only")
+    );
+    expect(eventKit?.info_plist_keys).toContainEqual(
+      expect.stringContaining(
+        "NSRemindersFullAccessUsageDescription only for full reminders access on iOS or iPadOS 17 or later"
+      )
+    );
+    expect(eventKit?.info_plist_keys).toContainEqual(expect.stringContaining("macOS 10.14 through 13"));
+    expect(eventKit?.related_capabilities).toContain("Hardened Runtime");
+    expect(eventKit?.entitlements).toContainEqual(expect.stringContaining("App Sandbox or Hardened Runtime"));
+    expect(eventKit?.unsupported_use_cases).toContain("Read-only calendar or reminders authorization");
+
+    const contacts = await findRecord("contacts");
+    expect(contacts?.sdk_availability).toContain("Limited authorization");
+    expect(contacts?.info_plist_keys).toContainEqual(expect.stringContaining("NSContactsUsageDescription only"));
+    expect(contacts?.entitlements).toContainEqual(expect.stringContaining("com.apple.developer.contacts.notes"));
+    expect(contacts?.entitlements).toContainEqual(expect.stringContaining("unavailable on watchOS"));
+    expect(contacts?.related_capabilities).toContain("Hardened Runtime");
+    expect(contacts?.entitlements).toContainEqual(expect.stringContaining("App Sandbox or Hardened Runtime"));
+    expect(contacts?.managed_entitlements).toContainEqual(expect.stringContaining("Apple approval"));
+
+    for (const adjacent of [
+      "SensorKit",
+      "Secure Enclave",
+      "NetworkExtension",
+      "Background URLSession",
+      "SafariServices",
+      "Universal Links"
+    ]) {
+      expect((await findTechnologyCatalogEntry(adjacent))?.coverage_status, adjacent).toBe("catalogued");
     }
   });
 
