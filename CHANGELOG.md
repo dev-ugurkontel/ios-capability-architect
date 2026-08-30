@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented in this file. The project follows [Semantic Versioning](https://semver.org/) and uses Conventional Commit messages to drive release automation.
 
+## [0.2.2](https://github.com/fillbyte/ios-capability-architect/compare/v0.2.1...v0.2.2) (2026-08-30)
+
+
+### Bug Fixes
+
+* **release:** make package publication idempotent ([#14](https://github.com/fillbyte/ios-capability-architect/issues/14)) ([898f592](https://github.com/fillbyte/ios-capability-architect/commit/898f592ada3a35d023a8094dc876d05b28b786b6))
+* **release:** target workflow dispatch repository ([#18](https://github.com/fillbyte/ios-capability-architect/issues/18)) ([056e381](https://github.com/fillbyte/ios-capability-architect/commit/056e381f06ce43b6486642201a3bc906aa9d9146))
+* **release:** validate generated metadata deterministically ([#17](https://github.com/fillbyte/ios-capability-architect/issues/17)) ([5ac14dc](https://github.com/fillbyte/ios-capability-architect/commit/5ac14dc7917fa33b4f0269b230d61ddff7b14528))
+
 ## [0.2.1](https://github.com/fillbyte/ios-capability-architect/compare/v0.2.0...v0.2.1) (2026-08-30)
 
 ### Bug Fixes

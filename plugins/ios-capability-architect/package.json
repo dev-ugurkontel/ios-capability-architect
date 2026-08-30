@@ -1,6 +1,6 @@
 {
   "name": "@fillbyte/ios-capability-architect",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "type": "module",
   "description": "Read-only MCP tools and workflow guidance for mapping iOS product ideas to documented Apple capabilities.",
   "license": "MIT",
