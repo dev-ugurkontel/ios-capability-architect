@@ -131,15 +131,36 @@ function evidenceFor(files: ScannedConfigurationFile[], needles: string[]): stri
     .map(({ path }) => path);
 }
 
-function configurationNeedles(value: string): string[] {
-  const withoutQualification = value
-    .replace(/\s+when\s+justified.*$/i, "")
-    .replace(/\s+for\s+APNs.*$/i, "")
-    .trim();
-  const parts = withoutQualification.split(":", 2).map((part) => part.trim());
-  const key = parts[0] ?? withoutQualification;
-  const detail = parts[1];
-  return detail ? [key, detail] : [key];
+const machineConfigurationKeyPattern =
+  /^(?:com\.apple\.(?:developer|security)\.[A-Za-z0-9.-]+|aps-environment|keychain-access-groups|BGTaskSchedulerPermittedIdentifiers|UIBackgroundModes|NS[A-Za-z0-9]+|ITS[A-Za-z0-9]+)(?=$|[\s:])/;
+const conditionalConfigurationPattern =
+  /\s+(?:only\s+(?:for|when)|when\s+(?:browsing|justified)|for\s+(?:local-network\s+access|remote\s+(?:change\s+delivery|notifications))|as\s+provisioning-managed|according\s+to|with\s+[A-Za-z0-9-]+\s+entries\s+for)\b/i;
+
+function parseConfigurationRequirement(value: string): { needles: string[]; conditional: boolean } {
+  const conditional = conditionalConfigurationPattern.test(value);
+  const machineKey = machineConfigurationKeyPattern.exec(value)?.[0];
+  if (machineKey) {
+    const needles = [machineKey];
+    if (machineKey === "UIBackgroundModes") {
+      const backgroundMode = /^UIBackgroundModes:\s*([A-Za-z0-9.-]+)/.exec(value)?.[1];
+      if (backgroundMode) needles.push(backgroundMode);
+    }
+    if (machineKey === "com.apple.developer.associated-domains") {
+      const domainService = /\s+with\s+([A-Za-z0-9-]+)\s+entries\b/i.exec(value)?.[1];
+      if (domainService) needles.push(domainService);
+    }
+    return { needles, conditional };
+  }
+
+  return {
+    needles: [
+      value
+        .replace(/\s+only\s+(?:for|when)\s+.*$/i, "")
+        .replace(/\s+for\s+remote\s+(?:change\s+delivery|notifications)\s*$/i, "")
+        .trim()
+    ],
+    conditional
+  };
 }
 
 function parseVersion(value: string): [number, number] | undefined {
@@ -189,9 +210,10 @@ function addConfigurationFindings(
   if (record.knowledge_state.fields[knowledgeField] === "unknown") return;
 
   for (const value of values) {
-    const evidence = evidenceFor(files, configurationNeedles(value));
+    const requirement = parseConfigurationRequirement(value);
+    const evidence = evidenceFor(files, requirement.needles);
     const requiresManualReview = category === "managed_entitlement";
-    const manualWhenMissing = category === "xcode_capability";
+    const manualWhenMissing = category === "xcode_capability" || requirement.conditional;
     findings.push(
       finding({
         capability_id: record.id,
@@ -217,7 +239,9 @@ function addConfigurationFindings(
           : evidence.length > 0
             ? "Confirm the value is attached to every intended target and configuration."
             : manualWhenMissing
-              ? "Confirm this Signing & Capabilities setting in the generated target; native project files may represent it through entitlements instead of the display name."
+              ? requirement.conditional
+                ? `Confirm whether this conditional ${category.replaceAll("_", " ")} applies; when it does, add or generate it and verify the built target.`
+                : "Confirm this Signing & Capabilities setting in the generated target; native project files may represent it through entitlements instead of the display name."
               : `Add or generate the required ${category.replaceAll("_", " ")} value, then verify the built target.`
       })
     );

@@ -133,6 +133,171 @@ describe("iOS project configuration audit", () => {
     );
   });
 
+  it("detects conditional data, security, and authentication configuration by its exact source tokens", async () => {
+    const root = await temporaryProject();
+    await writeFile(
+      join(root, "project.yml"),
+      [
+        "options:",
+        "  deploymentTarget:",
+        "    iOS: '18.0'",
+        "capabilities:",
+        "  iCloud with CloudKit: true",
+        "  Push Notifications: true",
+        "  Keychain Sharing: true",
+        "  Sign in with Apple: true",
+        "  Associated Domains: true",
+        "  AutoFill Credential Provider: true"
+      ].join("\n")
+    );
+    await writeFile(
+      join(root, "App.entitlements"),
+      [
+        "<plist><dict>",
+        "<key>com.apple.developer.icloud-services</key><array><string>CloudKit</string></array>",
+        "<key>com.apple.developer.icloud-container-identifiers</key><array><string>iCloud.example.app</string></array>",
+        "<key>com.apple.developer.icloud-container-environment</key><string>Production</string>",
+        "<key>aps-environment</key><string>production</string>",
+        "<key>keychain-access-groups</key><array><string>TEAM.example.app</string></array>",
+        "<key>com.apple.developer.applesignin</key><array><string>Default</string></array>",
+        "<key>com.apple.developer.associated-domains</key><array><string>webcredentials:example.com</string></array>",
+        "<key>com.apple.developer.authentication-services.autofill-credential-provider</key><true/>",
+        "</dict></plist>"
+      ].join("\n")
+    );
+    await writeFile(
+      join(root, "Info.plist"),
+      [
+        "<plist><dict>",
+        "<key>UIBackgroundModes</key><array><string>fetch</string><string>remote-notification</string></array>",
+        "<key>NSFaceIDUsageDescription</key><string>Unlock saved credentials.</string>",
+        "<key>ITSAppUsesNonExemptEncryption</key><false/>",
+        "</dict></plist>"
+      ].join("\n")
+    );
+
+    const audit = await auditProjectConfiguration({
+      project_root: root,
+      capability_ids: ["core-data", "cloudkit", "keychain-services", "authenticationservices", "cryptokit"],
+      platform: "iOS"
+    });
+    const statusFor = (capabilityId: string, requirement: string) =>
+      audit.data.findings.find(
+        (finding) => finding.capability_id === capabilityId && finding.requirement === requirement
+      )?.status;
+
+    expect(statusFor("core-data", "com.apple.developer.icloud-services only for CloudKit integration")).toBe(
+      "detected"
+    );
+    expect(statusFor("cloudkit", "aps-environment as provisioning-managed Push Notifications metadata")).toBe(
+      "detected"
+    );
+    expect(
+      statusFor(
+        "cloudkit",
+        "UIBackgroundModes: fetch only for silent CloudKit subscription delivery that requires background fetch"
+      )
+    ).toBe("detected");
+    expect(
+      statusFor("cloudkit", "UIBackgroundModes: remote-notification only for background CloudKit change delivery")
+    ).toBe("detected");
+    expect(
+      statusFor("keychain-services", "NSFaceIDUsageDescription only when Face ID protects access to a keychain item")
+    ).toBe("detected");
+    expect(
+      statusFor(
+        "cryptokit",
+        "ITSAppUsesNonExemptEncryption according to the app's actual export-compliance classification"
+      )
+    ).toBe("detected");
+
+    for (const requirement of [
+      "Sign in with Apple only for Sign in with Apple",
+      "Associated Domains only for passkeys and other associated-domain features",
+      "AutoFill Credential Provider only for a credential-provider app and extension",
+      "com.apple.developer.applesignin only for Sign in with Apple",
+      "com.apple.developer.associated-domains with webcredentials entries for passkeys",
+      "com.apple.developer.authentication-services.autofill-credential-provider only for an AutoFill credential-provider app and extension"
+    ]) {
+      expect(statusFor("authenticationservices", requirement), requirement).toBe("detected");
+    }
+  });
+
+  it("keeps absent conditional configuration manual without weakening unconditional requirements", async () => {
+    const root = await temporaryProject();
+    await writeFile(join(root, "Info.plist"), "<key>UIBackgroundModes</key><array><string>audio</string></array>");
+    await writeFile(
+      join(root, "App.entitlements"),
+      "<key>com.apple.developer.associated-domains</key><array><string>applinks:example.com</string></array>"
+    );
+
+    const audit = await auditProjectConfiguration({
+      project_root: root,
+      capability_ids: [
+        "core-data",
+        "cloudkit",
+        "keychain-services",
+        "authenticationservices",
+        "cryptokit",
+        "user-notifications"
+      ],
+      platform: "iOS"
+    });
+
+    expect(audit.data.findings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          capability_id: "cloudkit",
+          requirement:
+            "UIBackgroundModes: fetch only for silent CloudKit subscription delivery that requires background fetch",
+          status: "manual_review",
+          severity: "warning"
+        }),
+        expect.objectContaining({
+          capability_id: "cloudkit",
+          requirement: "UIBackgroundModes: remote-notification only for background CloudKit change delivery",
+          status: "manual_review",
+          severity: "warning"
+        }),
+        expect.objectContaining({
+          capability_id: "authenticationservices",
+          requirement: "com.apple.developer.associated-domains with webcredentials entries for passkeys",
+          status: "manual_review",
+          severity: "warning"
+        }),
+        expect.objectContaining({
+          capability_id: "cloudkit",
+          requirement: "com.apple.developer.icloud-services",
+          status: "not_detected",
+          severity: "error"
+        }),
+        expect.objectContaining({
+          capability_id: "user-notifications",
+          requirement: "aps-environment for APNs",
+          status: "not_detected",
+          severity: "error"
+        })
+      ])
+    );
+
+    for (const capabilityId of ["core-data", "keychain-services", "authenticationservices"]) {
+      const configurationFindings = audit.data.findings.filter(
+        (finding) =>
+          finding.capability_id === capabilityId &&
+          ["entitlement", "xcode_capability", "info_plist_key", "background_mode"].includes(finding.category)
+      );
+      expect(configurationFindings.length, capabilityId).toBeGreaterThan(0);
+      expect(
+        configurationFindings.every(({ status }) => status === "manual_review"),
+        capabilityId
+      ).toBe(true);
+      expect(
+        configurationFindings.every(({ severity }) => severity === "warning"),
+        capabilityId
+      ).toBe(true);
+    }
+  });
+
   it("keeps incomplete registry evidence visible in project findings", async () => {
     const root = await temporaryProject();
     await writeFile(join(root, "project.pbxproj"), "IPHONEOS_DEPLOYMENT_TARGET = 18.0;\n");

@@ -14,6 +14,7 @@ import {
   searchAppleTechnologyCatalog,
   searchOfficialAppleDocs
 } from "@/engine.js";
+import { loadTechnologyCatalog } from "@/registry.js";
 
 describe("read-only architecture tools", () => {
   it("returns profiles, comparisons, configuration audits, and privacy audits", async () => {
@@ -116,7 +117,28 @@ describe("read-only architecture tools", () => {
       catalog_entry: { coverage_status: "profiled" },
       profile: { id: "healthkit" }
     });
-    for (const technology of ["MapKit", "CryptoKit", "ARKit"]) {
+    for (const [technology, profileId] of [
+      ["URLSession", "urlsession"],
+      ["Core Data", "core-data"],
+      ["CloudKit", "cloudkit"],
+      ["Keychain Services", "keychain-services"],
+      ["AuthenticationServices", "authenticationservices"],
+      ["CryptoKit", "cryptokit"]
+    ] as const) {
+      expect((await getAppleTechnology(technology)).data).toMatchObject({
+        kind: "reviewed_profile",
+        catalog_entry: { coverage_status: "profiled" },
+        profile: { id: profileId }
+      });
+    }
+
+    const catalogOnlyTechnologies = (await loadTechnologyCatalog())
+      .filter((entry) => entry.coverage_status === "catalogued")
+      .slice(0, 3)
+      .map((entry) => entry.name);
+    expect(catalogOnlyTechnologies).toHaveLength(3);
+
+    for (const technology of catalogOnlyTechnologies) {
       const catalogOnly = await getAppleTechnology(technology);
       expect(catalogOnly.data).toMatchObject({
         kind: "catalog_only",
