@@ -48,6 +48,24 @@ describe("read-only architecture tools", () => {
     expect(incompatible.data.results[0]?.determination).toBe("incompatible");
   });
 
+  it("treats a reviewed null platform minimum as unavailable rather than unknown", async () => {
+    for (const capabilityId of ["app-attest", "apptrackingtransparency"]) {
+      const result = await checkAvailability({
+        capability_ids: [capabilityId],
+        platform: "macOS",
+        os_version: "26.0",
+        allow_beta: false
+      });
+
+      expect(result.data.results[0]).toMatchObject({
+        capability_id: capabilityId,
+        determination: "incompatible",
+        minimum_os_version: "unavailable"
+      });
+      expect(result.data.results[0]?.reasons).toContainEqual(expect.stringContaining("no usable macOS capability"));
+    }
+  });
+
   it("keeps deprecated capabilities out of default recommendations", async () => {
     const resolved = await resolveCapabilities({
       requirements: [
@@ -66,7 +84,7 @@ describe("read-only architecture tools", () => {
     expect(resolved.data.matches.some((match) => match.capability_id === "uiwebview")).toBe(false);
   });
 
-  it("keeps exact catalog research leads separate from reviewed capability matches", async () => {
+  it("promotes reviewed catalog identities while keeping adjacent catalog research leads separate", async () => {
     const resolved = await resolveCapabilities({
       requirements: [
         {
@@ -81,13 +99,26 @@ describe("read-only architecture tools", () => {
       maximum_results_per_requirement: 4
     });
 
-    expect(resolved.data.catalog_research_leads).toHaveLength(1);
-    expect(resolved.data.catalog_research_leads[0]?.requirement_id).toBe("req-maps");
-    expect(resolved.data.catalog_research_leads[0]?.matched_term).toBe("MapKit");
-    expect(resolved.data.catalog_research_leads[0]?.recommendation_eligible).toBe(false);
-    expect(resolved.data.catalog_research_leads[0]?.catalog_entry.id).toBe("technology.mapkit");
-    expect(resolved.data.catalog_research_leads[0]?.catalog_entry.coverage_status).toBe("catalogued");
-    expect(resolved.data.matches.some((match) => match.capability_id === "technology.mapkit")).toBe(false);
+    expect(resolved.data.matches.some((match) => match.capability_id === "mapkit")).toBe(true);
+    expect(resolved.data.catalog_research_leads).toEqual([]);
+
+    const adjacent = await resolveCapabilities({
+      requirements: [
+        {
+          id: "req-scanner",
+          kind: "product_goal",
+          description: "Provide document scanning with VisionKit",
+          keywords: ["VisionKit"],
+          confidence: "explicit"
+        }
+      ],
+      include_beta: false,
+      maximum_results_per_requirement: 4
+    });
+    expect(adjacent.data.catalog_research_leads).toHaveLength(1);
+    expect(adjacent.data.catalog_research_leads[0]?.catalog_entry.id).toBe("technology.visionkit");
+    expect(adjacent.data.catalog_research_leads[0]?.recommendation_eligible).toBe(false);
+    expect(adjacent.data.matches.some((match) => match.capability_id === "vision")).toBe(false);
   });
 
   it("does not create matches or research leads from stopwords and substrings", async () => {
@@ -96,8 +127,8 @@ describe("read-only architecture tools", () => {
         {
           id: "req-garden",
           kind: "product_goal",
-          description: "An app for the user with system support",
-          keywords: ["app", "user", "system", "support"],
+          description: "An app that should remain practical where the user prefers system support",
+          keywords: ["app", "that", "should", "remain", "practical", "where", "user", "prefers", "system", "support"],
           confidence: "explicit"
         }
       ],
@@ -123,7 +154,16 @@ describe("read-only architecture tools", () => {
       ["CloudKit", "cloudkit"],
       ["Keychain Services", "keychain-services"],
       ["AuthenticationServices", "authenticationservices"],
-      ["CryptoKit", "cryptokit"]
+      ["CryptoKit", "cryptokit"],
+      ["APNs", "apns"],
+      ["AVFoundation", "avfoundation"],
+      ["PhotoKit", "photokit"],
+      ["Vision", "vision"],
+      ["MapKit", "mapkit"],
+      ["Core Bluetooth", "core-bluetooth"],
+      ["Accessibility", "accessibility"],
+      ["AppTrackingTransparency", "apptrackingtransparency"],
+      ["App Attest", "app-attest"]
     ] as const) {
       expect((await getAppleTechnology(technology)).data).toMatchObject({
         kind: "reviewed_profile",

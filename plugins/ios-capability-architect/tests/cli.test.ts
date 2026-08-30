@@ -45,14 +45,14 @@ describe("skills-only CLI", () => {
 
   it("returns an exact catalog-only technology without promoting it to a profile", async () => {
     const output = capture();
-    await expect(runCli(["technology", "MapKit"], output.streams)).resolves.toBe(0);
+    await expect(runCli(["technology", "ARKit"], output.streams)).resolves.toBe(0);
     const result = JSON.parse(output.stdout()) as {
       data: { kind: string; recommendation_eligible: boolean; catalog_entry: { id: string } };
     };
     expect(result.data).toMatchObject({
       kind: "catalog_only",
       recommendation_eligible: false,
-      catalog_entry: { id: "technology.mapkit" }
+      catalog_entry: { id: "technology.arkit" }
     });
   });
 
