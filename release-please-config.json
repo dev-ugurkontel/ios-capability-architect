@@ -11,6 +11,11 @@
           "type": "json",
           "path": "plugins/ios-capability-architect/.codex-plugin/plugin.json",
           "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "package-lock.json",
+          "jsonpath": "$['packages']['plugins/ios-capability-architect']['version']"
         }
       ]
     }
