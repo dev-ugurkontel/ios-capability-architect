@@ -1,5 +1,5 @@
-# The individual maintainer account remains the owner after transfer to Fillbyte.
-# GitHub organizations are not valid CODEOWNERS without a specific team.
+# The individual maintainer account owns reviews until a dedicated Fillbyte
+# team is created; GitHub organizations themselves are not valid CODEOWNERS.
 * @dev-ugurkontel
 
 # Capability evidence and runtime contracts require maintainer review.
