@@ -1880,6 +1880,952 @@
       "last_verified_at": "2026-08-30"
     },
     {
+      "id": "apns",
+      "name": "Apple Push Notification service",
+      "aliases": ["APNs"],
+      "category": "notifications_background",
+      "entity_type": "apple_service",
+      "summary": "Apple's provider-to-device service as integrated through current remote-notification registration and UserNotifications APIs for registered app installations.",
+      "supported_use_cases": [
+        "Deliver visible remote notifications through UserNotifications",
+        "Deliver notification actions and content updates",
+        "Request best-effort silent background updates when explicitly configured",
+        "Address an app installation with its current APNs device token"
+      ],
+      "unsupported_use_cases": [
+        "Guaranteed delivery or exact delivery timing",
+        "A general-purpose or high-volume data transport",
+        "Unlimited background execution",
+        "Bypassing notification presentation authorization for alerts, sounds, or badges",
+        "Legacy-only UIApplication or NSApplication remote-notification registration paths outside the current UserNotifications integration baseline"
+      ],
+      "related_frameworks": ["UserNotifications"],
+      "related_capabilities": ["Push Notifications", "Background Modes"],
+      "related_entitlements": ["aps-environment", "com.apple.developer.aps-environment"],
+      "platforms": ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"],
+      "minimum_os_version": {
+        "iOS": "10.0",
+        "iPadOS": "10.0",
+        "Mac Catalyst": "13.0",
+        "macOS": "10.14",
+        "tvOS": "10.0",
+        "visionOS": "1.0",
+        "watchOS": "3.0"
+      },
+      "sdk_availability": "Current remote-notification registration and UserNotifications APIs are stable on the listed platforms; provider and platform behavior differs by notification type. Local interfaces were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      "stable_or_beta": "stable",
+      "on_device_level": "hybrid",
+      "network_requirement": "Delivery requires the provider server, an APNs connection, and device network reachability; visible or silent handling can occur only after delivery.",
+      "cloud_dependency": "Apple Push Notification service and an application provider server",
+      "user_permissions": [
+        "Notification authorization only for user-visible alerts, sounds, badges, and other requested presentation options; APNs registration and silent receipt are distinct"
+      ],
+      "info_plist_keys": [],
+      "xcode_capabilities": ["Push Notifications", "Background Modes only for silent background updates"],
+      "entitlements": [
+        "aps-environment as provisioning-managed development or production metadata on iOS-family platforms",
+        "com.apple.developer.aps-environment as provisioning-managed development or production metadata on macOS"
+      ],
+      "background_modes": ["UIBackgroundModes: remote-notification only for best-effort silent background updates"],
+      "required_reason_apis": [],
+      "app_review_considerations": [
+        "Request presentation authorization contextually and use notifications for a clear user-facing purpose",
+        "Do not rely on silent pushes to evade background-execution policy"
+      ],
+      "security_considerations": [
+        "Never place unencrypted sensitive or customer data in a notification payload",
+        "Protect provider signing keys or certificates and authenticate the APNs provider connection",
+        "Treat device tokens as app-and-device-specific routing data that can change"
+      ],
+      "implementation_notes": [
+        "Register with APNs independently from requesting visible-notification authorization",
+        "Forward each current device token to the provider and update it when the system issues a new value",
+        "Use the APNs HTTP/2 provider API over TLS and construct payloads for the intended push type",
+        "Treat deployment support that depends on legacy registration paths as separate compatibility research"
+      ],
+      "limitations": [
+        "Ordinary remote-notification payloads are limited to 4 KB",
+        "Silent pushes are best effort, may be throttled, and provide limited execution time after delivery",
+        "The system, user settings, network state, and device state control delivery and presentation"
+      ],
+      "keywords": ["apns", "apple push notification service", "remote notification", "device token", "silent push"],
+      "official_documentation": [
+        {
+          "title": "Registering your app with APNs",
+          "url": "https://developer.apple.com/documentation/usernotifications/registering-your-app-with-apns",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Setting up a remote notification server",
+          "url": "https://developer.apple.com/documentation/usernotifications/setting-up-a-remote-notification-server",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "APNs environment entitlement",
+          "url": "https://developer.apple.com/documentation/bundleresources/entitlements/aps-environment",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Asking permission to use notifications",
+          "url": "https://developer.apple.com/documentation/usernotifications/asking-permission-to-use-notifications",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Pushing background updates to your app",
+          "url": "https://developer.apple.com/documentation/usernotifications/pushing-background-updates-to-your-app",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Generating a remote notification",
+          "url": "https://developer.apple.com/documentation/usernotifications/generating-a-remote-notification",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
+      ],
+      "last_verified_at": "2026-08-30"
+    },
+    {
+      "id": "accessibility",
+      "name": "Accessibility",
+      "aliases": ["Accessibility framework"],
+      "category": "ui",
+      "entity_type": "framework",
+      "summary": "Apple's standalone Accessibility framework for reading supported accessibility feature state and settings, with linked platform guidance for accessible UI integration.",
+      "supported_use_cases": [
+        "Read supported accessibility feature and settings state exposed by the Accessibility framework",
+        "Observe supported accessibility state changes",
+        "Use framework-specific accessibility helpers and constants where available"
+      ],
+      "unsupported_use_cases": [
+        "Treating the framework's OS minimum as the beginning of UIKit or AppKit accessibility support",
+        "Assuming custom or bridged controls are automatically accessible",
+        "Replacing tests with Accessibility Inspector alone",
+        "Using an App Sandbox app as a macOS assistive app that controls other processes"
+      ],
+      "related_frameworks": ["SwiftUI", "UIKit", "AppKit"],
+      "platforms": ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"],
+      "minimum_os_version": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "Mac Catalyst": "14.0",
+        "macOS": "11.0",
+        "tvOS": "14.0",
+        "visionOS": "1.0",
+        "watchOS": "7.0"
+      },
+      "sdk_availability": "The Accessibility framework root is stable at the listed minimums; SwiftUI, UIKit, and AppKit accessibility APIs have independent and often earlier availability. Local interfaces were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      "stable_or_beta": "stable",
+      "on_device_level": "fully_on_device",
+      "network_requirement": "Making an app's own interface accessible and reading supported accessibility settings requires no network.",
+      "cloud_dependency": null,
+      "user_permissions": [],
+      "info_plist_keys": [],
+      "xcode_capabilities": [],
+      "entitlements": [],
+      "managed_entitlements": [],
+      "background_modes": [],
+      "required_reason_apis": [],
+      "app_review_considerations": [
+        "Keep Accessibility Nutrition Label claims accurate for common tasks on each supported device type",
+        "Ensure accessibility metadata and product descriptions accurately reflect implemented behavior"
+      ],
+      "implementation_notes": [
+        "Treat SwiftUI, UIKit, and AppKit label, value, trait, action, focus, and navigation APIs as related UI guidance with independent availability",
+        "Prefer standard system controls and add explicit semantics and actions to custom or bridged controls",
+        "Support Dynamic Type, sufficient contrast, reduced motion, alternate input, and logical focus where applicable",
+        "Test complete common tasks with actual assistive technologies on supported devices"
+      ],
+      "limitations": [
+        "Framework availability does not prove availability of every accessibility feature or setting",
+        "Automated checks cannot validate the full assistive-technology experience",
+        "The App Sandbox restriction for macOS assistive apps is distinct from making an app's own UI accessible"
+      ],
+      "keywords": [
+        "accessibility",
+        "voiceover",
+        "dynamic type",
+        "switch control",
+        "assistive technology",
+        "accessible ui"
+      ],
+      "official_documentation": [
+        {
+          "title": "Accessibility",
+          "url": "https://developer.apple.com/documentation/accessibility",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Accessibility fundamentals",
+          "url": "https://developer.apple.com/documentation/swiftui/accessibility-fundamentals",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Accessibility for UIKit",
+          "url": "https://developer.apple.com/documentation/uikit/accessibility-for-uikit",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Human Interface Guidelines: Accessibility",
+          "url": "https://developer.apple.com/design/human-interface-guidelines/accessibility",
+          "source_type": "hig",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Overview of Accessibility Nutrition Labels",
+          "url": "https://developer.apple.com/help/app-store-connect/manage-app-accessibility/overview-of-accessibility-nutrition-labels",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Protecting user data with App Sandbox",
+          "url": "https://developer.apple.com/documentation/security/protecting-user-data-with-app-sandbox",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
+      ],
+      "last_verified_at": "2026-08-30"
+    },
+    {
+      "id": "apptrackingtransparency",
+      "name": "AppTrackingTransparency",
+      "aliases": ["ATT", "ATTrackingManager"],
+      "category": "privacy_integrity",
+      "entity_type": "framework",
+      "summary": "Apple's system authorization framework for requesting permission before tracking a user across other companies' apps or websites or accessing the advertising identifier.",
+      "supported_use_cases": [
+        "Read the current tracking authorization status",
+        "Request tracking authorization while the app is active",
+        "Gate IDFA access and cross-company tracking behavior on authorized status"
+      ],
+      "unsupported_use_cases": [
+        "Fingerprinting or using alternate identifiers after denial",
+        "Gating app functionality or rewarding users for granting tracking permission",
+        "Replacing App Privacy disclosures, privacy manifests, or purpose limitation",
+        "Requesting authorization from an extension or repeatedly prompting after a decision"
+      ],
+      "related_frameworks": ["AdSupport"],
+      "platforms": ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS"],
+      "minimum_os_version": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "Mac Catalyst": "14.0",
+        "macOS": null,
+        "tvOS": "14.0",
+        "visionOS": "1.0"
+      },
+      "sdk_availability": "The ATT API is stable at the listed framework minimums; tracking and IDFA policy enforcement begins with iOS, iPadOS, and tvOS 14.5. The API is present on macOS 11 or later, but the locally verified SDK documents trackingAuthorizationStatus as always notDetermined and the advertising identifier as all zeros, so macOS has no usable ATT authorization minimum. Local interfaces were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      "stable_or_beta": "stable",
+      "on_device_level": "fully_on_device",
+      "network_requirement": "Reading status and presenting the system authorization request requires no network; any authorized tracking or advertising service has its own network dependencies.",
+      "cloud_dependency": null,
+      "user_permissions": ["Tracking authorization when the app performs tracking as Apple defines it"],
+      "info_plist_keys": ["NSUserTrackingUsageDescription only when requesting tracking authorization"],
+      "xcode_capabilities": [],
+      "entitlements": [],
+      "managed_entitlements": [],
+      "background_modes": [],
+      "privacy_manifest_requirements": [
+        "Declare actual SDK and app data collection or tracking behavior; ATT authorization does not replace privacy-manifest or App Privacy disclosures"
+      ],
+      "required_reason_apis": [],
+      "app_review_considerations": [
+        "Do not track without authorized status, fingerprint users, gate functionality, or incentivize consent",
+        "Apply Apple's tracking definition and documented exceptions to the app and every included SDK",
+        "Keep the tracking purpose string specific and consistent with actual data use"
+      ],
+      "security_considerations": [
+        "Treat authorization as permission for the disclosed tracking purpose, not unrestricted data use",
+        "Prevent third-party SDKs from transmitting tracking data before authorization"
+      ],
+      "implementation_notes": [
+        "Call requestTrackingAuthorization only while the app is active and handle every authorization status",
+        "Do not coordinate concurrent permission prompts; request ATT in a deliberate user-facing sequence",
+        "Expect the IDFA to be all zeros without authorization and in documented unsupported environments"
+      ],
+      "limitations": [
+        "The system generally presents the ATT prompt only once per app installation",
+        "Management, account, age, or system restrictions can produce restricted or denied status without a prompt",
+        "On macOS the local SDK reports trackingAuthorizationStatus as notDetermined and IDFA as zero; IDFA is also zero in Simulator and compatible iOS or iPadOS apps running on visionOS"
+      ],
+      "keywords": ["apptrackingtransparency", "att", "tracking permission", "idfa", "advertising identifier"],
+      "official_documentation": [
+        {
+          "title": "App Tracking Transparency",
+          "url": "https://developer.apple.com/documentation/apptrackingtransparency",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Requesting tracking authorization",
+          "url": "https://developer.apple.com/documentation/apptrackingtransparency/attrackingmanager/requesttrackingauthorization(completionhandler:)",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "NSUserTrackingUsageDescription",
+          "url": "https://developer.apple.com/documentation/bundleresources/information-property-list/nsusertrackingusagedescription",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "User privacy and data use",
+          "url": "https://developer.apple.com/app-store/user-privacy-and-data-use/",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Advertising identifier",
+          "url": "https://developer.apple.com/documentation/adsupport/asidentifiermanager/advertisingidentifier",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
+      ],
+      "last_verified_at": "2026-08-30"
+    },
+    {
+      "id": "app-attest",
+      "name": "App Attest",
+      "aliases": ["DCAppAttestService"],
+      "category": "privacy_integrity",
+      "entity_type": "apple_service",
+      "summary": "A DeviceCheck service that lets a supported app instance create a hardware-backed key and send attestations or assertions for server-side integrity validation.",
+      "supported_use_cases": [
+        "Attest a supported app installation's generated key to a developer backend",
+        "Bind sensitive server requests to one-time challenges and App Attest assertions",
+        "Detect replay or assertion-counter rollback on the server",
+        "Add a risk signal to layered abuse and fraud defenses"
+      ],
+      "unsupported_use_cases": [
+        "Client-only attestation validation",
+        "A permanent device identifier or replacement for account authentication",
+        "Definitively proving that an operating system or device is uncompromised",
+        "Assuming support on every platform, device, simulator, or extension"
+      ],
+      "related_frameworks": ["DeviceCheck"],
+      "related_capabilities": ["App Attest"],
+      "related_entitlements": ["com.apple.developer.devicecheck.appattest-environment"],
+      "platforms": ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"],
+      "minimum_os_version": {
+        "iOS": "14.0",
+        "iPadOS": "14.0",
+        "Mac Catalyst": null,
+        "macOS": null,
+        "tvOS": "15.0",
+        "visionOS": "1.0",
+        "watchOS": "9.0"
+      },
+      "sdk_availability": "DCAppAttestService symbols are present from Mac Catalyst 14 and macOS 11, but isSupported returns false on Mac devices, including Mac Catalyst and compatible iOS or iPadOS apps on Apple silicon, so those platforms have no usable App Attest minimum. The service is stable at the non-null platform minimums. Local interfaces were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      "stable_or_beta": "stable",
+      "supported_devices": ["Devices for which DCAppAttestService.shared.isSupported returns true at runtime"],
+      "hardware_requirements": ["A runtime environment supported by App Attest's hardware-backed key service"],
+      "on_device_level": "hybrid",
+      "network_requirement": "Attestation requires Apple servers and a developer backend; assertions require a developer backend to issue challenges and validate stored key state.",
+      "cloud_dependency": "Apple App Attest service and the application's verification backend",
+      "user_permissions": [],
+      "info_plist_keys": [],
+      "xcode_capabilities": ["App Attest on platforms with supported App Attest entitlement provisioning"],
+      "entitlements": [
+        "com.apple.developer.devicecheck.appattest-environment with development or production value on supported entitlement platforms"
+      ],
+      "managed_entitlements": [],
+      "background_modes": [],
+      "required_reason_apis": [],
+      "app_review_considerations": [
+        "Use App Attest as a proportionate integrity signal and provide a safe fallback for unsupported environments"
+      ],
+      "security_considerations": [
+        "Issue an unpredictable one-time server challenge and bind it into the attestation or assertion",
+        "Validate the certificate chain, nonce, App ID, environment AAGUID, key identifier, and assertion counter on the server",
+        "Store the public key, receipt, and counter by account and app installation, and reject replay or rollback",
+        "Keep development and production environments separate"
+      ],
+      "implementation_notes": [
+        "Check isSupported before generating a key and let the backend distinguish an explicit unsupported fallback",
+        "Persist the key identifier because the private key is unreadable and remains managed by the service",
+        "Rate-limit rollout and retry throttled attestation operations according to Apple's guidance"
+      ],
+      "limitations": [
+        "App Attest keys survive app updates but not reinstall, device migration, or backup restoration",
+        "Mac devices report App Attest unsupported even though API symbols are available",
+        "Extension support varies by extension type, platform, SDK documentation, and runtime support; generateKey fails where unsupported",
+        "App Attest is a risk signal rather than a sole fraud or compromise oracle"
+      ],
+      "keywords": ["app attest", "appattest", "dcappattestservice", "integrity", "attestation", "assertion"],
+      "official_documentation": [
+        {
+          "title": "DCAppAttestService",
+          "url": "https://developer.apple.com/documentation/devicecheck/dcappattestservice",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "isSupported",
+          "url": "https://developer.apple.com/documentation/devicecheck/dcappattestservice/issupported",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Establishing your app's integrity",
+          "url": "https://developer.apple.com/documentation/devicecheck/establishing-your-app-s-integrity",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Validating apps that connect to your server",
+          "url": "https://developer.apple.com/documentation/devicecheck/validating-apps-that-connect-to-your-server",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "App Attest environment entitlement",
+          "url": "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.devicecheck.appattest-environment",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Preparing to use the App Attest service",
+          "url": "https://developer.apple.com/documentation/devicecheck/preparing-to-use-the-app-attest-service",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
+      ],
+      "last_verified_at": "2026-08-30"
+    },
+    {
+      "id": "avfoundation",
+      "name": "AVFoundation",
+      "aliases": ["AV Foundation", "AVFoundation framework"],
+      "category": "audio_video_media",
+      "entity_type": "framework",
+      "summary": "Apple's audiovisual framework for time-based media playback, capture, composition, editing, processing, and export.",
+      "supported_use_cases": [
+        "Play local or network audiovisual media",
+        "Capture camera, microphone, and other supported media inputs when authorized",
+        "Compose, inspect, transform, export, and generate audiovisual assets",
+        "Configure application audio behavior with AVAudioSession on supported platforms"
+      ],
+      "unsupported_use_cases": [
+        "Camera or microphone capture without the corresponding authorization and purpose string",
+        "Photo-library access without using PhotoKit's authorization model",
+        "Assuming every capture, codec, format, or hardware feature exists on every device",
+        "Guaranteed uninterrupted background playback, recording, or network streaming"
+      ],
+      "related_frameworks": ["AVFAudio", "AVKit", "Photos", "PhotosUI"],
+      "related_capabilities": ["Background Modes"],
+      "platforms": ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"],
+      "minimum_os_version": {
+        "iOS": "2.2",
+        "iPadOS": "2.2",
+        "Mac Catalyst": "13.1",
+        "macOS": "10.7",
+        "tvOS": "9.0",
+        "visionOS": "1.0",
+        "watchOS": "3.0"
+      },
+      "sdk_availability": "The AVFoundation framework is stable at the listed platform lineage minimums; capture, media, codec, and member availability varies. The iPadOS minimum follows the iOS lineage even though current DocC labels iPadOS 13.1. Local interfaces were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      "stable_or_beta": "stable",
+      "hardware_requirements": [
+        "Compatible camera or microphone hardware only for the corresponding capture feature; check concrete devices at runtime"
+      ],
+      "on_device_level": "hybrid",
+      "network_requirement": "Local playback, capture, processing, and export require no network; remote assets and streams require connectivity and a reachable service.",
+      "cloud_dependency": null,
+      "user_permissions": [
+        "Camera authorization only for camera capture",
+        "Microphone authorization only for microphone or audio-input capture",
+        "Photo-library authorization only when separately reading or saving media through PhotoKit"
+      ],
+      "info_plist_keys": [
+        "NSCameraUsageDescription only for camera capture",
+        "NSMicrophoneUsageDescription only for microphone or audio-input capture",
+        "NSPhotoLibraryUsageDescription only for PhotoKit read-write access",
+        "NSPhotoLibraryAddUsageDescription only for PhotoKit add-only access"
+      ],
+      "xcode_capabilities": ["Background Modes only for qualifying background audiovisual behavior"],
+      "entitlements": [
+        "com.apple.security.device.camera only for camera capture in a sandboxed macOS app",
+        "com.apple.security.device.audio-input only for audio-input capture in a sandboxed macOS app",
+        "com.apple.developer.avfoundation.multitasking-camera-access only for the deprecated legacy iPad multitasking-camera case with a pre-iOS 16 deployment target and voip background mode"
+      ],
+      "background_modes": [
+        "UIBackgroundModes: audio only for qualifying audible playback, AirPlay, picture in picture, or background audio recording"
+      ],
+      "privacy_manifest_requirements": [
+        "AVFoundation import alone determines no framework-wide manifest declaration; disclose actual off-device audio or video collection and audit included SDK behavior"
+      ],
+      "required_reason_apis": [],
+      "app_review_considerations": [
+        "Request protected media access only when a visible feature needs it and keep purpose strings specific",
+        "Use background audio only for behavior that matches the declared audiovisual experience",
+        "Obtain explicit consent and provide a clear visual or audible indication while recording camera or microphone input"
+      ],
+      "security_considerations": [
+        "Treat captured camera and microphone content as sensitive user data",
+        "Stop capture and release protected resources when the user-facing operation ends",
+        "Validate untrusted media and remote metadata before processing"
+      ],
+      "implementation_notes": [
+        "Check authorization before creating or starting protected capture inputs",
+        "Observe session interruptions, route changes, failures, and application lifecycle",
+        "Check concrete API, codec, device, and hardware availability at runtime"
+      ],
+      "limitations": [
+        "Ordinary playback and file processing require no camera, microphone, or photo-library permission",
+        "AVCaptureDevice begins later than the framework root, capture is not available on watchOS, and Mac Catalyst capture members begin at 14.0",
+        "tvOS camera and microphone capture is limited to supported Continuity devices and hardware on newer tvOS versions",
+        "visionOS main-camera access is a separate enterprise ARKit capability with its own entitlement, license, and purpose string, not general AVFoundation access",
+        "Background execution remains system controlled even with an eligible audio mode",
+        "com.apple.developer.avfoundation.multitasking-camera-access is deprecated in iOS 18, begins at iOS 13.5, is restricted to voip background apps, and is needed only for the documented legacy pre-iOS 16 deployment-target case"
+      ],
+      "keywords": ["avfoundation", "audio", "video", "media", "playback", "capture", "camera", "microphone"],
+      "official_documentation": [
+        {
+          "title": "AVFoundation",
+          "url": "https://developer.apple.com/documentation/avfoundation",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Requesting authorization to capture and save media",
+          "url": "https://developer.apple.com/documentation/avfoundation/requesting-authorization-to-capture-and-save-media",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Configuring your app for media playback",
+          "url": "https://developer.apple.com/documentation/avfoundation/configuring-your-app-for-media-playback",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Accessing the camera while multitasking on iPad",
+          "url": "https://developer.apple.com/documentation/avkit/accessing-the-camera-while-multitasking-on-ipad",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
+      ],
+      "last_verified_at": "2026-08-30"
+    },
+    {
+      "id": "photokit",
+      "name": "PhotoKit",
+      "aliases": ["Photos framework", "PHPhotoLibrary"],
+      "category": "camera_photos_vision",
+      "entity_type": "framework",
+      "summary": "Apple's PhotoKit umbrella technology, covering Photos library APIs and PhotosUI picker flows for privacy-scoped access to user media.",
+      "supported_use_cases": [
+        "Fetch and observe photo-library assets, collections, and changes with authorized scope",
+        "Save images or videos with add-only or read-write access",
+        "Request image, video, and asset resources",
+        "Handle limited-library access and changes to the user's selected assets",
+        "Let users select media through PhotosUI or SwiftUI picker flows without library-wide authorization"
+      ],
+      "unsupported_use_cases": [
+        "Full library enumeration through a PhotosUI picker selection alone",
+        "Treating limited authorization as access to every asset",
+        "Assuming every iCloud Photos resource is already local",
+        "Accessing the photo library without the requested access level's purpose string"
+      ],
+      "related_frameworks": ["Photos", "PhotosUI", "AVFoundation"],
+      "platforms": ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"],
+      "minimum_os_version": {
+        "iOS": "8.0",
+        "iPadOS": "8.0",
+        "Mac Catalyst": "13.1",
+        "macOS": "10.11",
+        "tvOS": "10.0",
+        "visionOS": "1.0",
+        "watchOS": "10.0"
+      },
+      "sdk_availability": "The PhotoKit umbrella technology is stable at the listed minimums, while PHPhotoLibrary and individual APIs have separate availability; PHPhotoLibrary begins on macOS 10.13. The watchOS PhotoKit collection baseline is 10.0, while PhotosPicker and PhotosPickerItem begin at watchOS 9.0; the locally verified SDK provides this picker subset, not Photos.framework or PHPhotoLibrary library-query and mutation APIs. Local interfaces were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      "stable_or_beta": "stable",
+      "on_device_level": "hybrid",
+      "network_requirement": "Locally available assets require no network; iCloud Photos resources may require network access when the app allows downloading them.",
+      "cloud_dependency": "Optional iCloud Photos resource availability determined by the user's library and request options",
+      "user_permissions": [
+        "Photo library read-write authorization for library-wide read or modification features",
+        "Photo library add-only authorization when the feature only saves new assets",
+        "Limited photo-library access when the user selects a subset"
+      ],
+      "info_plist_keys": [
+        "NSPhotoLibraryUsageDescription only for applicable iOS, iPadOS, Mac Catalyst, macOS, or visionOS read-write library access",
+        "NSPhotoLibraryAddUsageDescription only for add-only access on supported non-macOS platforms",
+        "PHPhotoLibraryPreventAutomaticLimitedAccessAlert only when suppressing the automatic limited-access alert and providing an app-managed selection flow"
+      ],
+      "xcode_capabilities": [],
+      "entitlements": [
+        "com.apple.security.personal-information.photos-library only for photo-library access in a sandboxed macOS app"
+      ],
+      "background_modes": [],
+      "privacy_manifest_requirements": [
+        "PhotoKit import alone determines no framework-wide manifest declaration; disclose actual photo or video collection, transfer, and SDK behavior"
+      ],
+      "required_reason_apis": [],
+      "app_review_considerations": [
+        "Request the narrowest access level that supports the feature and explain it accurately",
+        "Respect limited-library choices and do not repeatedly pressure users to expand access"
+      ],
+      "security_considerations": [
+        "Treat library metadata and media as sensitive user content",
+        "Avoid retaining copies or metadata beyond the disclosed feature need"
+      ],
+      "implementation_notes": [
+        "Treat entity_type framework as the registry's closest fit for Apple's multi-framework PhotoKit technology",
+        "Request PHAccessLevel.addOnly or readWrite according to the operation and handle every authorization state",
+        "Observe library changes and tolerate assets becoming unavailable",
+        "Use PhotosUI picker flows when user-selected items are sufficient and library-wide authorization is unnecessary"
+      ],
+      "limitations": [
+        "PhotosUI pickers are a separate framework and can provide selected items without PhotoKit library authorization",
+        "watchOS provides the PhotosUI picker subset rather than full PHPhotoLibrary querying or mutation",
+        "Limited read-write authorization exposes only selected assets, prevents creating or fetching user albums, and adds newly created assets to the limited selection",
+        "Asset retrieval can depend on iCloud Photos, network state, and request policy"
+      ],
+      "recommended_alternatives": [
+        "PhotosUI or SwiftUI PhotosPicker for user-selected media without library-wide authorization"
+      ],
+      "keywords": ["photokit", "photos", "photo library", "phphotolibrary", "limited photos", "assets"],
+      "official_documentation": [
+        {
+          "title": "PhotoKit",
+          "url": "https://developer.apple.com/documentation/photokit",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Delivering an enhanced privacy experience in your Photos app",
+          "url": "https://developer.apple.com/documentation/photokit/delivering-an-enhanced-privacy-experience-in-your-photos-app",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Selecting photos and videos in iOS",
+          "url": "https://developer.apple.com/documentation/photokit/selecting-photos-and-videos-in-ios",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "PhotosUI",
+          "url": "https://developer.apple.com/documentation/photosui",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
+      ],
+      "last_verified_at": "2026-08-30"
+    },
+    {
+      "id": "vision",
+      "name": "Vision",
+      "aliases": ["Vision framework", "VNRequest"],
+      "category": "ai_ml",
+      "entity_type": "framework",
+      "summary": "Apple's on-device computer-vision framework for analyzing images and video with built-in requests or compatible Core ML models.",
+      "supported_use_cases": [
+        "Run supported image classification, detection, recognition, segmentation, and tracking requests",
+        "Recognize text, barcodes, faces, body or hand poses, and other request-specific features",
+        "Analyze image sequences and video frames",
+        "Use compatible Core ML models through Vision requests"
+      ],
+      "unsupported_use_cases": [
+        "Capturing camera frames or selecting photo-library assets",
+        "Providing VisionKit document-scanning or subject-lifting UI",
+        "Training models or providing cloud inference by itself",
+        "Assuming every request, revision, language, or compute path exists on every supported OS or device",
+        "Guaranteed accuracy or identical results across request revisions"
+      ],
+      "related_frameworks": ["Core ML", "AVFoundation", "Photos"],
+      "platforms": ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS"],
+      "minimum_os_version": {
+        "iOS": "11.0",
+        "iPadOS": "11.0",
+        "Mac Catalyst": "13.1",
+        "macOS": "10.13",
+        "tvOS": "11.0",
+        "visionOS": "1.0"
+      },
+      "sdk_availability": "VNRequest is stable at the listed minimums; concrete requests, revisions, languages, and compute options have independent availability. The locally verified watchOS SDK 26.5 has no Vision.framework, so newer post-boundary watchOS documentation is not claimed. Local interfaces were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      "stable_or_beta": "stable",
+      "on_device_level": "fully_on_device",
+      "network_requirement": "Built-in Vision requests and local Core ML model execution require no network; obtaining input or models can have separate dependencies.",
+      "cloud_dependency": null,
+      "user_permissions": [],
+      "info_plist_keys": [],
+      "xcode_capabilities": [],
+      "entitlements": [],
+      "managed_entitlements": [],
+      "background_modes": [],
+      "privacy_manifest_requirements": [
+        "Vision import alone determines no framework-wide manifest declaration; disclose actual off-device transfer of source media or derived observations and audit included SDK behavior"
+      ],
+      "required_reason_apis": [],
+      "app_review_considerations": [
+        "Obtain and disclose access to camera, photo, or other personal input through the source framework's permission model"
+      ],
+      "security_considerations": [
+        "Treat faces, text, documents, and other inferred observations as potentially sensitive data",
+        "Keep image inputs and observations on device unless the feature clearly discloses transfer"
+      ],
+      "implementation_notes": [
+        "Check the concrete request revision and supported recognition languages at runtime",
+        "Normalize image orientation and manage request handlers away from UI-critical work",
+        "Request camera or photo-library access only through the framework that supplies the input"
+      ],
+      "limitations": [
+        "Accuracy, latency, memory, and supported revisions vary by request, input quality, OS, and device",
+        "No Neural Engine or other specific accelerator is a framework-wide requirement",
+        "VisionKit is a separate framework with different UI and availability contracts"
+      ],
+      "keywords": ["vision", "computer vision", "vnrequest", "ocr", "image analysis", "object detection"],
+      "official_documentation": [
+        {
+          "title": "Vision",
+          "url": "https://developer.apple.com/documentation/vision",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "VNRequest",
+          "url": "https://developer.apple.com/documentation/vision/vnrequest",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
+      ],
+      "last_verified_at": "2026-08-30"
+    },
+    {
+      "id": "mapkit",
+      "name": "MapKit",
+      "aliases": ["MapKit framework", "MKMapView"],
+      "category": "location_maps_weather",
+      "entity_type": "framework",
+      "summary": "Apple's native framework for displaying maps and working with annotations, overlays, search, directions, place information, and map interactions.",
+      "supported_use_cases": [
+        "Display and customize Apple maps in native applications",
+        "Add annotations, overlays, controls, and map interactions",
+        "Search for places and request supported directions or place information",
+        "Display the user's location when separately authorized through Core Location"
+      ],
+      "unsupported_use_cases": [
+        "Accessing the user's location without Core Location authorization",
+        "Guaranteed offline map tiles, search, or directions",
+        "Treating native MapKit as MapKit JS or the Apple Maps Server API",
+        "Assuming Apple Maps service results are complete, permanent, or available without connectivity"
+      ],
+      "related_frameworks": ["Core Location"],
+      "related_capabilities": ["Maps", "Background Modes"],
+      "platforms": ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"],
+      "minimum_os_version": {
+        "iOS": "3.0",
+        "iPadOS": "3.0",
+        "Mac Catalyst": "13.0",
+        "macOS": "10.9",
+        "tvOS": "9.2",
+        "visionOS": "1.0",
+        "watchOS": "2.0"
+      },
+      "sdk_availability": "The native MapKit framework is stable at the listed minimums; map styles, controls, services, and members have independent availability. Local interfaces were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      "stable_or_beta": "stable",
+      "on_device_level": "hybrid",
+      "network_requirement": "Map content, local search, directions, and other Apple Maps services normally require network connectivity; locally supplied overlays and annotations do not.",
+      "cloud_dependency": "Apple Maps services for map content and network-backed search, directions, and place data",
+      "user_permissions": [
+        "Core Location authorization only when the feature accesses or displays the user's location"
+      ],
+      "info_plist_keys": [
+        "NSLocationWhenInUseUsageDescription only when an iOS-family app requests user location",
+        "NSLocationAlwaysAndWhenInUseUsageDescription only when requesting Always or background location",
+        "NSLocationAlwaysUsageDescription only for deployment targets before iOS 11",
+        "NSLocationUsageDescription only when a macOS app requests location",
+        "MKDirectionsApplicationSupportedModes only for an iOS routing app that provides directions to other apps",
+        "CFBundleDocumentTypes only for an iOS routing app that receives directions requests",
+        "com.apple.maps.directionsrequest only as the LSItemContentTypes value for an iOS routing app",
+        "CFBundleURLTypes only for an eligible default-navigation app",
+        "geo-navigation only as the CFBundleURLSchemes value for an eligible default-navigation app"
+      ],
+      "xcode_capabilities": [
+        "Maps only for a routing app that advertises directions to other apps",
+        "Default Navigation App only for an eligible default-navigation integration"
+      ],
+      "entitlements": ["com.apple.developer.navigation-app only for an eligible default-navigation app"],
+      "managed_entitlements": [],
+      "background_modes": [
+        "UIBackgroundModes: location only for separately justified background location, navigation, or an eligible default-navigation app"
+      ],
+      "region_restrictions": [
+        "Default-navigation integration only: iOS and iPadOS 18.4 or later in the European Union",
+        "Default-navigation integration only: iOS 26.2 or later in Japan"
+      ],
+      "privacy_manifest_requirements": [
+        "MapKit import alone determines no framework-wide manifest declaration; disclose actual off-device location, search, route, or place-data collection and audit included SDK behavior"
+      ],
+      "required_reason_apis": [],
+      "app_review_considerations": [
+        "Request location only for a clear user-visible map feature and use the least intrusive authorization level",
+        "Provide the required geographic coverage file before review when the app advertises routing directions",
+        "Preserve Apple Maps attribution, legal notices, and logo presentation"
+      ],
+      "security_considerations": [
+        "Treat user location, search, route, and place history as sensitive data",
+        "Avoid retaining precise location or route information beyond the feature need"
+      ],
+      "implementation_notes": [
+        "Map display and supplied-coordinate search do not themselves request location permission",
+        "Use Core Location authorization before enabling user-location behavior",
+        "Configure MapKit JS or Apple Maps Server API credentials separately when those distinct products are used",
+        "Treat routing-app and region-limited default-navigation configuration as separate optional integrations",
+        "Pair CFBundleDocumentTypes with com.apple.maps.directionsrequest for a routing app and CFBundleURLTypes with geo-navigation for a default-navigation app"
+      ],
+      "limitations": [
+        "The framework does not guarantee offline availability of map tiles or Apple Maps service results",
+        "Ordinary native MapKit use has no framework-wide capability, entitlement, location permission, or background mode",
+        "The deprecated com.apple.developer.maps entitlement is not recommended",
+        "Server API, MapKit JS, routing-app, and region-limited default-navigation configuration have separate contracts"
+      ],
+      "keywords": ["mapkit", "map", "mkmapview", "directions", "local search", "annotation", "overlay"],
+      "official_documentation": [
+        {
+          "title": "MapKit",
+          "url": "https://developer.apple.com/documentation/mapkit",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "showsUserLocation",
+          "url": "https://developer.apple.com/documentation/mapkit/mkmapview/showsuserlocation",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Configuring Maps support",
+          "url": "https://developer.apple.com/documentation/xcode/configuring-maps-support",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Preparing your app to be the default navigation app",
+          "url": "https://developer.apple.com/documentation/mapkit/preparing-your-app-to-be-the-default-navigation-app",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Providing directions",
+          "url": "https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/LocationAwarenessPG/ProvidingDirections/ProvidingDirections.html#//apple_ref/doc/uid/TP40009497-CH8-SW8",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
+      ],
+      "last_verified_at": "2026-08-30"
+    },
+    {
+      "id": "core-bluetooth",
+      "name": "Core Bluetooth",
+      "aliases": ["CoreBluetooth", "CBCentralManager", "CBPeripheralManager"],
+      "category": "nearby_accessories",
+      "entity_type": "framework",
+      "summary": "Apple's Bluetooth Low Energy framework for central-role discovery and communication and supported peripheral-role advertising and services.",
+      "supported_use_cases": [
+        "Discover, connect to, and communicate with Bluetooth Low Energy peripherals as a central",
+        "Publish supported local services and advertise as a peripheral where the role is available",
+        "Restore eligible central or peripheral state",
+        "Perform narrowly scoped background Bluetooth work when the corresponding mode is enabled"
+      ],
+      "unsupported_use_cases": [
+        "Assuming peripheral-role support on tvOS, watchOS, or visionOS",
+        "Continuous unrestricted scanning, advertising, or execution in the background",
+        "Treating Bluetooth proximity or an advertised identifier as sufficient authentication",
+        "Using Internet or classic Bluetooth profiles that Core Bluetooth does not expose"
+      ],
+      "related_capabilities": ["Background Modes"],
+      "platforms": ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"],
+      "minimum_os_version": {
+        "iOS": "5.0",
+        "iPadOS": "5.0",
+        "Mac Catalyst": "13.1",
+        "macOS": "10.7",
+        "tvOS": "9.0",
+        "visionOS": "1.0",
+        "watchOS": "4.0"
+      },
+      "sdk_availability": "The profile baseline follows CBCentralManager: iOS 5, macOS 10.7, and Mac Catalyst 13.1; the framework collection and individual members have separate availability. CBPeripheralManager begins at iOS 6 and macOS 10.9 and is unavailable on tvOS, watchOS, and visionOS in the locally verified SDK. Local interfaces were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      "stable_or_beta": "stable",
+      "hardware_requirements": [
+        "Compatible Bluetooth Low Energy hardware and a platform-supported central or peripheral role"
+      ],
+      "on_device_level": "fully_on_device",
+      "network_requirement": "Core Bluetooth communicates over the local Bluetooth radio and requires no Internet or cloud service.",
+      "cloud_dependency": null,
+      "user_permissions": ["Bluetooth authorization when the app accesses Bluetooth on permission-gated platforms"],
+      "info_plist_keys": [
+        "NSBluetoothAlwaysUsageDescription for permission-gated Bluetooth access on current iOS-family, macOS, tvOS, watchOS, and visionOS versions",
+        "NSBluetoothPeripheralUsageDescription only for legacy deployment targets before iOS 13"
+      ],
+      "xcode_capabilities": ["Background Modes only for the central or peripheral background role the feature uses"],
+      "entitlements": ["com.apple.security.device.bluetooth only for Bluetooth access in a sandboxed macOS app"],
+      "background_modes": [
+        "UIBackgroundModes: bluetooth-central only for background central-role communication",
+        "UIBackgroundModes: bluetooth-peripheral only for background peripheral-role advertising"
+      ],
+      "privacy_manifest_requirements": [
+        "Core Bluetooth import alone determines no framework-wide manifest declaration; disclose actual off-device accessory identifiers or Bluetooth-derived data collection and audit included SDK behavior"
+      ],
+      "required_reason_apis": [],
+      "app_review_considerations": [
+        "Explain Bluetooth access and background behavior in terms of the user-visible accessory feature"
+      ],
+      "security_considerations": [
+        "Authenticate and authorize sensitive accessory operations at the application protocol layer",
+        "Validate characteristic lengths, formats, state transitions, and untrusted peripheral data",
+        "Avoid exposing stable identifiers or sensitive values in advertisements"
+      ],
+      "implementation_notes": [
+        "Check manager authorization and state before scanning, advertising, or connecting",
+        "Choose only the background role required and implement state restoration where appropriate",
+        "Design for disconnects, duplicate discoveries, radio changes, and system scheduling"
+      ],
+      "limitations": [
+        "Background scanning and advertising behavior is constrained and can differ from foreground behavior",
+        "Bluetooth background modes are not supported for iPad apps running on macOS",
+        "Peripheral-role APIs are unavailable on tvOS, watchOS, and visionOS in the locally verified SDK",
+        "Simulator and device hardware do not provide equivalent Bluetooth validation"
+      ],
+      "keywords": ["core bluetooth", "corebluetooth", "ble", "central", "peripheral", "bluetooth accessory"],
+      "official_documentation": [
+        {
+          "title": "Core Bluetooth",
+          "url": "https://developer.apple.com/documentation/corebluetooth",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "NSBluetoothAlwaysUsageDescription",
+          "url": "https://developer.apple.com/documentation/bundleresources/information-property-list/nsbluetoothalwaysusagedescription",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "UIBackgroundModes",
+          "url": "https://developer.apple.com/documentation/bundleresources/information-property-list/uibackgroundmodes",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "CBPeripheralManager",
+          "url": "https://developer.apple.com/documentation/corebluetooth/cbperipheralmanager",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
+      ],
+      "last_verified_at": "2026-08-30"
+    },
+    {
       "id": "uiwebview",
       "name": "UIWebView",
       "aliases": ["legacy web view"],

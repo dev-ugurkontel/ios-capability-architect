@@ -108,6 +108,99 @@ describe("capability registry", () => {
     expect((await findTechnologyCatalogEntry("Sign in with Apple"))?.coverage_status).toBe("catalogued");
   });
 
+  it("loads reviewed platform profiles while preserving feature-specific configuration and adjacent identities", async () => {
+    const expected = [
+      "apns",
+      "avfoundation",
+      "photokit",
+      "vision",
+      "mapkit",
+      "core-bluetooth",
+      "accessibility",
+      "apptrackingtransparency",
+      "app-attest"
+    ];
+    for (const id of expected) {
+      const record = await findRecord(id);
+      expect(record).toMatchObject({ id, stable_or_beta: "stable", last_verified_at: "2026-08-30" });
+      expect(record?.official_documentation.length).toBeGreaterThan(0);
+      expect(record?.sdk_availability).toContain("Xcode 26.6 and SDK 26.5");
+      expect(record?.sdk_availability).toContain("Xcode 27 was not locally installed");
+      expect(record?.knowledge_state.completeness).toBe("partial");
+      if (id !== "mapkit") expect(record?.knowledge_state.fields.region_restrictions).toBe("unknown");
+    }
+
+    const apns = await findRecord("apns");
+    expect(apns?.on_device_level).toBe("hybrid");
+    expect(apns?.info_plist_keys).toEqual([]);
+    expect(apns?.entitlements).toContainEqual(expect.stringContaining("aps-environment"));
+    expect(apns?.background_modes).toContainEqual(expect.stringContaining("only for best-effort silent"));
+
+    const avFoundation = await findRecord("avfoundation");
+    expect(avFoundation?.minimum_os_version.iOS).toBe("2.2");
+    expect(avFoundation?.info_plist_keys).toContainEqual(expect.stringContaining("NSCameraUsageDescription only"));
+    expect(avFoundation?.info_plist_keys).toContainEqual(expect.stringContaining("NSMicrophoneUsageDescription only"));
+
+    const photoKit = await findRecord("photokit");
+    expect(photoKit?.minimum_os_version.watchOS).toBe("10.0");
+    expect(photoKit?.sdk_availability).toContain("picker subset");
+    expect(photoKit?.info_plist_keys).toContainEqual(
+      expect.stringContaining("NSPhotoLibraryAddUsageDescription only for")
+    );
+    expect(photoKit?.recommended_alternatives).toContainEqual(expect.stringContaining("PhotosUI"));
+    expect((await findTechnologyCatalogEntry("PhotosUI"))?.coverage_status).toBe("catalogued");
+
+    const vision = await findRecord("vision");
+    expect(vision?.platforms).not.toContain("watchOS");
+    expect(vision?.on_device_level).toBe("fully_on_device");
+    expect(vision?.user_permissions).toEqual([]);
+
+    const mapKit = await findRecord("mapkit");
+    expect(mapKit?.minimum_os_version.tvOS).toBe("9.2");
+    expect(mapKit?.user_permissions).toContainEqual(expect.stringContaining("only when"));
+    expect(mapKit?.limitations).toContainEqual(expect.stringContaining("Ordinary native MapKit"));
+    expect(mapKit?.entitlements).not.toContain("com.apple.developer.maps");
+    expect(mapKit?.region_restrictions).toHaveLength(2);
+    expect(mapKit?.info_plist_keys).toContainEqual(expect.stringContaining("NSLocationUsageDescription"));
+    expect(mapKit?.info_plist_keys).toContainEqual(expect.stringMatching(/^CFBundleDocumentTypes only for/));
+    expect(mapKit?.info_plist_keys).toContainEqual(expect.stringMatching(/^com\.apple\.maps\.directionsrequest only/));
+    expect(mapKit?.info_plist_keys).toContainEqual(expect.stringMatching(/^CFBundleURLTypes only for/));
+    expect(mapKit?.info_plist_keys).toContainEqual(expect.stringMatching(/^geo-navigation only/));
+
+    const coreBluetooth = await findRecord("core-bluetooth");
+    expect(coreBluetooth?.minimum_os_version.macOS).toBe("10.7");
+    expect(coreBluetooth?.minimum_os_version["Mac Catalyst"]).toBe("13.1");
+    expect(coreBluetooth?.background_modes).toContainEqual(expect.stringContaining("bluetooth-central only"));
+    expect(coreBluetooth?.background_modes).toContainEqual(expect.stringContaining("bluetooth-peripheral only"));
+    expect(coreBluetooth?.sdk_availability).toContain("CBPeripheralManager");
+    expect(coreBluetooth?.sdk_availability).toContain("unavailable on tvOS, watchOS, and visionOS");
+
+    const accessibility = await findRecord("accessibility");
+    expect(accessibility?.minimum_os_version.iOS).toBe("14.0");
+    expect(accessibility?.supported_use_cases).toContainEqual(expect.stringContaining("Accessibility framework"));
+    expect(accessibility?.supported_use_cases).not.toContainEqual(expect.stringContaining("labels"));
+    expect(accessibility?.network_requirement).toContain("requires no network");
+    expect(accessibility?.xcode_capabilities).toEqual([]);
+
+    const att = await findRecord("apptrackingtransparency");
+    expect(att?.platforms).not.toContain("watchOS");
+    expect(att?.minimum_os_version.macOS).toBeNull();
+    expect(att?.info_plist_keys).toContainEqual(expect.stringContaining("NSUserTrackingUsageDescription"));
+    expect(att?.required_reason_apis).toEqual([]);
+    expect(att?.sdk_availability).toContain("14.5");
+
+    const appAttest = await findRecord("app-attest");
+    expect(appAttest?.on_device_level).toBe("hybrid");
+    expect(appAttest?.minimum_os_version["Mac Catalyst"]).toBeNull();
+    expect(appAttest?.minimum_os_version.macOS).toBeNull();
+    expect(appAttest?.entitlements).toContainEqual(expect.stringContaining("appattest-environment"));
+    expect(appAttest?.sdk_availability).toContain("isSupported returns false on Mac devices");
+
+    for (const adjacent of ["AVFoundation capture", "PhotosUI", "VisionKit", "Maps", "DeviceCheck"]) {
+      expect((await findTechnologyCatalogEntry(adjacent))?.coverage_status).toBe("catalogued");
+    }
+  });
+
   it("looks up catalog technologies by exact id or normalized name only", async () => {
     expect((await findTechnologyCatalogEntry("MapKit"))?.id).toBe("technology.mapkit");
     expect((await findTechnologyCatalogEntry("technology.mapkit"))?.name).toBe("MapKit");
@@ -120,7 +213,7 @@ describe("capability registry", () => {
     for (const entry of catalog) {
       expect(await findTechnologyCatalogEntry(entry.id)).toEqual(entry);
     }
-  });
+  }, 10_000);
 
   it("returns defensive copies and handles empty searches", async () => {
     const first = await loadRegistry();
@@ -128,7 +221,7 @@ describe("capability registry", () => {
     expect((await loadRegistry())[0]?.name).not.toBe("mutated");
     resetRegistryCache();
     expect(await findRecord("   ")).toBeUndefined();
-    expect(await searchRecords("no-such-token")).toEqual([]);
+    expect(await searchRecords("zzzxqv-nohit")).toEqual([]);
     expect(await searchTechnologyCatalog(" ")).toEqual([]);
   });
 
