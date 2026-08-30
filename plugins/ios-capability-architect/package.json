@@ -1,0 +1,32 @@
+{
+  "name": "ios-capability-architect",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Read-only MCP tools and workflow guidance for mapping iOS product ideas to documented Apple capabilities.",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "main": "bundle/server.mjs",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && node scripts/build-bundle.mjs",
+    "check": "tsc -p tsconfig.json --noEmit",
+    "start": "node bundle/server.mjs",
+    "smoke:mcp": "tsx scripts/smoke-mcp.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "validate:registry": "tsx scripts/validate-registry.ts",
+    "verify:docs": "tsx scripts/verify-doc-links.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "zod": "4.5.4"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "esbuild": "0.28.2",
+    "tsx": "^4.20.0",
+    "typescript": "7.0.2",
+    "vitest": "4.1.11"
+  }
+}

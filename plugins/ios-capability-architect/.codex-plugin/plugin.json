@@ -1,0 +1,26 @@
+{
+  "name": "ios-capability-architect",
+  "version": "0.1.0",
+  "description": "Map iOS product ideas to verified Apple frameworks, capabilities, permissions, entitlements, architecture, and implementation plans.",
+  "author": {
+    "name": "Ugur Kontel"
+  },
+  "license": "MIT",
+  "keywords": ["ios", "swift", "swiftui", "apple", "architecture", "capabilities"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "iOS Capability Architect",
+    "shortDescription": "Turn iOS ideas into verified technical architecture.",
+    "longDescription": "Analyze an iOS app idea, map requirements to documented Apple technologies, separate permissions from capabilities and entitlements, identify privacy and App Store risks, and produce a practical SwiftUI-first architecture and delivery plan.",
+    "developerName": "Ugur Kontel",
+    "category": "Developer Tools",
+    "capabilities": ["Read"],
+    "defaultPrompt": [
+      "Architect my iOS app idea with verified Apple APIs.",
+      "Audit this iOS design's permissions and entitlements.",
+      "Compare on-device Apple technologies for this feature."
+    ],
+    "brandColor": "#0A84FF"
+  },
+  "mcpServers": "./.mcp.json"
+}

@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "ios-capability-architect": {
+      "command": "node",
+      "args": ["./bundle/server.mjs"],
+      "cwd": "."
+    }
+  }
+}

@@ -1,0 +1,40 @@
+# Architecture
+
+## Components
+
+1. Plugin manifest: identity, discovery metadata, skill path, and MCP path.
+2. Skill: complete expert behavior, source policy, analysis workflow, standard output, code rules, tests, and safety boundaries.
+3. MCP server: eleven read-only tools over stdio.
+4. Schema layer: Zod contracts for tool input and normalized registry records.
+5. Registry loader: conservative defaults, uniqueness checks, official-source validation, and in-process cache.
+6. Recommendation engine: deterministic requirement extraction, relevance scoring, availability checks, audits, architecture, and delivery plan.
+7. Registry: versioned starter records with direct Apple documentation and verification dates.
+8. Developer scripts: schema validation and live link verification.
+9. Tests: registry integrity plus the seven acceptance scenarios.
+
+## Data flow
+
+```mermaid
+flowchart LR
+  U[User idea] --> S[Skill workflow]
+  S --> A[analyze_app_idea]
+  A --> R[resolve_ios_capabilities]
+  R --> C[(Verified registry)]
+  S --> V[availability and configuration audits]
+  V --> C
+  S --> G[architecture and implementation plan]
+  G --> O[Capability map and actionable response]
+  C -. explicit developer command .-> L[Official Apple link verifier]
+```
+
+## Deliberate boundaries
+
+- Product reasoning remains in the skill/model; registry claims remain structured and testable.
+- The runtime has no write path. Registry refresh is a reviewed repository workflow.
+- Live web search is not hidden behind a tool named search. `search_official_apple_docs` searches the verified local index and says so.
+- Stable and beta records can coexist without beta leaking into default recommendations.
+- Permissions, purpose strings, capabilities, entitlements, managed entitlements, extensions, and background modes retain separate fields end to end.
+
+## Scaling path
+
+The starter local MCP server is the smallest deployable shape. A future public web-capable version can keep schemas and engine code while replacing stdio with a reviewed HTTPS MCP transport, adding rate limits and observability, and introducing authentication only if user-specific external data is added.

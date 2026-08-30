@@ -1,0 +1,192 @@
+# iOS Capability Architect
+
+`iOS Capability Architect` is a production-oriented Codex and ChatGPT plugin that turns an Apple-platform app idea into a verified capability map, architecture, configuration audit, implementation sequence, and test plan.
+
+The repository is a Codex marketplace containing one skills-plus-MCP plugin. Its MCP server is local, read-only, and deterministic: it analyzes ideas and queries a versioned registry without sending user content to a backend.
+
+## Platform verification summary
+
+Verified on 2026-08-30 against current official OpenAI plugin documentation and the installed Codex validator:
+
+- Every native plugin requires `.codex-plugin/plugin.json`.
+- A plugin may contain skills, a bundled MCP server, or both. This plugin uses both.
+- Bundled MCP server configuration belongs in `.mcp.json`; the manifest points to it with `mcpServers`.
+- Tools use explicit input and output schemas and MCP safety annotations.
+- A repository marketplace uses `.agents/plugins/marketplace.json`.
+- Public publishing is performed through OpenAI's plugin submission portal and review process; local marketplace installation is not public publication.
+- Authentication is optional. This local read-only server needs none. Remote service-backed plugins can use the authentication mechanisms supported by the registered MCP connection.
+- Skills can include instructions and packaged reference files. The plugin itself does not receive arbitrary persistent file storage; a bundled local process uses the plugin package read-only and would use the product-provided plugin data directory only if writable state were later required.
+- Bundled local MCP servers make a plugin desktop/local-runtime dependent. A public web-capable submission would need a reviewed remote MCP server or skills-only package.
+- Submission requires accurate listing metadata, test cases, country availability, policy attestations, a verified developer/business identity, and the applicable organization permission.
+
+`agent-plugins.com` did not resolve in DNS from the development environment and no official documentation for a separate `agent-plugins.com` manifest or runtime was discoverable. That surface is therefore **unverified**. The implementation makes the conservative assumption that the requested target is the current OpenAI plugin ecosystem and intentionally omits unverified fields or APIs.
+
+Official platform sources:
+
+- [Plugin architecture](https://developers.openai.com/plugins/concepts/plugins)
+- [Define tools](https://developers.openai.com/plugins/plan/tools)
+- [Package your plugin](https://developers.openai.com/plugins/build/plugins)
+- [Submit plugins](https://developers.openai.com/plugins/deploy/submission)
+- [Security and privacy](https://developers.openai.com/plugins/guides/security-privacy)
+- [MCP server review requirements](https://developers.openai.com/plugins/deploy/app-review)
+
+## Architecture
+
+```text
+.agents/plugins/marketplace.json
+└── plugins/ios-capability-architect
+    ├── .codex-plugin/plugin.json
+    ├── .mcp.json
+    ├── skills/ios-capability-architect
+    │   ├── SKILL.md
+    │   └── references/
+    ├── data/capabilities.json
+    ├── src/
+    │   ├── server.ts
+    │   ├── engine.ts
+    │   ├── registry.ts
+    │   ├── schema.ts
+    │   └── types.ts
+    ├── scripts/
+    ├── tests/
+    ├── examples/
+    └── docs/
+```
+
+The skill supplies the full system workflow and output contract. The MCP server supplies eleven focused, read-only tools. The registry loader expands conservative defaults, validates every normalized field with Zod, and refuses duplicate or malformed records. The recommendation engine is deliberately deterministic; the model provides product reasoning while the server supplies verified facts and structured audits.
+
+See [architecture.md](plugins/ios-capability-architect/docs/architecture.md), [tool-contracts.md](plugins/ios-capability-architect/docs/tool-contracts.md), and [platform-verification.md](plugins/ios-capability-architect/docs/platform-verification.md).
+
+## Technical assumptions
+
+- Node.js 24 is the current LTS baseline used by this repository.
+- SwiftUI is the default UI recommendation; UIKit is introduced only for an API or compatibility need.
+- Stable Apple SDK behavior is the default. iOS 27 and Xcode 27 capabilities remain beta on the verification date and are isolated from stable records.
+- The bundled registry is a verified starter set, not a closed catalog. Missing technology must produce an explicit gap and live official-source research, never an invented match.
+- Tool outputs are architectural advice, not proof that a specific App ID has an entitlement or that App Review will approve a design.
+- Runtime `#available`, hardware, region, language, authorization, and service-availability checks remain mandatory in the iOS app.
+
+## Local development
+
+Requirements:
+
+- macOS or another Node-compatible development host
+- Node.js 24.x and npm 11.x
+- Codex desktop/CLI for plugin installation
+- Network access only for live documentation-link verification
+
+Install and verify:
+
+```bash
+npm install
+npm run build
+npm run check
+npm run validate:registry
+npm test
+npm run verify:docs
+python3 /Users/ugurkontel/.codex/skills/.system/plugin-creator/scripts/validate_plugin.py \
+  /Users/ugurkontel/Documents/GitHub/agent-plugins/plugins/ios-capability-architect
+```
+
+The `verify:docs` command performs allowlisted conditional GETs against `developer.apple.com`, writes an ignored `data/link-verification-report.json`, and fails when a source is unreachable or invalid. A successful link check proves reachability, not semantic correctness; source changes still require human review.
+
+## Install in Codex
+
+The committed single-file runtime at `bundle/server.mjs` has no runtime `node_modules` dependency. Rebuild it after source changes; ordinary installation can use the committed bundle directly:
+
+```bash
+codex plugin marketplace add /Users/ugurkontel/Documents/GitHub/agent-plugins
+codex plugin add ios-capability-architect@personal
+```
+
+Then start a new Codex task so the skill and MCP tool inventory are loaded from the installed package.
+
+If the `personal` marketplace name already exists on another machine, rename this marketplace before adding it or install through the workspace's GitHub marketplace flow. Do not hand-edit Codex `config.toml`.
+
+## Tool surface
+
+- `analyze_app_idea`
+- `resolve_ios_capabilities`
+- `get_capability_profile`
+- `compare_implementation_options`
+- `check_availability`
+- `audit_permissions_and_entitlements`
+- `audit_privacy_and_app_review`
+- `generate_ios_architecture`
+- `generate_implementation_plan`
+- `search_official_apple_docs`
+- `refresh_capability_registry`
+
+All tools have `readOnlyHint: true`, `destructiveHint: false`, `idempotentHint: true`, and `openWorldHint: false`. The last tool returns only a refresh plan; it cannot change the registry.
+
+## Capability registry
+
+The normalized `CapabilityRecord` contains all fields requested by the product brief, including entity type, framework/capability/entitlement relations, OS and SDK availability, beta/deprecation status, devices and hardware, region/language restrictions, on-device level, network/cloud needs, permissions, Info.plist keys, capabilities, entitlements, managed entitlements, background modes, privacy manifests, required-reason APIs, review and security considerations, alternatives, official sources, release notes, and verification date.
+
+Starter records cover the seven acceptance scenarios and their supporting technologies. Extend the registry by adding evidence-backed records to `plugins/ios-capability-architect/data/capabilities.json`; omitted raw fields normalize conservatively. Run the full validation suite before merging.
+
+`plugins/ios-capability-architect/data/taxonomy.json` models the broader requested Apple ecosystem—language/UI, persistence, security, AI, system intelligence, location, health, background work, widgets, commerce, media, nearby devices, networking extensions, Home/Matter, spatial computing, personal information, parental controls, web, files, extensions, privacy, testing, delivery, gaming, automotive, managed deployment, localization, and accessibility. Taxonomy examples are discovery aids, not verified recommendation records; promote one to `capabilities.json` only with official evidence.
+
+## Documentation refresh and cache strategy
+
+1. Watch Apple release notes, framework update pages, WWDC guides, App Store Review Guidelines, and privacy requirement pages.
+2. Fetch only official allowlisted sources with conditional requests using saved `ETag` and `Last-Modified` values.
+3. Record final URL, status, redirect, check time, and response validators in the ignored report.
+4. Flag changed sources for review. Do not automatically rewrite capability claims or promote beta records.
+5. Update the record and `verified_at` only after a human checks the exact claim.
+6. Validate the normalized registry, run acceptance tests, and review the diff.
+
+This separates link freshness from factual verification and avoids turning transient web content into unreviewed architecture advice.
+
+## Error handling
+
+- Invalid tool input is rejected by MCP/Zod before execution.
+- Unknown capability IDs produce a clear recoverable error instead of a guessed match.
+- No recommendation match returns a warning and an empty result.
+- Beta records are excluded unless explicitly allowed.
+- Availability results distinguish compatible declared constraints from conditional or incompatible cases.
+- Link verification has an allowlist, timeout, bounded concurrency, and nonzero failure exit.
+- Registry mutation is disabled at runtime.
+- MCP diagnostics go to `stderr`; `stdout` is reserved for protocol messages.
+
+## Security and privacy model
+
+- No authentication, account, external database, telemetry, or cloud backend is used.
+- Idea text and results remain inside the local MCP process and host model context.
+- Every tool is read-only and has no external side effect.
+- Live link verification runs only as an explicit developer command and only against `developer.apple.com`.
+- Tool output excludes secrets, tokens, internal diagnostics, and unnecessary personal data.
+- The skill refuses private APIs, hidden entitlement acquisition, App Review bypasses, permission manipulation, and unsupported background claims.
+- Sensitive Apple-platform use cases trigger stricter permission, privacy, security, retention, and review analysis.
+
+See [security.md](plugins/ios-capability-architect/docs/security.md) for the threat model.
+
+## Testing
+
+`npm test` covers:
+
+- HealthKit permissions, sensitive data, and bounded background delivery
+- offline/on-device AI and hardware availability
+- background location permissions, energy, and review risk
+- separation of WidgetKit, ActivityKit, App Intents, Widget Extension, and App Groups
+- managed Family Controls entitlement handling
+- deprecated UIWebView migration
+- ambiguous ideas with assumptions and no more than three questions
+- default exclusion of iOS 27 beta records
+
+## Publishing
+
+Local and repository marketplace installation is complete in this repository. Public publication is not performed by code changes and requires explicit publisher action:
+
+1. Replace or confirm public developer, support, privacy-policy, terms, and listing metadata.
+2. Decide whether to submit skills-only or host the MCP server remotely. The bundled stdio server is local/desktop-oriented.
+3. For a remote MCP submission, implement production HTTPS transport and the authentication policy required by the service; no authentication is needed for the current local read-only registry.
+4. Prepare starter prompts, representative test cases, country availability, and policy attestations.
+5. Verify the developer or business identity and obtain the required OpenAI organization role.
+6. Submit through the OpenAI plugin submission portal, complete review, then explicitly publish the approved version.
+
+Publishing, deploying a remote service, creating accounts, or changing DNS is intentionally not attempted here.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
