@@ -33,7 +33,16 @@ var capabilities_default = {
         "Using HealthKit data for advertising",
         "Guaranteed execution while a device is locked"
       ],
-      platforms: ["iOS", "iPadOS", "watchOS", "visionOS"],
+      platforms: ["iOS", "iPadOS", "macOS", "watchOS", "visionOS"],
+      minimum_os_version: {
+        iOS: "8.0",
+        iPadOS: "8.0",
+        macOS: "14.0",
+        watchOS: "2.0",
+        visionOS: "1.0"
+      },
+      sdk_availability: "Available in the current stable Apple SDKs for the listed platforms.",
+      stable_or_beta: "stable",
       on_device_level: "primarily_on_device",
       user_permissions: ["Per-data-type HealthKit read authorization", "Per-data-type HealthKit write authorization"],
       info_plist_keys: ["NSHealthShareUsageDescription", "NSHealthUpdateUsageDescription"],
@@ -74,7 +83,8 @@ var capabilities_default = {
           source_type: "apple_developer_documentation",
           verified_at: "2026-08-30"
         }
-      ]
+      ],
+      last_verified_at: "2026-08-30"
     },
     {
       id: "healthkit-background-delivery",
@@ -87,7 +97,10 @@ var capabilities_default = {
       unsupported_use_cases: ["Continuous background execution", "Exact delivery timing"],
       related_frameworks: ["HealthKit"],
       related_capabilities: ["HealthKit"],
-      platforms: ["iOS", "watchOS"],
+      platforms: ["iOS", "iPadOS", "watchOS", "visionOS"],
+      minimum_os_version: { iOS: "15.0", iPadOS: "15.0", watchOS: "8.0", visionOS: "1.0" },
+      sdk_availability: "Available in the current stable Apple SDKs for the listed platforms.",
+      stable_or_beta: "stable",
       on_device_level: "fully_on_device",
       entitlements: ["com.apple.developer.healthkit.background-delivery"],
       xcode_capabilities: ["HealthKit > Background Delivery"],
@@ -110,7 +123,8 @@ var capabilities_default = {
           source_type: "apple_developer_documentation",
           verified_at: "2026-08-30"
         }
-      ]
+      ],
+      last_verified_at: "2026-08-30"
     },
     {
       id: "core-ml",
@@ -129,6 +143,16 @@ var capabilities_default = {
         "Assuming every model fits device memory or energy budgets"
       ],
       platforms: ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
+      minimum_os_version: {
+        iOS: "11.0",
+        iPadOS: "11.0",
+        macOS: "10.13",
+        watchOS: "4.0",
+        tvOS: "11.0",
+        visionOS: "1.0"
+      },
+      sdk_availability: "Available in the current stable Apple SDKs for the listed platforms.",
+      stable_or_beta: "stable",
       on_device_level: "fully_on_device",
       network_requirement: "No network is required after the model is present on device.",
       cloud_dependency: null,
@@ -150,7 +174,8 @@ var capabilities_default = {
           source_type: "apple_developer_documentation",
           verified_at: "2026-08-30"
         }
-      ]
+      ],
+      last_verified_at: "2026-08-30"
     },
     {
       id: "foundation-models",
@@ -167,6 +192,7 @@ var capabilities_default = {
       platforms: ["iOS", "iPadOS", "macOS", "visionOS"],
       minimum_os_version: { iOS: "26.0", iPadOS: "26.0", macOS: "26.0", visionOS: "26.0" },
       sdk_availability: "Stable APIs in the iOS 26 SDK; iOS 27 additions are tracked separately as beta.",
+      stable_or_beta: "stable",
       on_device_level: "fully_on_device",
       network_requirement: "No network is required after the system model is available; initial system model readiness is controlled by the OS.",
       supported_devices: ["Devices eligible for Apple Intelligence"],
@@ -195,7 +221,8 @@ var capabilities_default = {
           source_type: "apple_developer_documentation",
           verified_at: "2026-08-30"
         }
-      ]
+      ],
+      last_verified_at: "2026-08-30"
     },
     {
       id: "foundation-models-ios27-beta",
@@ -243,7 +270,8 @@ var capabilities_default = {
           source_type: "release_notes",
           verified_at: "2026-08-30"
         }
-      ]
+      ],
+      last_verified_at: "2026-08-30"
     },
     {
       id: "core-location",
@@ -259,6 +287,15 @@ var capabilities_default = {
         "Background location on visionOS"
       ],
       platforms: ["iOS", "iPadOS", "macOS", "watchOS", "visionOS"],
+      minimum_os_version: {
+        iOS: "2.0",
+        iPadOS: "2.0",
+        macOS: "10.6",
+        watchOS: "2.0",
+        visionOS: "1.0"
+      },
+      sdk_availability: "Available in the current stable Apple SDKs for the listed platforms.",
+      stable_or_beta: "stable",
       on_device_level: "primarily_on_device",
       user_permissions: [
         "When In Use location authorization",
@@ -295,7 +332,8 @@ var capabilities_default = {
           source_type: "apple_developer_documentation",
           verified_at: "2026-08-30"
         }
-      ]
+      ],
+      last_verified_at: "2026-08-30"
     },
     {
       id: "user-notifications",
@@ -310,6 +348,16 @@ var capabilities_default = {
         "Silent background execution without system policy"
       ],
       platforms: ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
+      minimum_os_version: {
+        iOS: "10.0",
+        iPadOS: "10.0",
+        macOS: "10.14",
+        watchOS: "3.0",
+        tvOS: "10.0",
+        visionOS: "1.0"
+      },
+      sdk_availability: "Available in the current stable Apple SDKs for the listed platforms.",
+      stable_or_beta: "stable",
       on_device_level: "hybrid",
       network_requirement: "Local notifications do not require network; remote notifications require APNs and a provider.",
       user_permissions: ["Notification authorization for alerts, sounds, and badges as requested"],
@@ -334,7 +382,8 @@ var capabilities_default = {
           source_type: "apple_developer_documentation",
           verified_at: "2026-08-30"
         }
-      ]
+      ],
+      last_verified_at: "2026-08-30"
     },
     {
       id: "background-tasks",
@@ -350,6 +399,9 @@ var capabilities_default = {
         "Replacing a server for always-on processing"
       ],
       platforms: ["iOS", "iPadOS", "tvOS", "visionOS"],
+      minimum_os_version: { iOS: "13.0", iPadOS: "13.0", tvOS: "13.0", visionOS: "1.0" },
+      sdk_availability: "Available in the current stable Apple SDKs for the listed platforms.",
+      stable_or_beta: "stable",
       on_device_level: "fully_on_device",
       info_plist_keys: ["BGTaskSchedulerPermittedIdentifiers"],
       background_modes: ["UIBackgroundModes: fetch", "UIBackgroundModes: processing"],
@@ -366,7 +418,8 @@ var capabilities_default = {
           source_type: "apple_developer_documentation",
           verified_at: "2026-08-30"
         }
-      ]
+      ],
+      last_verified_at: "2026-08-30"
     },
     {
       id: "widgetkit",
@@ -380,6 +433,15 @@ var capabilities_default = {
       related_frameworks: ["SwiftUI", "AppIntents", "ActivityKit"],
       related_extensions: ["Widget Extension"],
       platforms: ["iOS", "iPadOS", "macOS", "watchOS", "visionOS"],
+      minimum_os_version: {
+        iOS: "14.0",
+        iPadOS: "14.0",
+        macOS: "11.0",
+        watchOS: "9.0",
+        visionOS: "26.0"
+      },
+      sdk_availability: "Available in the current stable Apple SDKs for the listed platforms.",
+      stable_or_beta: "stable",
       on_device_level: "primarily_on_device",
       implementation_notes: [
         "Use a widget extension target",
@@ -404,7 +466,8 @@ var capabilities_default = {
           source_type: "apple_developer_documentation",
           verified_at: "2026-08-30"
         }
-      ]
+      ],
+      last_verified_at: "2026-08-30"
     },
     {
       id: "activitykit",
@@ -421,7 +484,10 @@ var capabilities_default = {
       ],
       related_frameworks: ["WidgetKit", "SwiftUI", "AppIntents"],
       related_extensions: ["Widget Extension"],
-      platforms: ["iOS", "iPadOS", "watchOS", "macOS"],
+      platforms: ["iOS", "iPadOS"],
+      minimum_os_version: { iOS: "16.1", iPadOS: "16.1" },
+      sdk_availability: "Available in the current stable iOS and iPadOS SDKs.",
+      stable_or_beta: "stable",
       on_device_level: "hybrid",
       network_requirement: "Local updates can originate from the app; remote updates require ActivityKit push notifications through APNs.",
       info_plist_keys: ["NSSupportsLiveActivities", "NSSupportsLiveActivitiesFrequentUpdates when justified"],
@@ -441,7 +507,8 @@ var capabilities_default = {
           source_type: "apple_developer_documentation",
           verified_at: "2026-08-30"
         }
-      ]
+      ],
+      last_verified_at: "2026-08-30"
     },
     {
       id: "app-intents",
@@ -456,6 +523,16 @@ var capabilities_default = {
         "Bypassing user authorization required by the underlying action"
       ],
       platforms: ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
+      minimum_os_version: {
+        iOS: "16.0",
+        iPadOS: "16.0",
+        macOS: "13.0",
+        watchOS: "9.0",
+        tvOS: "16.0",
+        visionOS: "1.0"
+      },
+      sdk_availability: "Available in the current stable Apple SDKs for the listed platforms.",
+      stable_or_beta: "stable",
       on_device_level: "primarily_on_device",
       implementation_notes: [
         "Keep intents focused, parameterized, and safe to retry",
@@ -476,7 +553,8 @@ var capabilities_default = {
           source_type: "apple_developer_documentation",
           verified_at: "2026-08-30"
         }
-      ]
+      ],
+      last_verified_at: "2026-08-30"
     },
     {
       id: "app-groups",
@@ -493,7 +571,16 @@ var capabilities_default = {
         "Sharing data with unrelated developers",
         "Using UserDefaults.standard across processes"
       ],
-      platforms: ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
+      platforms: ["iOS", "iPadOS", "macOS", "watchOS", "tvOS"],
+      minimum_os_version: {
+        iOS: "3.0",
+        iPadOS: "3.0",
+        macOS: "10.7",
+        watchOS: "2.0",
+        tvOS: "9.0"
+      },
+      sdk_availability: "Available in the current stable Apple SDKs for the listed platforms.",
+      stable_or_beta: "stable",
       on_device_level: "fully_on_device",
       xcode_capabilities: ["App Groups"],
       entitlements: ["com.apple.security.application-groups"],
@@ -509,8 +596,15 @@ var capabilities_default = {
           url: "https://developer.apple.com/documentation/xcode/configuring-app-groups",
           source_type: "apple_developer_documentation",
           verified_at: "2026-08-30"
+        },
+        {
+          title: "App Groups Entitlement",
+          url: "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.security.application-groups",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
         }
-      ]
+      ],
+      last_verified_at: "2026-08-30"
     },
     {
       id: "family-controls-managed-entitlement",
@@ -532,6 +626,9 @@ var capabilities_default = {
         "Shield Configuration"
       ],
       platforms: ["iOS", "iPadOS"],
+      minimum_os_version: { iOS: "15.0", iPadOS: "15.0" },
+      sdk_availability: "Available in the current stable iOS and iPadOS SDKs; distribution requires Apple approval.",
+      stable_or_beta: "stable",
       on_device_level: "primarily_on_device",
       xcode_capabilities: ["Family Controls"],
       entitlements: ["com.apple.developer.family-controls"],
@@ -568,8 +665,15 @@ var capabilities_default = {
           url: "https://developer.apple.com/documentation/xcode/configuring-family-controls",
           source_type: "apple_developer_documentation",
           verified_at: "2026-08-30"
+        },
+        {
+          title: "Family Controls entitlement",
+          url: "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.family-controls",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
         }
-      ]
+      ],
+      last_verified_at: "2026-08-30"
     },
     {
       id: "swiftdata",
@@ -596,6 +700,8 @@ var capabilities_default = {
         tvOS: "17.0",
         visionOS: "1.0"
       },
+      sdk_availability: "Available in the current stable Apple SDKs for the listed platforms.",
+      stable_or_beta: "stable",
       on_device_level: "primarily_on_device",
       cloud_dependency: "Optional CloudKit integration",
       implementation_notes: [
@@ -614,7 +720,8 @@ var capabilities_default = {
           source_type: "apple_developer_documentation",
           verified_at: "2026-08-30"
         }
-      ]
+      ],
+      last_verified_at: "2026-08-30"
     },
     {
       id: "privacy-manifest",
@@ -626,6 +733,9 @@ var capabilities_default = {
       supported_use_cases: ["Declare required-reason API categories", "Provide SDK privacy declarations"],
       unsupported_use_cases: ["Replacing App Store privacy answers", "Replacing runtime permission purpose strings"],
       platforms: ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
+      minimum_os_version: {},
+      sdk_availability: "App and SDK declaration file evaluated by Apple tooling and submission policy; it has no independent runtime deployment target.",
+      stable_or_beta: "stable",
       on_device_level: "unknown",
       privacy_manifest_requirements: [
         "PrivacyInfo.xcprivacy when the app or included SDK uses covered APIs or requires declarations"
@@ -643,7 +753,8 @@ var capabilities_default = {
           source_type: "apple_developer_documentation",
           verified_at: "2026-08-30"
         }
-      ]
+      ],
+      last_verified_at: "2026-08-30"
     },
     {
       id: "required-reason-apis",
@@ -655,6 +766,9 @@ var capabilities_default = {
       supported_use_cases: ["Declare an approved reason that accurately matches covered API use"],
       unsupported_use_cases: ["Inventing a reason", "Declaring a reason that does not match actual behavior"],
       platforms: ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
+      minimum_os_version: {},
+      sdk_availability: "App and SDK declaration policy evaluated by Apple tooling and App Store submission; it has no independent runtime deployment target.",
+      stable_or_beta: "stable",
       on_device_level: "unknown",
       required_reason_apis: ["Audit the current Apple list; do not infer categories from API names alone"],
       app_review_considerations: ["Invalid, missing, or inaccurate reasons can block submission"],
@@ -667,7 +781,8 @@ var capabilities_default = {
           source_type: "apple_developer_documentation",
           verified_at: "2026-08-30"
         }
-      ]
+      ],
+      last_verified_at: "2026-08-30"
     },
     {
       id: "storekit-2",
@@ -687,6 +802,16 @@ var capabilities_default = {
         "Treating client-only state as authoritative for server-delivered value"
       ],
       platforms: ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
+      minimum_os_version: {
+        iOS: "15.0",
+        iPadOS: "15.0",
+        macOS: "12.0",
+        watchOS: "8.0",
+        tvOS: "15.0",
+        visionOS: "1.0"
+      },
+      sdk_availability: "StoreKit 2 Swift APIs are available in the current stable Apple SDKs for the listed platforms.",
+      stable_or_beta: "stable",
       on_device_level: "hybrid",
       network_requirement: "App Store product and transaction operations require Apple services; cached entitlement state can support limited offline behavior.",
       security_considerations: [
@@ -701,8 +826,15 @@ var capabilities_default = {
           url: "https://developer.apple.com/documentation/storekit",
           source_type: "apple_developer_documentation",
           verified_at: "2026-08-30"
+        },
+        {
+          title: "Product",
+          url: "https://developer.apple.com/documentation/storekit/product",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
         }
-      ]
+      ],
+      last_verified_at: "2026-08-30"
     },
     {
       id: "uiwebview",
@@ -714,6 +846,8 @@ var capabilities_default = {
       supported_use_cases: ["Migration analysis for legacy code"],
       unsupported_use_cases: ["New implementation"],
       platforms: ["iOS"],
+      minimum_os_version: { iOS: "2.0" },
+      sdk_availability: "Deprecated since iOS 12.0; retained only for migration analysis.",
       stable_or_beta: "deprecated",
       deprecated_status: "Deprecated; Apple directs apps to use WKWebView or a purpose-specific system browser/authentication API.",
       on_device_level: "hybrid",
@@ -737,7 +871,8 @@ var capabilities_default = {
           source_type: "apple_developer_documentation",
           verified_at: "2026-08-30"
         }
-      ]
+      ],
+      last_verified_at: "2026-08-30"
     }
   ]
 };
@@ -20202,23 +20337,14 @@ function buildRelationships(raw) {
   ];
 }
 function normalizeRecord(raw) {
-  const sourceDates = [...raw.official_documentation, ...raw.release_notes ?? []].map((source) => source.verified_at);
-  const lastVerifiedAt = raw.last_verified_at ?? sourceDates.sort().at(-1);
-  if (!lastVerifiedAt) {
-    throw new Error(`Record ${raw.id} has no source verification date`);
-  }
   return {
     ...emptyArrays,
     relationships: buildRelationships(raw),
-    minimum_os_version: {},
-    sdk_availability: "Verify availability against the current stable SDK before implementation.",
-    stable_or_beta: "unknown",
     deprecated_status: null,
     on_device_level: "unknown",
     network_requirement: "Depends on the selected API and feature configuration.",
     cloud_dependency: null,
     ...raw,
-    last_verified_at: lastVerifiedAt,
     knowledge_state: buildKnowledgeState(raw)
   };
 }

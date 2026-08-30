@@ -9,6 +9,10 @@ The catalog uses four monotonic states and reports them without claiming permane
 
 `catalogued` is not implementation evidence. `profiled` is not automatically `reviewed`. A technology can be discovered upstream but remain intentionally uncatalogued while maintainers determine whether it belongs in this plugin's Apple-platform scope.
 
+Reviewed profiles must state `minimum_os_version`, `sdk_availability`, `stable_or_beta`, and `last_verified_at` explicitly. The loader does not manufacture defaults for these core availability fields. An empty minimum-version map is valid only when the reviewed item is a submission or declaration policy without an independent runtime deployment target.
+
+Review is evidence provenance, not a claim that every tracked field is known. Omitted optional fields remain `unknown` in `knowledge_state`; an explicit empty array, empty object, null, or empty string means the source review verified that the field has no applicable value. Never add empty values merely to turn a partial profile into a complete one.
+
 ## Deterministic pull-request gate
 
 Every ordinary test run rebuilds the report from `taxonomy.json`, `capabilities.json`, and `apple-technologies.snapshot.json`, then compares it byte-for-byte at the JSON data level with `catalog-coverage.json`. This makes category removals, canonical-ID changes, profile promotion, and evidence-status changes visible in review.
