@@ -1,19 +1,18 @@
 {
-  "name": "ios-capability-architect",
+  "name": "@dev-ugurkontel/ios-capability-architect",
   "version": "0.1.0",
-  "private": true,
   "type": "module",
   "description": "Read-only MCP tools and workflow guidance for mapping iOS product ideas to documented Apple capabilities.",
   "license": "MIT",
   "author": "Ugur Kontel",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dev-ugurkontel/agent-plugins.git",
+    "url": "git+https://github.com/dev-ugurkontel/ios-capability-architect.git",
     "directory": "plugins/ios-capability-architect"
   },
-  "homepage": "https://github.com/dev-ugurkontel/agent-plugins/tree/main/plugins/ios-capability-architect#readme",
+  "homepage": "https://github.com/dev-ugurkontel/ios-capability-architect/tree/main/plugins/ios-capability-architect#readme",
   "bugs": {
-    "url": "https://github.com/dev-ugurkontel/agent-plugins/issues"
+    "url": "https://github.com/dev-ugurkontel/ios-capability-architect/issues"
   },
   "keywords": [
     "apple",
@@ -25,15 +24,28 @@
     "swiftui"
   ],
   "sideEffects": false,
+  "bin": {
+    "ios-capability-architect-mcp": "./bundle/server.mjs"
+  },
+  "exports": {
+    ".": "./bundle/server.mjs"
+  },
   "files": [
     ".codex-plugin",
     ".mcp.json",
     "bundle",
-    "data",
+    "data/capabilities.json",
+    "data/taxonomy.json",
     "docs",
     "examples",
+    "LICENSE",
+    "README.md",
     "skills"
   ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://npm.pkg.github.com/"
+  },
   "engines": {
     "node": ">=24 <25"
   },

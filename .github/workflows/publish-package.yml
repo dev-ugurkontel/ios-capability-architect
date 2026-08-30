@@ -1,0 +1,50 @@
+name: Publish release package
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out the released tag
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.release.tag_name }}
+          persist-credentials: false
+      - name: Set up Node.js and GitHub Packages
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24
+          cache: npm
+          registry-url: https://npm.pkg.github.com
+          scope: "@dev-ugurkontel"
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Verify the released source
+        run: npm run verify
+      - name: Build release assets
+        id: assets
+        run: |
+          package_version=$(node -p "require('./plugins/ios-capability-architect/package.json').version")
+          test "v$package_version" = "${{ github.event.release.tag_name }}"
+          mkdir release-assets
+          npm pack --workspace plugins/ios-capability-architect --pack-destination release-assets
+          npm run --silent release:sbom > release-assets/ios-capability-architect-${{ github.event.release.tag_name }}.sbom.cdx.json
+          package_path=$(find release-assets -maxdepth 1 -name '*.tgz' -print -quit)
+          printf 'package_path=%s\n' "$package_path" >> "$GITHUB_OUTPUT"
+          shasum -a 256 release-assets/* > release-assets/SHA256SUMS
+      - name: Publish GitHub npm package
+        run: npm publish "${{ steps.assets.outputs.package_path }}" --registry=https://npm.pkg.github.com
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Attach package, checksum, and SBOM to the GitHub release
+        run: gh release upload "${{ github.event.release.tag_name }}" release-assets/* --clobber
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -3,7 +3,7 @@
   "packages": {
     ".": {
       "release-type": "node",
-      "package-name": "agent-plugins-marketplace",
+      "package-name": "ios-capability-architect",
       "extra-files": [
         "plugins/ios-capability-architect/package.json",
         {

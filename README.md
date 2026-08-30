@@ -92,16 +92,16 @@ The `verify:docs` command performs allowlisted conditional GETs against `develop
 
 ## Install in Codex
 
-The committed single-file runtime at `bundle/server.mjs` has no runtime `node_modules` dependency. Rebuild it after source changes; ordinary installation can use the committed bundle directly:
+The committed single-file runtime at `bundle/server.mjs` has no runtime `node_modules` dependency. Install the versioned public marketplace directly from GitHub:
 
 ```bash
-codex plugin marketplace add .
-codex plugin add ios-capability-architect@personal
+codex plugin marketplace add dev-ugurkontel/ios-capability-architect --ref v0.1.0
+codex plugin add ios-capability-architect@ios-capability-architect
 ```
 
 Then start a new Codex task so the skill and MCP tool inventory are loaded from the installed package.
 
-If the `personal` marketplace name already exists on another machine, rename this marketplace before adding it or install through the workspace's GitHub marketplace flow. Do not hand-edit Codex `config.toml`.
+Contributors working from a checkout can pass the repository path instead of the GitHub source. Do not hand-edit Codex `config.toml`.
 
 ## Tool surface
 
@@ -185,9 +185,11 @@ See [security.md](plugins/ios-capability-architect/docs/security.md) for the thr
 - ambiguous ideas with assumptions and no more than three questions
 - default exclusion of iOS 27 beta records
 
-## Publishing
+## Distribution and publishing
 
-Local and repository marketplace installation is complete in this repository. Public publication is not performed by code changes and requires explicit publisher action:
+The source repository, tagged GitHub releases, release checksums, CycloneDX SBOM, and scoped GitHub npm package are public distribution surfaces. Release Please maintains version changes and changelog entries; publishing a GitHub release triggers source verification, npm package publication, and release-asset attachment.
+
+Publishing into OpenAI's reviewed plugin directory remains a separate process:
 
 1. Replace or confirm public developer, support, privacy-policy, terms, and listing metadata.
 2. Decide whether to submit skills-only or host the MCP server remotely. The bundled stdio server is local/desktop-oriented.
@@ -196,7 +198,7 @@ Local and repository marketplace installation is complete in this repository. Pu
 5. Verify the developer or business identity and obtain the required OpenAI organization role.
 6. Submit through the OpenAI plugin submission portal, complete review, then explicitly publish the approved version.
 
-Publishing, deploying a remote service, creating accounts, or changing DNS is intentionally not attempted here.
+Deploying a remote MCP service, creating external service accounts, or changing DNS is intentionally outside this repository release process.
 
 ## License
 
