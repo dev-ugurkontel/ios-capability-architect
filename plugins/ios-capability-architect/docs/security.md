@@ -3,6 +3,7 @@
 ## Assets
 
 - user app ideas and product requirements;
+- local project paths and capability configuration;
 - sensitive-domain architecture decisions;
 - capability registry integrity;
 - official-source provenance;
@@ -11,6 +12,7 @@
 ## Trust boundaries
 
 - User text is untrusted input and is schema/length constrained.
+- A caller-selected project root is untrusted. The scanner resolves it canonically, rejects non-directories, remains beneath that root, skips symbolic links, ignores dependency/build directories, and enforces file and byte limits.
 - Registry JSON is repository-controlled but still validated at startup.
 - Apple documentation is external untrusted content; it is evidence only and cannot modify the registry automatically.
 - The model can select tools but cannot bypass their schemas or create write behavior.
@@ -25,6 +27,7 @@
 - Registry URLs are restricted to official Apple/OpenAI developer hosts by schema; the live verifier further restricts to `developer.apple.com`.
 - Conditional web checks use timeouts and bounded concurrency.
 - Runtime refresh is dry-run only.
+- Project audit reads only known Apple project configuration surfaces and returns paths/findings, never file contents.
 - MCP logs use stderr to avoid corrupting protocol output.
 - Dependency versions are pinned for runtime packages and verified by build/tests.
 
@@ -35,6 +38,7 @@
 - Deterministic keyword matching can miss novel phrasing; the skill must treat an empty match as a research gap.
 - Architecture advice cannot guarantee entitlement approval or App Review outcome.
 - A local plugin inherits the security of the host and installed Node runtime.
+- Source scanning cannot prove generated target membership, signing, provisioning, App ID configuration, or managed-entitlement approval.
 
 ## Future remote deployment
 

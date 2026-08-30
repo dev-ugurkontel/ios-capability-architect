@@ -4,10 +4,10 @@
 
 1. Plugin manifest: identity, discovery metadata, skill path, and MCP path.
 2. Skill: complete expert behavior, source policy, analysis workflow, standard output, code rules, tests, and safety boundaries.
-3. MCP server: thirteen read-only tools over stdio.
+3. MCP server: fourteen read-only tools over stdio.
 4. Schema layer: Zod contracts for tool input and normalized registry records.
 5. Registry loader: conservative defaults, uniqueness checks, official-source validation, and in-process cache.
-6. Recommendation engine: deterministic requirement extraction, relevance scoring, availability checks, audits, architecture, and delivery plan.
+6. Recommendation engine: deterministic requirement extraction, relevance scoring, availability checks, project-aware audits, architecture, and delivery plan.
 7. Registry: reviewed recommendation profiles plus a separate measured discovery catalog sourced from official Apple indexes.
 8. Developer scripts: schema validation and live link verification.
 9. Tests: registry integrity plus the seven acceptance scenarios.
@@ -22,6 +22,8 @@ flowchart LR
   R --> C[(Verified registry)]
   S --> V[availability and configuration audits]
   V --> C
+  P[Local project configuration] --> PA[audit_ios_project_configuration]
+  PA --> V
   S --> G[architecture and implementation plan]
   G --> O[Capability map and actionable response]
   C -. explicit developer command .-> L[Official Apple link verifier]
@@ -31,6 +33,7 @@ flowchart LR
 
 - Product reasoning remains in the skill/model; registry claims remain structured and testable.
 - The runtime has no write path. Registry refresh is a reviewed repository workflow.
+- Local project inspection is bounded to configuration surfaces, does not follow symlinks, and does not return source contents.
 - Live web search is not hidden behind a tool named search. `search_official_apple_docs` searches the verified local index and says so.
 - Stable and beta records can coexist without beta leaking into default recommendations.
 - Permissions, purpose strings, capabilities, entitlements, managed entitlements, extensions, and background modes retain separate fields end to end.

@@ -1,6 +1,6 @@
 # iOS Capability Architect
 
-`iOS Capability Architect` is a production-oriented Codex and ChatGPT plugin that turns an Apple-platform app idea into a verified capability map, architecture, configuration audit, implementation sequence, and test plan.
+`iOS Capability Architect` is a production-oriented Codex and ChatGPT plugin that turns an Apple-platform app idea into a verified capability map, architecture, configuration audit, implementation sequence, and test plan. It can also compare selected capabilities with an existing local project's source configuration, exposing missing plist keys, entitlements, background modes, privacy-manifest review, and deployment-target conflicts before release.
 
 The repository is a Codex marketplace containing one skills-plus-MCP plugin. Its MCP server is local, read-only, and deterministic: it analyzes ideas and queries a versioned registry without sending user content to a backend.
 
@@ -53,9 +53,17 @@ Official platform sources:
     └── docs/
 ```
 
-The skill supplies the full system workflow and output contract. The MCP server supplies thirteen focused, read-only tools. The registry loader expands conservative defaults, validates every normalized field with Zod, and refuses duplicate or malformed records. The recommendation engine is deliberately deterministic; the model provides product reasoning while the server supplies verified facts and structured audits.
+The skill supplies the full system workflow and output contract. The MCP server supplies fourteen focused, read-only tools. The registry loader expands conservative defaults, validates every normalized field with Zod, and refuses duplicate or malformed records. The recommendation engine is deliberately deterministic; the model provides product reasoning while the server supplies verified facts and structured audits.
 
-See [architecture.md](plugins/ios-capability-architect/docs/architecture.md), [tool-contracts.md](plugins/ios-capability-architect/docs/tool-contracts.md), and [platform-verification.md](plugins/ios-capability-architect/docs/platform-verification.md).
+### Why use it instead of generic iOS advice?
+
+- It separates user permission, Info.plist, Xcode capability, entitlement, managed entitlement, background mode, and extension requirements instead of treating them as synonyms.
+- It exposes evidence gaps and unknown registry fields rather than interpreting an empty list as proof that no configuration is needed.
+- It checks a real project's configuration without modifying it, following symlinks, or returning source contents.
+- It keeps beta, deprecated, hardware-, region-, language-, and approval-constrained technologies explicit.
+- It connects architecture advice to dated official Apple sources, privacy review, App Store constraints, and a concrete delivery order.
+
+See [architecture.md](plugins/ios-capability-architect/docs/architecture.md), [tool-contracts.md](plugins/ios-capability-architect/docs/tool-contracts.md), [project-configuration-audit.md](plugins/ios-capability-architect/docs/project-configuration-audit.md), and [platform-verification.md](plugins/ios-capability-architect/docs/platform-verification.md).
 
 ## Technical assumptions
 
@@ -95,11 +103,11 @@ The `verify:docs` command performs allowlisted conditional GETs against `develop
 The committed single-file runtime at `bundle/server.mjs` has no runtime `node_modules` dependency. Install the versioned public marketplace directly from GitHub:
 
 ```bash
-codex plugin marketplace add fillbyte/ios-capability-architect --ref ios-capability-architect-v0.2.0
+codex plugin marketplace add fillbyte/ios-capability-architect --ref v0.2.2
 codex plugin add ios-capability-architect@ios-capability-architect
 ```
 
-The command pins the latest release available before the repository transfer as a reproducible example. To install a newer version, replace it with the exact non-prerelease tag shown on the [Releases page](https://github.com/fillbyte/ios-capability-architect/releases). Then start a new Codex task so the skill and MCP tool inventory are loaded from the installed package.
+The command pins a reproducible non-prerelease release. To install a newer version, replace it with the exact tag shown on the [Releases page](https://github.com/fillbyte/ios-capability-architect/releases). Then start a new Codex task so the skill and MCP tool inventory are loaded from the installed package.
 
 Contributors working from a checkout can pass the repository path instead of the GitHub source. Do not hand-edit Codex `config.toml`.
 
@@ -123,6 +131,7 @@ Release Please owns version and changelog updates after the `0.2.0` baseline. Co
 - `compare_implementation_options`
 - `check_availability`
 - `audit_permissions_and_entitlements`
+- `audit_ios_project_configuration`
 - `audit_privacy_and_app_review`
 - `generate_ios_architecture`
 - `generate_implementation_plan`

@@ -1,8 +1,19 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 const pluginRoot = process.env.PLUGIN_SMOKE_ROOT ?? fileURLToPath(new URL("..", import.meta.url));
+const packageMetadata: unknown = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
+if (
+  typeof packageMetadata !== "object" ||
+  packageMetadata === null ||
+  !("version" in packageMetadata) ||
+  typeof packageMetadata.version !== "string"
+) {
+  throw new Error("Package metadata has no string version");
+}
+const expectedVersion = packageMetadata.version;
 const client = new Client({ name: "ios-capability-architect-smoke", version: "0.1.0" });
 const transport = new StdioClientTransport({
   command: "node",
@@ -13,8 +24,11 @@ const transport = new StdioClientTransport({
 
 try {
   await client.connect(transport);
+  if (client.getServerVersion()?.version !== expectedVersion) {
+    throw new Error(`Expected MCP server version ${expectedVersion}, received ${client.getServerVersion()?.version}`);
+  }
   const tools = await client.listTools();
-  if (tools.tools.length !== 13) throw new Error(`Expected 13 tools, received ${tools.tools.length}`);
+  if (tools.tools.length !== 14) throw new Error(`Expected 14 tools, received ${tools.tools.length}`);
   const expected = [
     "analyze_app_idea",
     "resolve_ios_capabilities",
@@ -22,6 +36,7 @@ try {
     "compare_implementation_options",
     "check_availability",
     "audit_permissions_and_entitlements",
+    "audit_ios_project_configuration",
     "audit_privacy_and_app_review",
     "generate_ios_architecture",
     "generate_implementation_plan",
@@ -42,12 +57,22 @@ try {
   const structuredContent = response.structuredContent as Record<string, unknown> | undefined;
   if (structuredContent?.schema_version !== "1.0") throw new Error("Missing structured output envelope");
 
+  const auditResponse = await client.callTool({
+    name: "audit_ios_project_configuration",
+    arguments: { project_root: pluginRoot, capability_ids: ["swiftdata"], platform: "iOS" }
+  });
+  if (auditResponse.isError) throw new Error("audit_ios_project_configuration returned an MCP error");
+  const auditEnvelope = auditResponse.structuredContent as { data?: { findings?: unknown[] } } | undefined;
+  if (!auditEnvelope?.data?.findings?.length) throw new Error("Project audit returned no structured findings");
+
   console.log(
     JSON.stringify(
       {
         connected: true,
+        server_version: expectedVersion,
         tool_count: tools.tools.length,
         profile_smoke: "healthkit",
+        project_audit_smoke: "swiftdata",
         structured_output: true
       },
       null,

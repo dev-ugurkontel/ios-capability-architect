@@ -5,6 +5,7 @@ import { fileURLToPath, URL } from "node:url";
 import { build } from "esbuild";
 
 const bundleRoot = new URL("../bundle/", import.meta.url);
+const packageMetadata = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
 
 await mkdir(bundleRoot, { recursive: true });
 await build({
@@ -17,7 +18,10 @@ await build({
   packages: "bundle",
   sourcemap: false,
   minify: false,
-  legalComments: "external"
+  legalComments: "external",
+  define: {
+    __PLUGIN_VERSION__: JSON.stringify(packageMetadata.version)
+  }
 });
 
 const dependencyQuery = execFileSync(

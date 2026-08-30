@@ -214,3 +214,32 @@ export interface ToolEnvelope<T> {
   data: T;
   warnings: string[];
 }
+
+export interface ProjectConfigurationFinding {
+  capability_id: string;
+  category:
+    | "entitlement"
+    | "managed_entitlement"
+    | "xcode_capability"
+    | "info_plist_key"
+    | "background_mode"
+    | "privacy_manifest"
+    | "deployment_target"
+    | "registry_evidence";
+  requirement: string;
+  status: "detected" | "not_detected" | "incompatible" | "manual_review" | "unknown";
+  severity: "info" | "warning" | "error";
+  evidence: string[];
+  recommendation: string;
+}
+
+export interface ProjectConfigurationAudit {
+  project_root: string;
+  scanned_files: string[];
+  skipped_entries: string[];
+  selected_capabilities: string[];
+  platform: string;
+  findings: ProjectConfigurationFinding[];
+  summary: Record<ProjectConfigurationFinding["status"], number>;
+  limitations: string[];
+}
