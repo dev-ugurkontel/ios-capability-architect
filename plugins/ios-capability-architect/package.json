@@ -1,6 +1,6 @@
 {
   "name": "@fillbyte/ios-capability-architect",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "type": "module",
   "description": "Read-only MCP and CLI tools for evidence-backed Apple capability planning and project configuration auditing.",
   "license": "MIT",
