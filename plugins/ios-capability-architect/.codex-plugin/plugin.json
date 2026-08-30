@@ -6,14 +6,7 @@
     "name": "Ugur Kontel"
   },
   "license": "MIT",
-  "keywords": [
-    "ios",
-    "swift",
-    "swiftui",
-    "apple",
-    "architecture",
-    "capabilities"
-  ],
+  "keywords": ["ios", "swift", "swiftui", "apple", "architecture", "capabilities"],
   "skills": "./skills/",
   "interface": {
     "displayName": "iOS Capability Architect",
@@ -21,9 +14,7 @@
     "longDescription": "Analyze an iOS app idea, map requirements to documented Apple technologies, separate permissions from capabilities and entitlements, identify privacy and App Store risks, and produce a practical SwiftUI-first architecture and delivery plan.",
     "developerName": "Ugur Kontel",
     "category": "Developer Tools",
-    "capabilities": [
-      "Read"
-    ],
+    "capabilities": ["Read"],
     "defaultPrompt": [
       "Architect my iOS app idea with verified Apple APIs.",
       "Audit this iOS design's permissions and entitlements.",
