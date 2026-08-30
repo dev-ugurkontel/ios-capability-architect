@@ -5,6 +5,7 @@ const pluginRoot = new URL("..", import.meta.url);
 const requiredPaths = [
   ".codex-plugin/plugin.json",
   ".mcp.json",
+  "bundle/cli.mjs",
   "bundle/server.mjs",
   "data/capabilities.json",
   "data/taxonomy.json",

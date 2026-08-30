@@ -5,20 +5,39 @@ import { fileURLToPath, URL } from "node:url";
 import { build } from "esbuild";
 
 const bundleRoot = new URL("../bundle/", import.meta.url);
+const bundleTargets = [
+  { entry: "../src/server.ts", output: "../bundle/server.mjs" },
+  { entry: "../src/cli.ts", output: "../bundle/cli.mjs" }
+];
 
 await mkdir(bundleRoot, { recursive: true });
-await build({
-  entryPoints: [fileURLToPath(new URL("../src/server.ts", import.meta.url))],
-  outfile: fileURLToPath(new URL("../bundle/server.mjs", import.meta.url)),
-  bundle: true,
-  platform: "node",
-  format: "esm",
-  target: "node24",
-  packages: "bundle",
-  sourcemap: false,
-  minify: false,
-  legalComments: "external"
-});
+await Promise.all(
+  bundleTargets.map(({ entry, output }) =>
+    build({
+      entryPoints: [fileURLToPath(new URL(entry, import.meta.url))],
+      outfile: fileURLToPath(new URL(output, import.meta.url)),
+      bundle: true,
+      platform: "node",
+      format: "esm",
+      target: "node24",
+      packages: "bundle",
+      sourcemap: false,
+      minify: false,
+      legalComments: "external"
+    })
+  )
+);
+
+for (const { output } of bundleTargets) {
+  const outputUrl = new URL(output, import.meta.url);
+  const source = await readFile(outputUrl, "utf8");
+  const normalized = `${source
+    .split(/\r?\n/)
+    .map((line) => line.trimEnd())
+    .join("\n")
+    .trimEnd()}\n`;
+  if (source !== normalized) await writeFile(outputUrl, normalized, "utf8");
+}
 
 const dependencyQuery = execFileSync(
   "npm",

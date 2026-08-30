@@ -14426,7 +14426,7 @@ var $ZodObjectJIT = /* @__PURE__ */ $constructor("$ZodObjectJIT", (inst, def) =>
         doc.write(`
         if (${id}.issues.length) {${prefixStr(id, k)}
         }
-        
+
         if (${id}.value === undefined) {
           if (${isPresent}) {
             newResult[${k}] = undefined;

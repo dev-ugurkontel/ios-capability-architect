@@ -36,6 +36,8 @@ npm run verify:docs
 
 `npm run verify` runs formatting, lint, type, registry, plugin-layout, coverage, build, and MCP smoke checks. The final documentation command accesses only the allowlisted Apple Developer documentation host. It verifies reachability, not the meaning of a source; factual changes still require human review.
 
+Verification also builds the public skills-only archive, rejects unsafe archive paths and symlinks, and runs the packaged CLI from the generated distribution. Submission-facing changes must update and validate `docs/openai-submission` without weakening the local-first privacy boundary.
+
 ## Adding or changing a capability record
 
 Capability data is product behavior, not incidental content. A record change must:
@@ -58,6 +60,7 @@ Do not promote an item from the taxonomy into the verified registry merely becau
 - Return structured, actionable errors; do not hide invalid input behind guessed defaults.
 - Keep protocol output on `stdout` and diagnostics on `stderr`.
 - Rebuild `plugins/ios-capability-architect/bundle/server.mjs` after source changes.
+- Rebuild `plugins/ios-capability-architect/bundle/cli.mjs` after engine or CLI changes and keep the skills-only smoke test passing.
 - Add regression tests for bug fixes and acceptance tests for observable behavior changes.
 - Never commit credentials, signing assets, tokens, private identifiers, or generated link-verification reports.
 

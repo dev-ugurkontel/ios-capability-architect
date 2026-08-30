@@ -1,9 +1,9 @@
 {
   "name": "ios-capability-architect",
   "version": "0.3.0",
-  "description": "Map iOS product ideas to verified Apple frameworks, capabilities, permissions, entitlements, architecture, and implementation plans.",
+  "description": "Map Apple-platform ideas and existing projects to verified capabilities, configuration evidence, architecture, and implementation plans.",
   "author": {
-    "name": "Ugur Kontel"
+    "name": "Fillbyte"
   },
   "license": "MIT",
   "keywords": [
@@ -17,9 +17,9 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "iOS Capability Architect",
-    "shortDescription": "Turn iOS ideas into verified technical architecture.",
-    "longDescription": "Analyze an iOS app idea, map requirements to documented Apple technologies, separate permissions from capabilities and entitlements, identify privacy and App Store risks, and produce a practical SwiftUI-first architecture and delivery plan.",
-    "developerName": "Ugur Kontel",
+    "shortDescription": "Plan and audit iOS capabilities with verified evidence.",
+    "longDescription": "Analyze an Apple-platform app idea or existing project, map requirements to documented technologies, separate permissions from capabilities and entitlements, audit source configuration without modifying it, identify privacy and App Store risks, and produce a practical SwiftUI-first architecture and delivery plan.",
+    "developerName": "Fillbyte",
     "category": "Developer Tools",
     "capabilities": [
       "Read"

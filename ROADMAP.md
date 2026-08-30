@@ -41,8 +41,8 @@ Completion signal: reviewed profiles cover at least 30% of the committed technol
 
 ## Then: distribution and adoption
 
-- Evaluate and submit a skills-only public package before introducing a hosted service.
-- Prepare public marketplace metadata, starter prompts, test cases, country availability, policy attestations, privacy terms, and release automation.
+- Submit the completed skills-only public package before introducing a hosted service, then address review feedback without weakening its local-first boundaries.
+- Keep the completed marketplace metadata, starter prompts, five positive and three negative test cases, country policy, attestations, privacy terms, icon, reviewer guide, and release automation synchronized with each submitted version.
 - Publish a five-minute end-to-end example that starts with an app idea, audits a real project, and produces a verified remediation plan.
 - Exercise install, upgrade, rollback, and uninstall procedures across consecutive tagged releases.
 - Keep unauthenticated GitHub release artifacts available even while GitHub Packages requires npm authentication.

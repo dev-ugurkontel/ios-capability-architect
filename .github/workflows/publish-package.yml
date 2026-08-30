@@ -19,6 +19,8 @@ on:
 permissions:
   contents: write
   packages: write
+  id-token: write
+  attestations: write
 
 jobs:
   publish:
@@ -60,6 +62,7 @@ jobs:
           esac
           mkdir release-assets
           npm pack --workspace plugins/ios-capability-architect --pack-destination release-assets
+          cp "dist/skills-only/ios-capability-architect-skill-$package_version.zip" release-assets/
           npm run --silent release:sbom > "release-assets/ios-capability-architect-$RELEASE_TAG.sbom.cdx.json"
           package_path=$(find release-assets -maxdepth 1 -name '*.tgz' -print -quit)
           {
@@ -67,7 +70,11 @@ jobs:
             printf 'package_name=%s\n' "$package_name"
             printf 'package_version=%s\n' "$package_version"
           } >> "$GITHUB_OUTPUT"
-          (cd release-assets && shasum -a 256 ./*.tgz ./*.json > SHA256SUMS)
+          (cd release-assets && shasum -a 256 ./*.tgz ./*.zip ./*.json > SHA256SUMS)
+      - name: Attest release artifact provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
+        with:
+          subject-path: release-assets/*
       - name: Publish GitHub npm package
         run: |
           if npm view "${{ steps.assets.outputs.package_name }}@${{ steps.assets.outputs.package_version }}" version --registry=https://npm.pkg.github.com >/dev/null 2>&1; then

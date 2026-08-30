@@ -1,0 +1,9 @@
+{
+  "launch_policy": "Select every country or region offered by the portal where the Plugins Directory and GitHub-hosted public documentation are available on the submission date.",
+  "product_restrictions": [],
+  "authentication_restrictions": [],
+  "data_residency_dependencies": [],
+  "supported_prompt_languages": "The skill follows the user's language; maintained instructions and support documentation are in English.",
+  "support_language": "English and Turkish",
+  "confirmation_required_at_submission": true
+}
