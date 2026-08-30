@@ -2,9 +2,9 @@
   "name": "@fillbyte/ios-capability-architect",
   "version": "0.3.0",
   "type": "module",
-  "description": "Read-only MCP tools and workflow guidance for mapping iOS product ideas to documented Apple capabilities.",
+  "description": "Read-only MCP and CLI tools for evidence-backed Apple capability planning and project configuration auditing.",
   "license": "MIT",
-  "author": "Ugur Kontel",
+  "author": "Fillbyte",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/fillbyte/ios-capability-architect.git",
@@ -25,10 +25,12 @@
   ],
   "sideEffects": false,
   "bin": {
+    "ios-capability-architect": "bundle/cli.mjs",
     "ios-capability-architect-mcp": "bundle/server.mjs"
   },
   "exports": {
-    ".": "./bundle/server.mjs"
+    ".": "./bundle/server.mjs",
+    "./cli": "./bundle/cli.mjs"
   },
   "files": [
     ".codex-plugin",
@@ -51,10 +53,12 @@
   },
   "main": "bundle/server.mjs",
   "scripts": {
-    "build": "npm run typecheck && node scripts/build-bundle.mjs",
+    "build": "npm run typecheck && node scripts/build-bundle.mjs && npm run build:skills",
+    "build:skills": "node scripts/build-skills-package.mjs",
     "check": "npm run typecheck",
     "start": "node bundle/server.mjs",
     "smoke:mcp": "tsx scripts/smoke-mcp.ts",
+    "smoke:skills": "node scripts/validate-skills-package.mjs",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",

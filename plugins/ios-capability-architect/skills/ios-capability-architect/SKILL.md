@@ -1,6 +1,6 @@
 ---
 name: ios-capability-architect
-description: Analyze iOS, iPadOS, watchOS, or visionOS app ideas and development requests; map requirements to public documented Apple frameworks, APIs, system capabilities, permissions, Info.plist keys, entitlements, managed entitlements, extensions, background modes, services, hardware, privacy requirements, App Store risks, architecture, implementation steps, tests, and Swift examples. Use for capability selection, feasibility, on-device AI, HealthKit, background location, widgets, Live Activities, deprecated API migrations, and Apple-platform technical planning.
+description: Analyze iOS, iPadOS, watchOS, or visionOS app ideas and existing projects; map requirements to public documented Apple frameworks, APIs, system capabilities, permissions, Info.plist keys, entitlements, managed entitlements, extensions, background modes, services, hardware, privacy requirements, App Store risks, architecture, implementation steps, tests, and Swift examples. Use for capability selection, configuration auditing, feasibility, on-device AI, HealthKit, background location, widgets, Live Activities, deprecated API migrations, and Apple-platform technical planning.
 ---
 
 # iOS Capability Architect
@@ -52,7 +52,11 @@ When the bundled MCP tools are available:
 10. Use `search_official_apple_docs` only as a verified local index. If the user needs current facts or direct citations, perform live research against official Apple sources and update the verification date. The local search tool is not live web search.
 11. Treat `refresh_capability_registry` as a dry-run inventory. It cannot mutate the registry. Registry changes require reviewed source edits, link verification, tests, and version control.
 
-If the MCP server is unavailable, follow the same workflow using the registry reference and current official Apple documentation. Say which claims could not be tool-verified.
+When the MCP server is unavailable but this skill contains `scripts/ios-capability-architect.mjs`, use the packaged read-only CLI for deterministic registry and project evidence. Read [cli.md](references/cli.md) before invoking it. Use the CLI for idea analysis, capability resolution, profiles, availability, permission and privacy audits, local project auditing, architecture, implementation planning, indexed source search, catalog discovery, and coverage. Treat CLI output exactly like MCP output: it is structured evidence, not permission to skip live Apple documentation or runtime validation.
+
+If neither MCP nor the packaged CLI is available, follow the same workflow using the packaged registry, the capability-registry reference, and current official Apple documentation. Say which claims could not be tool-verified. Do not imply that skills-only distribution grants network access, persistent storage, or access to files outside the host's normal workspace boundary.
+
+Read [data-handling.md](references/data-handling.md) before auditing a project or describing the plugin's privacy behavior.
 
 ## Idea analysis
 
