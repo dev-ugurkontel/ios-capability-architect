@@ -35663,6 +35663,9 @@ var StdioServerTransport = class {
   }
 };
 
+// src/server.ts
+import { readFileSync } from "node:fs";
+
 // src/types.ts
 var entityTypes = [
   "framework",
@@ -37883,9 +37886,16 @@ function listKnowledgeGaps(records, fields) {
 }
 
 // src/server.ts
+function loadPackageVersion() {
+  const metadata = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
+  if (typeof metadata !== "object" || metadata === null || !("version" in metadata) || typeof metadata.version !== "string") {
+    throw new Error("Package metadata has no string version");
+  }
+  return metadata.version;
+}
 var server = new McpServer({
   name: "ios-capability-architect",
-  version: "0.2.2"
+  version: loadPackageVersion()
 });
 var readOnlyAnnotations = {
   readOnlyHint: true,
