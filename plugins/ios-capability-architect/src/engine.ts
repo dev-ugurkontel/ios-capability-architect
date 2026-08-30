@@ -186,6 +186,7 @@ const resolverStopwords = new Set([
   "app",
   "application",
   "apple",
+  "can",
   "data",
   "device",
   "for",
@@ -194,22 +195,33 @@ const resolverStopwords = new Set([
   "in",
   "ios",
   "local",
+  "must",
   "of",
   "offline",
   "on",
   "on device",
   "or",
+  "practical",
+  "prefer",
+  "preferred",
+  "prefers",
   "privacy",
   "processing",
+  "remain",
+  "should",
   "support",
   "supports",
   "system",
+  "that",
   "the",
+  "this",
   "to",
   "use",
   "uses",
   "using",
   "user",
+  "where",
+  "will",
   "with"
 ]);
 
@@ -426,8 +438,10 @@ export async function checkAvailability(input: {
     if (!record.platforms.includes(input.platform))
       incompatibleReasons.push(`${input.platform} is not listed as supported.`);
     if (!input.os_version) conditionalReasons.push("No target OS version was provided.");
-    if (minimum === undefined || minimum === null)
+    if (minimum === undefined)
       conditionalReasons.push(`The minimum ${input.platform} version is not verified in this record.`);
+    if (minimum === null)
+      incompatibleReasons.push(`${record.name} has no usable ${input.platform} capability in this reviewed profile.`);
     if (record.stable_or_beta === "beta" && !input.allow_beta)
       incompatibleReasons.push("This record is beta and beta use was not allowed.");
     if (record.stable_or_beta === "beta" && input.allow_beta)
@@ -456,7 +470,7 @@ export async function checkAvailability(input: {
       status:
         determination === "verified_compatible" ? "compatible_on_declared_constraints" : "conditional_or_incompatible",
       determination,
-      minimum_os_version: minimum ?? "not specified",
+      minimum_os_version: minimum === null ? "unavailable" : (minimum ?? "not specified"),
       stable_or_beta: record.stable_or_beta,
       hardware_requirements: record.hardware_requirements,
       region_restrictions: record.region_restrictions,

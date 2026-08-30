@@ -88,6 +88,46 @@ describe("iOS project configuration audit", () => {
     );
   });
 
+  it("flags a reviewed null minimum as unavailable instead of silently skipping it", async () => {
+    const root = await temporaryProject();
+    await writeFile(join(root, "project.pbxproj"), "MACOSX_DEPLOYMENT_TARGET = 15.0;\n");
+
+    const audit = await auditProjectConfiguration({
+      project_root: root,
+      capability_ids: ["apptrackingtransparency", "app-attest"],
+      platform: "macOS"
+    });
+
+    expect(audit.data.findings).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          capability_id: "apptrackingtransparency",
+          category: "deployment_target",
+          requirement: "AppTrackingTransparency has no usable capability on macOS",
+          status: "incompatible",
+          severity: "error"
+        }),
+        expect.objectContaining({
+          capability_id: "app-attest",
+          category: "deployment_target",
+          requirement: "App Attest has no usable capability on macOS",
+          status: "incompatible",
+          severity: "error"
+        })
+      ])
+    );
+    const errorFindings = audit.data.findings.filter(({ severity }) => severity === "error");
+    expect(errorFindings).toHaveLength(2);
+    expect(errorFindings.map(({ category }) => category)).toEqual(["deployment_target", "deployment_target"]);
+    expect(
+      audit.data.findings.some(
+        ({ capability_id: capabilityId, category }) =>
+          capabilityId === "app-attest" &&
+          ["entitlement", "xcode_capability", "info_plist_key", "background_mode"].includes(category)
+      )
+    ).toBe(false);
+  });
+
   it("accepts a compatible deployment target and detects a privacy manifest", async () => {
     const root = await temporaryProject();
     await writeFile(join(root, "project.yml"), "deploymentTarget:\n  iOS: '17.2'\n");
@@ -221,6 +261,78 @@ describe("iOS project configuration audit", () => {
     ]) {
       expect(statusFor("authenticationservices", requirement), requirement).toBe("detected");
     }
+  });
+
+  it("detects routing and default-navigation MapKit configuration by exact plist tokens", async () => {
+    const root = await temporaryProject();
+    await writeFile(join(root, "project.pbxproj"), "IPHONEOS_DEPLOYMENT_TARGET = 18.0;\n");
+    await writeFile(
+      join(root, "Info.plist"),
+      [
+        "<plist><dict>",
+        "<key>MKDirectionsApplicationSupportedModes</key><array><string>MKDirectionsModeCar</string></array>",
+        "<key>CFBundleDocumentTypes</key><array><dict><key>LSItemContentTypes</key><array><string>com.apple.maps.directionsrequest</string></array></dict></array>",
+        "<key>CFBundleURLTypes</key><array><dict><key>CFBundleURLSchemes</key><array><string>geo-navigation</string></array></dict></array>",
+        "</dict></plist>"
+      ].join("\n")
+    );
+
+    const audit = await auditProjectConfiguration({
+      project_root: root,
+      capability_ids: ["mapkit"],
+      platform: "iOS"
+    });
+    const statusFor = (requirement: string) =>
+      audit.data.findings.find((finding) => finding.capability_id === "mapkit" && finding.requirement === requirement)
+        ?.status;
+
+    for (const requirement of [
+      "MKDirectionsApplicationSupportedModes only for an iOS routing app that provides directions to other apps",
+      "CFBundleDocumentTypes only for an iOS routing app that receives directions requests",
+      "com.apple.maps.directionsrequest only as the LSItemContentTypes value for an iOS routing app",
+      "CFBundleURLTypes only for an eligible default-navigation app",
+      "geo-navigation only as the CFBundleURLSchemes value for an eligible default-navigation app"
+    ]) {
+      expect(statusFor(requirement), requirement).toBe("detected");
+    }
+  });
+
+  it("distinguishes APNs entitlement tokens and keeps the ATT request key conditional", async () => {
+    const root = await temporaryProject();
+    await writeFile(join(root, "project.pbxproj"), "IPHONEOS_DEPLOYMENT_TARGET = 18.0;\n");
+    await writeFile(
+      join(root, "App.entitlements"),
+      "<plist><dict><key>com.apple.developer.aps-environment</key><string>production</string></dict></plist>"
+    );
+
+    const audit = await auditProjectConfiguration({
+      project_root: root,
+      capability_ids: ["apns", "apptrackingtransparency"],
+      platform: "iOS"
+    });
+    const findingFor = (capabilityId: string, requirement: string) =>
+      audit.data.findings.find(
+        (finding) => finding.capability_id === capabilityId && finding.requirement === requirement
+      );
+
+    expect(
+      findingFor(
+        "apns",
+        "com.apple.developer.aps-environment as provisioning-managed development or production metadata on macOS"
+      )
+    ).toMatchObject({ status: "detected", evidence: ["App.entitlements"] });
+    expect(
+      findingFor(
+        "apns",
+        "aps-environment as provisioning-managed development or production metadata on iOS-family platforms"
+      )
+    ).toMatchObject({ status: "manual_review", severity: "warning", evidence: [] });
+    expect(
+      findingFor(
+        "apptrackingtransparency",
+        "NSUserTrackingUsageDescription only when requesting tracking authorization"
+      )
+    ).toMatchObject({ status: "manual_review", severity: "warning", evidence: [] });
   });
 
   it("keeps absent conditional configuration manual without weakening unconditional requirements", async () => {

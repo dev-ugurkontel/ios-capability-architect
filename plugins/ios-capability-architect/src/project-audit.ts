@@ -126,15 +126,18 @@ function evidenceFor(files: ScannedConfigurationFile[], needles: string[]): stri
   return files
     .filter(({ content }) => {
       const normalizedContent = content.toLocaleLowerCase("en-US");
-      return normalizedNeedles.every((needle) => normalizedContent.includes(needle));
+      return normalizedNeedles.every((needle) => {
+        const escapedNeedle = needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        return new RegExp(`(?:^|[^A-Za-z0-9_.-])${escapedNeedle}(?=$|[^A-Za-z0-9_.-])`).test(normalizedContent);
+      });
     })
     .map(({ path }) => path);
 }
 
 const machineConfigurationKeyPattern =
-  /^(?:com\.apple\.(?:developer|security)\.[A-Za-z0-9.-]+|aps-environment|keychain-access-groups|BGTaskSchedulerPermittedIdentifiers|UIBackgroundModes|NS[A-Za-z0-9]+|ITS[A-Za-z0-9]+)(?=$|[\s:])/;
+  /^(?:com\.apple\.(?:developer|maps|security)\.[A-Za-z0-9.-]+|aps-environment|geo-navigation|keychain-access-groups|BGTaskSchedulerPermittedIdentifiers|CFBundle[A-Za-z0-9]+|UIBackgroundModes|MK[A-Za-z0-9]+|NS[A-Za-z0-9]+|ITS[A-Za-z0-9]+)(?=$|[\s:])/;
 const conditionalConfigurationPattern =
-  /\s+(?:only\s+(?:for|when)|when\s+(?:browsing|justified)|for\s+(?:local-network\s+access|remote\s+(?:change\s+delivery|notifications))|as\s+provisioning-managed|according\s+to|with\s+[A-Za-z0-9-]+\s+entries\s+for)\b/i;
+  /\s+(?:only\s+(?:as|for|when)|when\s+(?:browsing|justified)|for\s+(?:local-network\s+access|remote\s+(?:change\s+delivery|notifications))|as\s+provisioning-managed|according\s+to|with\s+[A-Za-z0-9-]+\s+entries\s+for)\b/i;
 
 function parseConfigurationRequirement(value: string): { needles: string[]; conditional: boolean } {
   const conditional = conditionalConfigurationPattern.test(value);
@@ -282,6 +285,10 @@ export async function auditProjectConfiguration(input: {
         })
       );
     }
+    const unavailableOnPlatform =
+      record.knowledge_state.fields.minimum_os_version !== "unknown" &&
+      record.minimum_os_version[input.platform] === null;
+    if (unavailableOnPlatform) continue;
     addConfigurationFindings(findings, scanned.files, record, "entitlement", record.entitlements, "entitlements");
     addConfigurationFindings(
       findings,
@@ -349,7 +356,20 @@ export async function auditProjectConfiguration(input: {
   for (const record of records.filter((value): value is CapabilityRecord => Boolean(value))) {
     if (record.knowledge_state.fields.minimum_os_version === "unknown") continue;
     const minimum = record.minimum_os_version[input.platform];
-    if (!minimum) continue;
+    if (minimum === undefined) continue;
+    if (minimum === null) {
+      findings.push(
+        finding({
+          capability_id: record.id,
+          category: "deployment_target",
+          requirement: `${record.name} has no usable capability on ${input.platform}`,
+          status: "incompatible",
+          severity: "error",
+          recommendation: `Remove ${record.name} from the ${input.platform} target or choose a supported alternative; changing the deployment target cannot make this profile available.`
+        })
+      );
+      continue;
+    }
     const minimumVersion = parseVersion(minimum);
     if (!minimumVersion) continue;
     if (targets.length === 0) {
