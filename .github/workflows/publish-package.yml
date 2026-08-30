@@ -41,7 +41,7 @@ jobs:
           printf 'package_path=%s\n' "$package_path" >> "$GITHUB_OUTPUT"
           shasum -a 256 release-assets/* > release-assets/SHA256SUMS
       - name: Publish GitHub npm package
-        run: npm publish "${{ steps.assets.outputs.package_path }}" --registry=https://npm.pkg.github.com
+        run: npm publish "./${{ steps.assets.outputs.package_path }}" --registry=https://npm.pkg.github.com
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Attach package, checksum, and SBOM to the GitHub release
