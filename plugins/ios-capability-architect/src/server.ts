@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { readFileSync } from "node:fs";
 import { z } from "zod";
 import {
   analyzeIdeaInputSchema,
@@ -35,11 +36,22 @@ import {
 } from "@/engine.js";
 import type { ToolEnvelope } from "@/types.js";
 
-declare const __PLUGIN_VERSION__: string;
+function loadPackageVersion(): string {
+  const metadata: unknown = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
+  if (
+    typeof metadata !== "object" ||
+    metadata === null ||
+    !("version" in metadata) ||
+    typeof metadata.version !== "string"
+  ) {
+    throw new Error("Package metadata has no string version");
+  }
+  return metadata.version;
+}
 
 const server = new McpServer({
   name: "ios-capability-architect",
-  version: __PLUGIN_VERSION__
+  version: loadPackageVersion()
 });
 
 const readOnlyAnnotations = {
