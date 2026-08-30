@@ -9,6 +9,7 @@ import {
   getCapabilityProfile,
   refreshCapabilityRegistry,
   reportRegistryCoverage,
+  resolveCapabilities,
   searchAppleTechnologyCatalog,
   searchOfficialAppleDocs
 } from "@/engine.js";
@@ -40,7 +41,35 @@ describe("read-only architecture tools", () => {
     });
 
     expect(withoutTarget.data.results[0]?.status).toBe("conditional_or_incompatible");
+    expect(withoutTarget.data.results[0]?.determination).toBe("conditional");
     expect(incompatible.data.results[0]?.status).toBe("conditional_or_incompatible");
+    expect(incompatible.data.results[0]?.determination).toBe("incompatible");
+  });
+
+  it("keeps deprecated capabilities out of default recommendations", async () => {
+    const resolved = await resolveCapabilities({
+      requirements: [
+        {
+          id: "req-web",
+          kind: "platform",
+          description: "Embed UIWebView web content",
+          keywords: ["uiwebview", "web"],
+          confidence: "explicit"
+        }
+      ],
+      include_beta: false,
+      maximum_results_per_requirement: 10
+    });
+
+    expect(resolved.data.matches.some((match) => match.capability_id === "uiwebview")).toBe(false);
+  });
+
+  it("reports unknown configuration fields instead of treating empty arrays as verified absence", async () => {
+    const audit = await auditPermissionsAndEntitlements(["core-ml"]);
+
+    expect(audit.data.user_permissions).toEqual([]);
+    expect(audit.data.knowledge_gaps).toContain("core-ml.user_permissions");
+    expect(audit.warnings.join(" ")).toContain("not proof of no requirement");
   });
 
   it("builds proportional architecture and implementation phases", async () => {

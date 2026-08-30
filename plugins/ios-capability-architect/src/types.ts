@@ -32,9 +32,66 @@ export const onDeviceLevels = [
 
 export const stabilityLevels = ["stable", "beta", "deprecated", "unknown"] as const;
 
+export const knowledgeStates = ["unknown", "verified_none", "verified_value"] as const;
+
+export const knowledgeTrackedFields = [
+  "aliases",
+  "supported_use_cases",
+  "unsupported_use_cases",
+  "related_frameworks",
+  "related_capabilities",
+  "related_entitlements",
+  "related_extensions",
+  "platforms",
+  "minimum_os_version",
+  "sdk_availability",
+  "stable_or_beta",
+  "supported_devices",
+  "hardware_requirements",
+  "region_restrictions",
+  "language_restrictions",
+  "on_device_level",
+  "network_requirement",
+  "cloud_dependency",
+  "user_permissions",
+  "info_plist_keys",
+  "xcode_capabilities",
+  "entitlements",
+  "managed_entitlements",
+  "background_modes",
+  "privacy_manifest_requirements",
+  "required_reason_apis",
+  "app_review_considerations",
+  "security_considerations",
+  "implementation_notes",
+  "limitations",
+  "recommended_alternatives",
+  "release_notes"
+] as const;
+
+export const relationshipTypes = [
+  "related_framework",
+  "related_capability",
+  "related_entitlement",
+  "related_extension"
+] as const;
+
 export type EntityType = (typeof entityTypes)[number];
+export type KnowledgeState = (typeof knowledgeStates)[number];
+export type KnowledgeTrackedField = (typeof knowledgeTrackedFields)[number];
 export type OnDeviceLevel = (typeof onDeviceLevels)[number];
+export type RelationshipType = (typeof relationshipTypes)[number];
 export type StabilityLevel = (typeof stabilityLevels)[number];
+
+export interface CapabilityKnowledgeState {
+  completeness: "complete" | "partial";
+  fields: Record<KnowledgeTrackedField, KnowledgeState>;
+}
+
+export interface CapabilityRelationship {
+  type: RelationshipType;
+  target: string;
+}
 
 export interface DocumentationReference {
   title: string;
@@ -63,6 +120,7 @@ export interface CapabilityRecord {
   related_capabilities: string[];
   related_entitlements: string[];
   related_extensions: string[];
+  relationships: CapabilityRelationship[];
   platforms: string[];
   minimum_os_version: Record<string, string | null>;
   sdk_availability: string;
@@ -92,6 +150,7 @@ export interface CapabilityRecord {
   release_notes: DocumentationReference[];
   last_verified_at: string;
   keywords: string[];
+  knowledge_state: CapabilityKnowledgeState;
 }
 
 export interface TechnologyCatalogEntry {

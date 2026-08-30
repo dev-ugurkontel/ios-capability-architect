@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Security fixes are applied to the latest released version and the default development branch. Older releases may not receive patches. Until the first public release, only the current default branch is supported.
+Security fixes are applied to the latest non-prerelease minor line shown on the repository's Releases page and to the default development branch. Older release lines may not receive patches. Before 1.0, a new minor release replaces the previous minor line as the supported release.
 
 ## Reporting a vulnerability
 

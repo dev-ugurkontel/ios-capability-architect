@@ -1,12 +1,21 @@
 import rawRegistryData from "@data/capabilities.json" with { type: "json" };
 import rawTaxonomyData from "@data/taxonomy.json" with { type: "json" };
 import { capabilityRegistrySchema } from "@/schema.js";
-import type { CapabilityRecord, DocumentationReference, RegistryCoverage, TechnologyCatalogEntry } from "@/types.js";
+import {
+  knowledgeTrackedFields,
+  type CapabilityKnowledgeState,
+  type CapabilityRecord,
+  type CapabilityRelationship,
+  type DocumentationReference,
+  type KnowledgeState,
+  type RegistryCoverage,
+  type TechnologyCatalogEntry
+} from "@/types.js";
 
-type RawRecord = Partial<CapabilityRecord> &
+type RawRecord = Omit<Partial<CapabilityRecord>, "knowledge_state" | "relationships"> &
   Pick<
     CapabilityRecord,
-    "id" | "name" | "category" | "entity_type" | "summary" | "keywords" | "official_documentation"
+    "id" | "name" | "category" | "entity_type" | "summary" | "platforms" | "keywords" | "official_documentation"
   >;
 
 interface RawRegistry {
@@ -28,7 +37,6 @@ const emptyArrays = {
   related_capabilities: [],
   related_entitlements: [],
   related_extensions: [],
-  platforms: ["iOS"],
   supported_devices: [],
   hardware_requirements: [],
   region_restrictions: [],
@@ -49,6 +57,42 @@ const emptyArrays = {
   release_notes: []
 } satisfies Partial<CapabilityRecord>;
 
+function hasOwn(record: RawRecord, field: keyof CapabilityRecord): boolean {
+  return Object.prototype.hasOwnProperty.call(record, field);
+}
+
+function classifyKnowledge(value: unknown): KnowledgeState {
+  if (value === null || value === "") return "verified_none";
+  if (Array.isArray(value) && value.length === 0) return "verified_none";
+  if (typeof value === "object" && value !== null && Object.keys(value).length === 0) return "verified_none";
+  return "verified_value";
+}
+
+function buildKnowledgeState(raw: RawRecord): CapabilityKnowledgeState {
+  const fields = Object.fromEntries(
+    knowledgeTrackedFields.map((field) => [field, hasOwn(raw, field) ? classifyKnowledge(raw[field]) : "unknown"])
+  ) as CapabilityKnowledgeState["fields"];
+  return {
+    completeness: Object.values(fields).includes("unknown") ? "partial" : "complete",
+    fields
+  };
+}
+
+function buildRelationships(raw: RawRecord): CapabilityRelationship[] {
+  const sources: Array<[CapabilityRelationship["type"], string[] | undefined]> = [
+    ["related_framework", raw.related_frameworks],
+    ["related_capability", raw.related_capabilities],
+    ["related_entitlement", raw.related_entitlements],
+    ["related_extension", raw.related_extensions]
+  ];
+  const relationships = sources.flatMap(([type, targets]) => (targets ?? []).map((target) => ({ type, target })));
+  return [
+    ...new Map(
+      relationships.map((relationship) => [`${relationship.type}:${relationship.target}`, relationship])
+    ).values()
+  ];
+}
+
 function normalizeRecord(raw: RawRecord): CapabilityRecord {
   const sourceDates = [...raw.official_documentation, ...(raw.release_notes ?? [])].map((source) => source.verified_at);
   const lastVerifiedAt = raw.last_verified_at ?? sourceDates.sort().at(-1);
@@ -58,6 +102,7 @@ function normalizeRecord(raw: RawRecord): CapabilityRecord {
 
   return {
     ...emptyArrays,
+    relationships: buildRelationships(raw),
     minimum_os_version: {},
     sdk_availability: "Verify availability against the current stable SDK before implementation.",
     stable_or_beta: "unknown",
@@ -66,7 +111,8 @@ function normalizeRecord(raw: RawRecord): CapabilityRecord {
     network_requirement: "Depends on the selected API and feature configuration.",
     cloud_dependency: null,
     ...raw,
-    last_verified_at: lastVerifiedAt
+    last_verified_at: lastVerifiedAt,
+    knowledge_state: buildKnowledgeState(raw)
   } satisfies CapabilityRecord;
 }
 

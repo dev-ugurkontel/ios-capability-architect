@@ -1,0 +1,4132 @@
+{
+  "schema_version": "1.0",
+  "as_of": "2026-08-30",
+  "status_contract": {
+    "discovered": "Present in the committed snapshot extracted from Apple's official technologies page.",
+    "catalogued": "Present in taxonomy.json with a deterministic canonical identity; not recommendation evidence.",
+    "profiled": "Catalogued and matched to at least one capability profile.",
+    "reviewed": "Profiled and every matched profile has dated official Apple evidence."
+  },
+  "counts": {
+    "taxonomy_occurrence_count": 207,
+    "discovered_technology_count": 71,
+    "catalogued_technology_count": 193,
+    "profiled_technology_count": 20,
+    "reviewed_technology_count": 20,
+    "discovered_only_count": 47,
+    "catalog_only_count": 173
+  },
+  "entries": [
+    {
+      "canonical_id": "technology.5g-network-slicing",
+      "name": "5G Network Slicing",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["5G Network Slicing"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.accelerate",
+      "name": "Accelerate",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/accelerate/"]
+    },
+    {
+      "canonical_id": "technology.access-wifi-information",
+      "name": "Access WiFi Information",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Access WiFi Information"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.accessibility",
+      "name": "Accessibility",
+      "status": "catalogued",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Accessibility"],
+      "category_ids": ["ui"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/accessibility",
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.accessories",
+      "name": "Accessories",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/accessories/"]
+    },
+    {
+      "canonical_id": "technology.accessorysetupkit",
+      "name": "AccessorySetupKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["AccessorySetupKit"],
+      "category_ids": ["nearby_accessories"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.activitykit",
+      "name": "ActivityKit",
+      "status": "reviewed",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": true,
+      "reviewed": true,
+      "taxonomy_names": ["ActivityKit"],
+      "category_ids": ["widgets_live_activities"],
+      "profile_ids": ["activitykit"],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.ai-and-machine-learning",
+      "name": "AI & Machine Learning",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/machine-learning/"]
+    },
+    {
+      "canonical_id": "technology.alarmkit",
+      "name": "AlarmKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["AlarmKit"],
+      "category_ids": ["emerging_platform_technologies"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.apns",
+      "name": "APNs",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["APNs"],
+      "category_ids": ["notifications_background"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.app-attest",
+      "name": "App Attest",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["App Attest"],
+      "category_ids": ["privacy_integrity", "provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.app-extensions",
+      "name": "App extensions",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/documentation/technologyoverviews/app-extensions"]
+    },
+    {
+      "canonical_id": "technology.app-groups",
+      "name": "App Groups",
+      "status": "reviewed",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": true,
+      "reviewed": true,
+      "taxonomy_names": ["App Groups"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": ["app-groups"],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.app-intents",
+      "name": "App Intents",
+      "status": "reviewed",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": true,
+      "reviewed": true,
+      "taxonomy_names": ["App Intents"],
+      "category_ids": ["system_intelligence"],
+      "profile_ids": ["app-intents"],
+      "source_urls": [
+        "https://developer.apple.com/documentation/appintents",
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.app-shortcuts",
+      "name": "App Shortcuts",
+      "status": "reviewed",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": true,
+      "reviewed": true,
+      "taxonomy_names": ["App Shortcuts"],
+      "category_ids": ["system_intelligence"],
+      "profile_ids": ["app-intents"],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.app-store-connect",
+      "name": "App Store Connect",
+      "status": "catalogued",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["App Store Connect"],
+      "category_ids": ["developer_delivery"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/app-store-connect/",
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.appintentstesting",
+      "name": "AppIntentsTesting",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["AppIntentsTesting"],
+      "category_ids": ["emerging_platform_technologies"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.appkit",
+      "name": "AppKit",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/documentation/appkit/"]
+    },
+    {
+      "canonical_id": "technology.apple-arcade",
+      "name": "Apple Arcade",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/apple-arcade/"]
+    },
+    {
+      "canonical_id": "technology.apple-games-app",
+      "name": "Apple Games app",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/games-app/"]
+    },
+    {
+      "canonical_id": "technology.apple-home",
+      "name": "Apple Home",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/apple-home/"]
+    },
+    {
+      "canonical_id": "technology.apple-immersive-video",
+      "name": "Apple Immersive Video",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/apple-immersive-video/"]
+    },
+    {
+      "canonical_id": "technology.apple-intelligence",
+      "name": "Apple Intelligence",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/apple-intelligence/"]
+    },
+    {
+      "canonical_id": "technology.apple-news-format",
+      "name": "Apple News Format",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/news-publisher/"]
+    },
+    {
+      "canonical_id": "technology.apple-pay",
+      "name": "Apple Pay",
+      "status": "catalogued",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Apple Pay"],
+      "category_ids": ["commerce_wallet", "provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/apple-pay/",
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.apple-wallet",
+      "name": "Apple Wallet",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/wallet/"]
+    },
+    {
+      "canonical_id": "technology.apptrackingtransparency",
+      "name": "AppTrackingTransparency",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["AppTrackingTransparency"],
+      "category_ids": ["privacy_integrity"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.arkit",
+      "name": "ARKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["ARKit"],
+      "category_ids": ["graphics_spatial"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.associated-domains",
+      "name": "Associated Domains",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Associated Domains"],
+      "category_ids": ["provisioning_capabilities", "web_links"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.audio",
+      "name": "Audio",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/audio/"]
+    },
+    {
+      "canonical_id": "technology.audio-and-video",
+      "name": "Audio and video",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/documentation/technologyoverviews/audio-and-video"]
+    },
+    {
+      "canonical_id": "technology.augmented-reality",
+      "name": "Augmented reality",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/augmented-reality/"]
+    },
+    {
+      "canonical_id": "technology.authenticationservices",
+      "name": "AuthenticationServices",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["AuthenticationServices"],
+      "category_ids": ["security_identity"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.autofill-credential-provider",
+      "name": "AutoFill Credential Provider",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["AutoFill Credential Provider"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.avfoundation",
+      "name": "AVFoundation",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["AVFoundation"],
+      "category_ids": ["audio_video_media"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.avfoundation-capture",
+      "name": "AVFoundation capture",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["AVFoundation capture"],
+      "category_ids": ["camera_photos_vision"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.avsystemrouting",
+      "name": "AVSystemRouting",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["AVSystemRouting"],
+      "category_ids": ["emerging_platform_technologies"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.background-modes",
+      "name": "Background Modes",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Background Modes"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.background-urlsession",
+      "name": "Background URLSession",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Background URLSession"],
+      "category_ids": ["notifications_background"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.backgroundtasks",
+      "name": "BackgroundTasks",
+      "status": "reviewed",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": true,
+      "reviewed": true,
+      "taxonomy_names": ["BackgroundTasks"],
+      "category_ids": ["notifications_background"],
+      "profile_ids": ["background-tasks"],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.bonjour",
+      "name": "Bonjour",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Bonjour"],
+      "category_ids": ["networking"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.c-plus-plus",
+      "name": "C++",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/xcode/cpp/"]
+    },
+    {
+      "canonical_id": "technology.callkit",
+      "name": "CallKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["CallKit"],
+      "category_ids": ["personal_information"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.carplay",
+      "name": "CarPlay",
+      "status": "catalogued",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["CarPlay"],
+      "category_ids": ["automotive"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/carplay/",
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.child-safety",
+      "name": "Child safety",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/kids/"]
+    },
+    {
+      "canonical_id": "technology.classkit",
+      "name": "ClassKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["ClassKit"],
+      "category_ids": ["education_enterprise", "provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.cloudkit",
+      "name": "CloudKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["CloudKit"],
+      "category_ids": ["persistence_sync"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.cloudkit-console",
+      "name": "CloudKit Console",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://icloud.developer.apple.com/"]
+    },
+    {
+      "canonical_id": "technology.command-line-tools",
+      "name": "Command Line Tools",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/download/all/?q=for%20Xcode"]
+    },
+    {
+      "canonical_id": "technology.communication-notifications",
+      "name": "Communication Notifications",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Communication Notifications"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.contacts",
+      "name": "Contacts",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Contacts"],
+      "category_ids": ["personal_information"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.content-filter",
+      "name": "Content Filter",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Content Filter"],
+      "category_ids": ["network_extensions"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.core-ai",
+      "name": "Core AI",
+      "status": "catalogued",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Core AI"],
+      "category_ids": ["ai_ml", "emerging_platform_technologies"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/core-ai/",
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.core-ai-debugger",
+      "name": "Core AI Debugger",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/core-ai-debugger/"]
+    },
+    {
+      "canonical_id": "technology.core-audio",
+      "name": "Core Audio",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Core Audio"],
+      "category_ids": ["audio_video_media"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.core-bluetooth",
+      "name": "Core Bluetooth",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Core Bluetooth"],
+      "category_ids": ["nearby_accessories"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.core-data",
+      "name": "Core Data",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Core Data"],
+      "category_ids": ["persistence_sync"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.core-image",
+      "name": "Core Image",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Core Image"],
+      "category_ids": ["graphics_spatial"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.core-location",
+      "name": "Core Location",
+      "status": "reviewed",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": true,
+      "reviewed": true,
+      "taxonomy_names": ["Core Location"],
+      "category_ids": ["automotive", "location_maps_weather"],
+      "profile_ids": ["core-location"],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.core-ml",
+      "name": "Core ML",
+      "status": "reviewed",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": true,
+      "reviewed": true,
+      "taxonomy_names": ["Core ML"],
+      "category_ids": ["ai_ml"],
+      "profile_ids": ["core-ml"],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.core-motion",
+      "name": "Core Motion",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Core Motion"],
+      "category_ids": ["health_fitness_sensors"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.core-nfc",
+      "name": "Core NFC",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Core NFC"],
+      "category_ids": ["nearby_accessories"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.core-spotlight",
+      "name": "Core Spotlight",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Core Spotlight"],
+      "category_ids": ["system_intelligence"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.crashreportextension",
+      "name": "CrashReportExtension",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["CrashReportExtension"],
+      "category_ids": ["emerging_platform_technologies"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.credential-provider-extension",
+      "name": "Credential Provider Extension",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Credential Provider Extension"],
+      "category_ids": ["app_extensions"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.cryptokit",
+      "name": "CryptoKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["CryptoKit"],
+      "category_ids": ["security_identity"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.data-protection",
+      "name": "Data Protection",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Data Protection"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.declaredagerange",
+      "name": "DeclaredAgeRange",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["DeclaredAgeRange"],
+      "category_ids": ["emerging_platform_technologies"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.deviceactivity",
+      "name": "DeviceActivity",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["DeviceActivity"],
+      "category_ids": ["parental_controls"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.devicecheck",
+      "name": "DeviceCheck",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["DeviceCheck"],
+      "category_ids": ["privacy_integrity"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.dns-proxy",
+      "name": "DNS Proxy",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["DNS Proxy"],
+      "category_ids": ["network_extensions"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.driverkit-family-midi",
+      "name": "DriverKit Family MIDI",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["DriverKit Family MIDI"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.dynamic-island",
+      "name": "Dynamic Island",
+      "status": "reviewed",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": true,
+      "reviewed": true,
+      "taxonomy_names": ["Dynamic Island"],
+      "category_ids": ["widgets_live_activities"],
+      "profile_ids": ["activitykit"],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.dynamic-type",
+      "name": "Dynamic Type",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Dynamic Type"],
+      "category_ids": ["localization_accessibility"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.energykit",
+      "name": "EnergyKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["EnergyKit"],
+      "category_ids": ["emerging_platform_technologies"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.evaluations",
+      "name": "Evaluations",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Evaluations"],
+      "category_ids": ["emerging_platform_technologies"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.eventkit",
+      "name": "EventKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["EventKit"],
+      "category_ids": ["personal_information"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.extended-virtual-addressing",
+      "name": "Extended Virtual Addressing",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Extended Virtual Addressing"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.face-id-and-touch-id",
+      "name": "Face ID and Touch ID",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/localauthentication/logging_a_user_into_your_app_with_face_id_or_touch_id/"
+      ]
+    },
+    {
+      "canonical_id": "technology.family-controls-development",
+      "name": "Family Controls Development",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Family Controls Development"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.familycontrols",
+      "name": "FamilyControls",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["FamilyControls"],
+      "category_ids": ["parental_controls"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.feedback-assistant",
+      "name": "Feedback Assistant",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/bug-reporting/"]
+    },
+    {
+      "canonical_id": "technology.filemanager",
+      "name": "FileManager",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["FileManager"],
+      "category_ids": ["persistence_sync"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.fileprovider",
+      "name": "FileProvider",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["FileProvider"],
+      "category_ids": ["files_documents"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.fileprovider-testing-mode",
+      "name": "FileProvider Testing Mode",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["FileProvider Testing Mode"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.financekit",
+      "name": "FinanceKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["FinanceKit"],
+      "category_ids": ["commerce_wallet"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.fonts",
+      "name": "Fonts",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Fonts"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.formatstyle",
+      "name": "FormatStyle",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["FormatStyle"],
+      "category_ids": ["localization_accessibility"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.foundation",
+      "name": "Foundation",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Foundation"],
+      "category_ids": ["language_core"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.foundation-models",
+      "name": "Foundation models",
+      "status": "reviewed",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": true,
+      "reviewed": true,
+      "taxonomy_names": ["Foundation Models"],
+      "category_ids": ["ai_ml"],
+      "profile_ids": ["foundation-models"],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/FoundationModels",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.game-center",
+      "name": "Game Center",
+      "status": "catalogued",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Game Center"],
+      "category_ids": ["gaming", "provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/game-center/",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.game-controller",
+      "name": "Game Controller",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Game Controller"],
+      "category_ids": ["gaming"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.game-porting-toolkit",
+      "name": "Game Porting Toolkit",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/games/game-porting-toolkit/"]
+    },
+    {
+      "canonical_id": "technology.gamekit",
+      "name": "GameKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["GameKit"],
+      "category_ids": ["gaming"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.gameplaykit",
+      "name": "GameplayKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["GameplayKit"],
+      "category_ids": ["gaming"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.games-technologies",
+      "name": "Games technologies",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/games/"]
+    },
+    {
+      "canonical_id": "technology.group-activities",
+      "name": "Group Activities",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Group Activities"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.head-pose",
+      "name": "Head Pose",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Head Pose"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.health-and-fitness",
+      "name": "Health and fitness",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/health-fitness/"]
+    },
+    {
+      "canonical_id": "technology.healthkit",
+      "name": "HealthKit",
+      "status": "reviewed",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": true,
+      "reviewed": true,
+      "taxonomy_names": ["HealthKit"],
+      "category_ids": ["health_fitness_sensors", "provisioning_capabilities"],
+      "profile_ids": ["healthkit"],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.healthkit-estimate-recalibration",
+      "name": "HealthKit Estimate Recalibration",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["HealthKit Estimate Recalibration"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.hls-interstitial-previews",
+      "name": "HLS Interstitial Previews",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["HLS Interstitial Previews"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.homekit",
+      "name": "HomeKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["HomeKit"],
+      "category_ids": ["home_matter", "provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.hotspot",
+      "name": "Hotspot",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Hotspot"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.http-live-streaming-hls",
+      "name": "HTTP Live Streaming (HLS)",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/streaming/"]
+    },
+    {
+      "canonical_id": "technology.icloud-and-cloudkit",
+      "name": "iCloud and CloudKit",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/icloud/"]
+    },
+    {
+      "canonical_id": "technology.icloud-cloudkit",
+      "name": "iCloud CloudKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["iCloud CloudKit"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.icloud-documents",
+      "name": "iCloud Documents",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["iCloud Documents"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.icloud-key-value-storage",
+      "name": "iCloud Key-Value Storage",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["iCloud Key-Value Storage"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.icon-composer",
+      "name": "Icon Composer",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/icon-composer/"]
+    },
+    {
+      "canonical_id": "technology.id-verifier-display-only",
+      "name": "ID Verifier Display Only",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["ID Verifier Display Only"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.imessage-apps-and-stickers",
+      "name": "iMessage apps and stickers",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/imessage/"]
+    },
+    {
+      "canonical_id": "technology.in-app-purchase",
+      "name": "In-App Purchase",
+      "status": "reviewed",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": true,
+      "reviewed": true,
+      "taxonomy_names": ["In-App Purchase"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": ["storekit-2"],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/in-app-purchase/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.increased-debugging-memory-limit",
+      "name": "Increased Debugging Memory Limit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Increased Debugging Memory Limit"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.instruments",
+      "name": "Instruments",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Instruments"],
+      "category_ids": ["testing_diagnostics"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.inter-app-audio",
+      "name": "Inter-App Audio",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Inter-App Audio"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.journaling-suggestions",
+      "name": "Journaling Suggestions",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Journaling Suggestions"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.keychain-services",
+      "name": "Keychain Services",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Keychain Services"],
+      "category_ids": ["security_identity"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.keychain-sharing",
+      "name": "Keychain Sharing",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Keychain Sharing"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.live-activities",
+      "name": "Live Activities",
+      "status": "reviewed",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": true,
+      "reviewed": true,
+      "taxonomy_names": ["Live Activities"],
+      "category_ids": ["widgets_live_activities"],
+      "profile_ids": ["activitykit"],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.localauthentication",
+      "name": "LocalAuthentication",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["LocalAuthentication"],
+      "category_ids": ["security_identity"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.localization",
+      "name": "Localization",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/localization/"]
+    },
+    {
+      "canonical_id": "technology.low-latency-hls",
+      "name": "Low Latency HLS",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Low Latency HLS"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.managed-app-configuration",
+      "name": "Managed App Configuration",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Managed App Configuration"],
+      "category_ids": ["education_enterprise"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.managedappdistribution",
+      "name": "ManagedAppDistribution",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["ManagedAppDistribution"],
+      "category_ids": ["education_enterprise"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.managedsettings",
+      "name": "ManagedSettings",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["ManagedSettings"],
+      "category_ids": ["parental_controls"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.mapkit",
+      "name": "MapKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["MapKit"],
+      "category_ids": ["automotive", "location_maps_weather"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.maps",
+      "name": "Maps",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Maps"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.maps-and-location",
+      "name": "Maps and location",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/maps/"]
+    },
+    {
+      "canonical_id": "technology.maps-tools",
+      "name": "Maps Tools",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/maps/resources/"]
+    },
+    {
+      "canonical_id": "technology.matter",
+      "name": "Matter",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Matter"],
+      "category_ids": ["home_matter"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.matter-allow-setup-payload",
+      "name": "Matter Allow Setup Payload",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Matter Allow Setup Payload"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.mattersupport",
+      "name": "MatterSupport",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["MatterSupport"],
+      "category_ids": ["home_matter"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.mdm-managed-associated-domains",
+      "name": "MDM Managed Associated Domains",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["MDM Managed Associated Domains"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.media-device-discovery",
+      "name": "Media Device Discovery",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Media Device Discovery"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.mediadevice",
+      "name": "MediaDevice",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["MediaDevice"],
+      "category_ids": ["emerging_platform_technologies"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.mediaintents",
+      "name": "MediaIntents",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["MediaIntents"],
+      "category_ids": ["emerging_platform_technologies"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.mediaplayer",
+      "name": "MediaPlayer",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["MediaPlayer"],
+      "category_ids": ["audio_video_media"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.messages-collaboration",
+      "name": "Messages Collaboration",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Messages Collaboration"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.messageui",
+      "name": "MessageUI",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["MessageUI"],
+      "category_ids": ["personal_information"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.metal",
+      "name": "Metal",
+      "status": "catalogued",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Metal"],
+      "category_ids": ["graphics_spatial"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/metal/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.metal-developer-tools",
+      "name": "Metal Developer Tools",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/metal/tools/"]
+    },
+    {
+      "canonical_id": "technology.metrickit",
+      "name": "MetricKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["MetricKit"],
+      "category_ids": ["testing_diagnostics"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.multipath",
+      "name": "Multipath",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Multipath"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.multipeerconnectivity",
+      "name": "MultipeerConnectivity",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["MultipeerConnectivity"],
+      "category_ids": ["nearby_accessories"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.musickit",
+      "name": "MusicKit",
+      "status": "catalogued",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["MusicKit"],
+      "category_ids": ["audio_video_media"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/musickit/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.musicunderstanding",
+      "name": "MusicUnderstanding",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["MusicUnderstanding"],
+      "category_ids": ["emerging_platform_technologies"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.natural-language",
+      "name": "Natural Language",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Natural Language"],
+      "category_ids": ["ai_ml"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.near-field-communication-tag-reading",
+      "name": "Near Field Communication Tag Reading",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Near Field Communication Tag Reading"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.nearby-interaction",
+      "name": "Nearby Interaction",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Nearby Interaction"],
+      "category_ids": ["nearby_accessories"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.network",
+      "name": "Network",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Network"],
+      "category_ids": ["networking"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.network-extensions",
+      "name": "Network Extensions",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Network Extensions"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.networkextension",
+      "name": "NetworkExtension",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["NetworkExtension"],
+      "category_ids": ["network_extensions"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.notification-service-extension",
+      "name": "Notification Service Extension",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Notification Service Extension"],
+      "category_ids": ["app_extensions"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.notifications",
+      "name": "Notifications",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/notifications/"]
+    },
+    {
+      "canonical_id": "technology.now-playing",
+      "name": "NowPlaying",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Now Playing", "NowPlaying"],
+      "category_ids": ["automotive", "emerging_platform_technologies"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.observation",
+      "name": "Observation",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Observation"],
+      "category_ids": ["ui"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.on-demand-install-capable",
+      "name": "On Demand Install Capable",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["On Demand Install Capable"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.oslog",
+      "name": "OSLog",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["OSLog"],
+      "category_ids": ["testing_diagnostics"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.pass-designer",
+      "name": "Pass Designer",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/pass-designer/"]
+    },
+    {
+      "canonical_id": "technology.passkeys",
+      "name": "Passkeys",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/passkeys/"]
+    },
+    {
+      "canonical_id": "technology.passkit",
+      "name": "PassKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["PassKit"],
+      "category_ids": ["commerce_wallet"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.pdfkit",
+      "name": "PDFKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["PDFKit"],
+      "category_ids": ["files_documents"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.pencilkit",
+      "name": "PencilKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["PencilKit"],
+      "category_ids": ["files_documents"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.permissionkit",
+      "name": "PermissionKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["PermissionKit"],
+      "category_ids": ["emerging_platform_technologies"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.personal-vpn",
+      "name": "Personal VPN",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Personal VPN"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.photokit",
+      "name": "PhotoKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["PhotoKit"],
+      "category_ids": ["camera_photos_vision"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.photosui",
+      "name": "PhotosUI",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["PhotosUI"],
+      "category_ids": ["camera_photos_vision"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.privacy-manifests",
+      "name": "Privacy Manifests",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Privacy Manifests"],
+      "category_ids": ["privacy_integrity"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.private-cloud-compute-entitlement",
+      "name": "Private Cloud Compute Entitlement",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Private Cloud Compute Entitlement"],
+      "category_ids": ["emerging_platform_technologies"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.proximityreader",
+      "name": "ProximityReader",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["ProximityReader"],
+      "category_ids": ["emerging_platform_technologies"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.push-notifications",
+      "name": "Push Notifications",
+      "status": "reviewed",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": true,
+      "reviewed": true,
+      "taxonomy_names": ["Push Notifications"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": ["user-notifications"],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.push-notifications-console",
+      "name": "Push Notifications Console",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/notifications/push-notifications-console/"]
+    },
+    {
+      "canonical_id": "technology.push-to-talk",
+      "name": "Push to Talk",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Push to Talk"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.quicklook",
+      "name": "QuickLook",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["QuickLook"],
+      "category_ids": ["files_documents"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.reality-composer-pro",
+      "name": "Reality Composer Pro",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/augmented-reality/reality-composer/"]
+    },
+    {
+      "canonical_id": "technology.realitykit",
+      "name": "RealityKit",
+      "status": "catalogued",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["RealityKit"],
+      "category_ids": ["graphics_spatial"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/realitykit/",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.required-reason-apis",
+      "name": "Required Reason APIs",
+      "status": "reviewed",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": true,
+      "reviewed": true,
+      "taxonomy_names": ["Required Reason APIs"],
+      "category_ids": ["privacy_integrity"],
+      "profile_ids": ["required-reason-apis"],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.roomplan",
+      "name": "RoomPlan",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["RoomPlan"],
+      "category_ids": ["graphics_spatial"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.safari-and-web",
+      "name": "Safari and web",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/safari/"]
+    },
+    {
+      "canonical_id": "technology.safariservices",
+      "name": "SafariServices",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["SafariServices"],
+      "category_ids": ["web_links"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.secure-enclave",
+      "name": "Secure Enclave",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Secure Enclave"],
+      "category_ids": ["security_identity"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.security",
+      "name": "Security",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/security/"]
+    },
+    {
+      "canonical_id": "technology.sensitive-content-analysis",
+      "name": "Sensitive Content Analysis",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Sensitive Content Analysis"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.sensorkit",
+      "name": "SensorKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["SensorKit"],
+      "category_ids": ["health_fitness_sensors"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.sf-symbols",
+      "name": "SF Symbols",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/sf-symbols/"]
+    },
+    {
+      "canonical_id": "technology.share-extension",
+      "name": "Share Extension",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Share Extension"],
+      "category_ids": ["app_extensions"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.shared-with-you",
+      "name": "Shared with You",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Shared with You"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.shareplay",
+      "name": "SharePlay",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/shareplay/"]
+    },
+    {
+      "canonical_id": "technology.shazamkit",
+      "name": "ShazamKit",
+      "status": "catalogued",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["ShazamKit"],
+      "category_ids": ["audio_video_media"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/shazamkit/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.sign-in-with-apple",
+      "name": "Sign in with Apple",
+      "status": "catalogued",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Sign in with Apple"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/sign-in-with-apple/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.sim-inserted-for-wireless-carriers",
+      "name": "SIM Inserted for Wireless Carriers",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["SIM Inserted for Wireless Carriers"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.simulator",
+      "name": "Simulator",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Simulator"],
+      "category_ids": ["developer_delivery"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.siri",
+      "name": "Siri",
+      "status": "reviewed",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": true,
+      "reviewed": true,
+      "taxonomy_names": ["Siri"],
+      "category_ids": ["provisioning_capabilities", "system_intelligence"],
+      "profile_ids": ["app-intents"],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/siri/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.spatial-audio-profile",
+      "name": "Spatial Audio Profile",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Spatial Audio Profile"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.spatialpreview",
+      "name": "SpatialPreview",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["SpatialPreview"],
+      "category_ids": ["emerging_platform_technologies"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.speech",
+      "name": "Speech",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Speech"],
+      "category_ids": ["ai_ml"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.spritekit",
+      "name": "SpriteKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["SpriteKit"],
+      "category_ids": ["gaming"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.statereporting",
+      "name": "StateReporting",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["StateReporting"],
+      "category_ids": ["emerging_platform_technologies"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.storekit",
+      "name": "StoreKit",
+      "status": "reviewed",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": true,
+      "reviewed": true,
+      "taxonomy_names": ["StoreKit"],
+      "category_ids": ["commerce_wallet"],
+      "profile_ids": ["storekit-2"],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/storekit/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.string-catalogs",
+      "name": "String Catalogs",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["String Catalogs"],
+      "category_ids": ["localization_accessibility"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.suggestedactions",
+      "name": "SuggestedActions",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["SuggestedActions"],
+      "category_ids": ["emerging_platform_technologies"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.sustained-execution",
+      "name": "Sustained Execution",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Sustained Execution"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.swift",
+      "name": "Swift",
+      "status": "catalogued",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Swift"],
+      "category_ids": ["language_core"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/swift/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.swift-concurrency",
+      "name": "Swift Concurrency",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Swift Concurrency"],
+      "category_ids": ["language_core"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.swift-package-manager",
+      "name": "Swift Package Manager",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Swift Package Manager"],
+      "category_ids": ["language_core"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.swift-playground",
+      "name": "Swift Playground",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/swift-playgrounds/"]
+    },
+    {
+      "canonical_id": "technology.swift-testing",
+      "name": "Swift Testing",
+      "status": "catalogued",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Swift Testing"],
+      "category_ids": ["testing_diagnostics"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/",
+        "https://developer.apple.com/xcode/swift-testing/"
+      ]
+    },
+    {
+      "canonical_id": "technology.swiftdata",
+      "name": "SwiftData",
+      "status": "reviewed",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": true,
+      "reviewed": true,
+      "taxonomy_names": ["SwiftData"],
+      "category_ids": ["persistence_sync"],
+      "profile_ids": ["swiftdata"],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/SwiftData",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.swiftui",
+      "name": "SwiftUI",
+      "status": "catalogued",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["SwiftUI"],
+      "category_ids": ["ui"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/swiftui/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.tap-to-pay-on-iphone",
+      "name": "Tap to Pay on iPhone",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/tap-to-pay/"]
+    },
+    {
+      "canonical_id": "technology.testflight",
+      "name": "TestFlight",
+      "status": "catalogued",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["TestFlight"],
+      "category_ids": ["developer_delivery"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/",
+        "https://developer.apple.com/testflight/"
+      ]
+    },
+    {
+      "canonical_id": "technology.time-sensitive-notifications",
+      "name": "Time Sensitive Notifications",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Time Sensitive Notifications"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.translation",
+      "name": "Translation",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Translation"],
+      "category_ids": ["localization_accessibility"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.transporter",
+      "name": "Transporter",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://apps.apple.com/us/app/transporter/id1450874784?mt=12"]
+    },
+    {
+      "canonical_id": "technology.trustinsights",
+      "name": "TrustInsights",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["TrustInsights"],
+      "category_ids": ["emerging_platform_technologies"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.uidocument",
+      "name": "UIDocument",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["UIDocument"],
+      "category_ids": ["files_documents"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.uikit",
+      "name": "UIKit",
+      "status": "catalogued",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["UIKit"],
+      "category_ids": ["ui"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/uikit/",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.universal-links",
+      "name": "Universal Links",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Universal Links"],
+      "category_ids": ["web_links"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.urlsession",
+      "name": "URLSession",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["URLSession"],
+      "category_ids": ["networking"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.usernotifications",
+      "name": "UserNotifications",
+      "status": "reviewed",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": true,
+      "reviewed": true,
+      "taxonomy_names": ["UserNotifications"],
+      "category_ids": ["notifications_background"],
+      "profile_ids": ["user-notifications"],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.vision",
+      "name": "Vision",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Vision"],
+      "category_ids": ["ai_ml"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.visionkit",
+      "name": "VisionKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["VisionKit"],
+      "category_ids": ["camera_photos_vision"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.visualintelligence",
+      "name": "VisualIntelligence",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["VisualIntelligence"],
+      "category_ids": ["emerging_platform_technologies"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.voiceover",
+      "name": "VoiceOver",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["VoiceOver"],
+      "category_ids": ["localization_accessibility"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.vpn",
+      "name": "VPN",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["VPN"],
+      "category_ids": ["network_extensions"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.wallet",
+      "name": "Wallet",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Wallet"],
+      "category_ids": ["commerce_wallet", "provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.weatherkit",
+      "name": "WeatherKit",
+      "status": "catalogued",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["WeatherKit"],
+      "category_ids": ["location_maps_weather", "provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/",
+        "https://developer.apple.com/weatherkit/"
+      ]
+    },
+    {
+      "canonical_id": "technology.webkit",
+      "name": "WebKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["WebKit"],
+      "category_ids": ["web_links"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.websocket",
+      "name": "WebSocket",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["WebSocket"],
+      "category_ids": ["networking"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.wi-fi-aware",
+      "name": "Wi-Fi Aware",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Wi-Fi Aware"],
+      "category_ids": ["emerging_platform_technologies"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.widget-extension",
+      "name": "Widget Extension",
+      "status": "reviewed",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": true,
+      "reviewed": true,
+      "taxonomy_names": ["Widget Extension"],
+      "category_ids": ["app_extensions"],
+      "profile_ids": ["widgetkit"],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.widgetkit",
+      "name": "WidgetKit",
+      "status": "reviewed",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": true,
+      "reviewed": true,
+      "taxonomy_names": ["WidgetKit"],
+      "category_ids": ["widgets_live_activities"],
+      "profile_ids": ["widgetkit"],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.widgets",
+      "name": "Widgets",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": ["widgetkit"],
+      "source_urls": ["https://developer.apple.com/documentation/widgetkit"]
+    },
+    {
+      "canonical_id": "technology.wireless-accessory-configuration",
+      "name": "Wireless Accessory Configuration",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Wireless Accessory Configuration"],
+      "category_ids": ["provisioning_capabilities"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.workoutkit",
+      "name": "WorkoutKit",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["WorkoutKit"],
+      "category_ids": ["health_fitness_sensors"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.xcode",
+      "name": "Xcode",
+      "status": "catalogued",
+      "discovered": true,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["Xcode"],
+      "category_ids": ["developer_delivery"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/",
+        "https://developer.apple.com/xcode/"
+      ]
+    },
+    {
+      "canonical_id": "technology.xcode-cloud",
+      "name": "Xcode Cloud",
+      "status": "discovered",
+      "discovered": true,
+      "catalogued": false,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": [],
+      "category_ids": [],
+      "profile_ids": [],
+      "source_urls": ["https://developer.apple.com/xcode-cloud/"]
+    },
+    {
+      "canonical_id": "technology.xctest",
+      "name": "XCTest",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["XCTest"],
+      "category_ids": ["testing_diagnostics"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    },
+    {
+      "canonical_id": "technology.xcuitest",
+      "name": "XCUITest",
+      "status": "catalogued",
+      "discovered": false,
+      "catalogued": true,
+      "profiled": false,
+      "reviewed": false,
+      "taxonomy_names": ["XCUITest"],
+      "category_ids": ["testing_diagnostics"],
+      "profile_ids": [],
+      "source_urls": [
+        "https://developer.apple.com/documentation/bundleresources",
+        "https://developer.apple.com/documentation/updates",
+        "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+        "https://developer.apple.com/technologies/"
+      ]
+    }
+  ]
+}

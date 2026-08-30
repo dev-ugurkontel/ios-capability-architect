@@ -28,4 +28,24 @@ describe("capability registry", () => {
     expect(await searchRecords("no-such-token")).toEqual([]);
     expect(await searchTechnologyCatalog(" ")).toEqual([]);
   });
+
+  it("distinguishes unknown fields, verified values, and verified absence", async () => {
+    const healthKit = await findRecord("healthkit");
+    const coreML = await findRecord("core-ml");
+
+    expect(healthKit?.knowledge_state.completeness).toBe("partial");
+    expect(healthKit?.knowledge_state.fields.user_permissions).toBe("verified_value");
+    expect(healthKit?.knowledge_state.fields.managed_entitlements).toBe("unknown");
+    expect(coreML?.knowledge_state.fields.cloud_dependency).toBe("verified_none");
+  });
+
+  it("derives typed, deduplicated relationships from legacy relationship arrays", async () => {
+    const widgetKit = await findRecord("widgetkit");
+
+    expect(widgetKit?.relationships).toContainEqual({ type: "related_framework", target: "SwiftUI" });
+    expect(widgetKit?.relationships).toContainEqual({ type: "related_extension", target: "Widget Extension" });
+    expect(new Set(widgetKit?.relationships.map(({ type, target }) => `${type}:${target}`)).size).toBe(
+      widgetKit?.relationships.length
+    );
+  });
 });

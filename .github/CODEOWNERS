@@ -1,8 +1,8 @@
 # Default ownership for repository-wide changes.
-* @ugurkontel
+* @dev-ugurkontel
 
 # Capability evidence and runtime contracts require maintainer review.
-/plugins/ios-capability-architect/data/ @ugurkontel
-/plugins/ios-capability-architect/src/ @ugurkontel
-/plugins/ios-capability-architect/skills/ @ugurkontel
-/.github/ @ugurkontel
+/plugins/ios-capability-architect/data/ @dev-ugurkontel
+/plugins/ios-capability-architect/src/ @dev-ugurkontel
+/plugins/ios-capability-architect/skills/ @dev-ugurkontel
+/.github/ @dev-ugurkontel

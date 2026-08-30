@@ -1,0 +1,363 @@
+{
+  "schema_version": "1.0",
+  "source_url": "https://developer.apple.com/technologies/",
+  "observed_at": "2026-08-30",
+  "extraction_contract": "Links inside the Tools and frameworks section of developer.apple.com/technologies/.",
+  "entries": [
+    {
+      "canonical_id": "technology.accelerate",
+      "name": "Accelerate",
+      "url": "https://developer.apple.com/accelerate/"
+    },
+    {
+      "canonical_id": "technology.accessibility",
+      "name": "Accessibility",
+      "url": "https://developer.apple.com/documentation/accessibility"
+    },
+    {
+      "canonical_id": "technology.accessories",
+      "name": "Accessories",
+      "url": "https://developer.apple.com/accessories/"
+    },
+    {
+      "canonical_id": "technology.ai-and-machine-learning",
+      "name": "AI & Machine Learning",
+      "url": "https://developer.apple.com/machine-learning/"
+    },
+    {
+      "canonical_id": "technology.app-extensions",
+      "name": "App extensions",
+      "url": "https://developer.apple.com/documentation/technologyoverviews/app-extensions"
+    },
+    {
+      "canonical_id": "technology.app-intents",
+      "name": "App Intents",
+      "url": "https://developer.apple.com/documentation/appintents"
+    },
+    {
+      "canonical_id": "technology.app-store-connect",
+      "name": "App Store Connect",
+      "url": "https://developer.apple.com/app-store-connect/"
+    },
+    {
+      "canonical_id": "technology.appkit",
+      "name": "AppKit",
+      "url": "https://developer.apple.com/documentation/appkit/"
+    },
+    {
+      "canonical_id": "technology.apple-arcade",
+      "name": "Apple Arcade",
+      "url": "https://developer.apple.com/apple-arcade/"
+    },
+    {
+      "canonical_id": "technology.apple-games-app",
+      "name": "Apple Games app",
+      "url": "https://developer.apple.com/games-app/"
+    },
+    {
+      "canonical_id": "technology.apple-home",
+      "name": "Apple Home",
+      "url": "https://developer.apple.com/apple-home/"
+    },
+    {
+      "canonical_id": "technology.apple-immersive-video",
+      "name": "Apple Immersive Video",
+      "url": "https://developer.apple.com/apple-immersive-video/"
+    },
+    {
+      "canonical_id": "technology.apple-intelligence",
+      "name": "Apple Intelligence",
+      "url": "https://developer.apple.com/apple-intelligence/"
+    },
+    {
+      "canonical_id": "technology.apple-news-format",
+      "name": "Apple News Format",
+      "url": "https://developer.apple.com/news-publisher/"
+    },
+    {
+      "canonical_id": "technology.apple-pay",
+      "name": "Apple Pay",
+      "url": "https://developer.apple.com/apple-pay/"
+    },
+    {
+      "canonical_id": "technology.apple-wallet",
+      "name": "Apple Wallet",
+      "url": "https://developer.apple.com/wallet/"
+    },
+    {
+      "canonical_id": "technology.audio",
+      "name": "Audio",
+      "url": "https://developer.apple.com/audio/"
+    },
+    {
+      "canonical_id": "technology.audio-and-video",
+      "name": "Audio and video",
+      "url": "https://developer.apple.com/documentation/technologyoverviews/audio-and-video"
+    },
+    {
+      "canonical_id": "technology.augmented-reality",
+      "name": "Augmented reality",
+      "url": "https://developer.apple.com/augmented-reality/"
+    },
+    {
+      "canonical_id": "technology.c-plus-plus",
+      "name": "C++",
+      "url": "https://developer.apple.com/xcode/cpp/"
+    },
+    {
+      "canonical_id": "technology.carplay",
+      "name": "CarPlay",
+      "url": "https://developer.apple.com/carplay/"
+    },
+    {
+      "canonical_id": "technology.child-safety",
+      "name": "Child safety",
+      "url": "https://developer.apple.com/kids/"
+    },
+    {
+      "canonical_id": "technology.cloudkit-console",
+      "name": "CloudKit Console",
+      "url": "https://icloud.developer.apple.com/"
+    },
+    {
+      "canonical_id": "technology.command-line-tools",
+      "name": "Command Line Tools",
+      "url": "https://developer.apple.com/download/all/?q=for%20Xcode"
+    },
+    {
+      "canonical_id": "technology.core-ai",
+      "name": "Core AI",
+      "url": "https://developer.apple.com/core-ai/"
+    },
+    {
+      "canonical_id": "technology.core-ai-debugger",
+      "name": "Core AI Debugger",
+      "url": "https://developer.apple.com/core-ai-debugger/"
+    },
+    {
+      "canonical_id": "technology.face-id-and-touch-id",
+      "name": "Face ID and Touch ID",
+      "url": "https://developer.apple.com/documentation/localauthentication/logging_a_user_into_your_app_with_face_id_or_touch_id/"
+    },
+    {
+      "canonical_id": "technology.feedback-assistant",
+      "name": "Feedback Assistant",
+      "url": "https://developer.apple.com/bug-reporting/"
+    },
+    {
+      "canonical_id": "technology.foundation-models",
+      "name": "Foundation models",
+      "url": "https://developer.apple.com/documentation/FoundationModels"
+    },
+    {
+      "canonical_id": "technology.game-center",
+      "name": "Game Center",
+      "url": "https://developer.apple.com/game-center/"
+    },
+    {
+      "canonical_id": "technology.game-porting-toolkit",
+      "name": "Game Porting Toolkit",
+      "url": "https://developer.apple.com/games/game-porting-toolkit/"
+    },
+    {
+      "canonical_id": "technology.games-technologies",
+      "name": "Games technologies",
+      "url": "https://developer.apple.com/games/"
+    },
+    {
+      "canonical_id": "technology.health-and-fitness",
+      "name": "Health and fitness",
+      "url": "https://developer.apple.com/health-fitness/"
+    },
+    {
+      "canonical_id": "technology.http-live-streaming-hls",
+      "name": "HTTP Live Streaming (HLS)",
+      "url": "https://developer.apple.com/streaming/"
+    },
+    {
+      "canonical_id": "technology.icloud-and-cloudkit",
+      "name": "iCloud and CloudKit",
+      "url": "https://developer.apple.com/icloud/"
+    },
+    {
+      "canonical_id": "technology.icon-composer",
+      "name": "Icon Composer",
+      "url": "https://developer.apple.com/icon-composer/"
+    },
+    {
+      "canonical_id": "technology.imessage-apps-and-stickers",
+      "name": "iMessage apps and stickers",
+      "url": "https://developer.apple.com/imessage/"
+    },
+    {
+      "canonical_id": "technology.in-app-purchase",
+      "name": "In-App Purchase",
+      "url": "https://developer.apple.com/in-app-purchase/"
+    },
+    {
+      "canonical_id": "technology.localization",
+      "name": "Localization",
+      "url": "https://developer.apple.com/localization/"
+    },
+    {
+      "canonical_id": "technology.maps-and-location",
+      "name": "Maps and location",
+      "url": "https://developer.apple.com/maps/"
+    },
+    {
+      "canonical_id": "technology.maps-tools",
+      "name": "Maps Tools",
+      "url": "https://developer.apple.com/maps/resources/"
+    },
+    {
+      "canonical_id": "technology.metal",
+      "name": "Metal",
+      "url": "https://developer.apple.com/metal/"
+    },
+    {
+      "canonical_id": "technology.metal-developer-tools",
+      "name": "Metal Developer Tools",
+      "url": "https://developer.apple.com/metal/tools/"
+    },
+    {
+      "canonical_id": "technology.musickit",
+      "name": "MusicKit",
+      "url": "https://developer.apple.com/musickit/"
+    },
+    {
+      "canonical_id": "technology.notifications",
+      "name": "Notifications",
+      "url": "https://developer.apple.com/notifications/"
+    },
+    {
+      "canonical_id": "technology.pass-designer",
+      "name": "Pass Designer",
+      "url": "https://developer.apple.com/pass-designer/"
+    },
+    {
+      "canonical_id": "technology.passkeys",
+      "name": "Passkeys",
+      "url": "https://developer.apple.com/passkeys/"
+    },
+    {
+      "canonical_id": "technology.push-notifications-console",
+      "name": "Push Notifications Console",
+      "url": "https://developer.apple.com/notifications/push-notifications-console/"
+    },
+    {
+      "canonical_id": "technology.reality-composer-pro",
+      "name": "Reality Composer Pro",
+      "url": "https://developer.apple.com/augmented-reality/reality-composer/"
+    },
+    {
+      "canonical_id": "technology.realitykit",
+      "name": "RealityKit",
+      "url": "https://developer.apple.com/documentation/realitykit/"
+    },
+    {
+      "canonical_id": "technology.safari-and-web",
+      "name": "Safari and web",
+      "url": "https://developer.apple.com/safari/"
+    },
+    {
+      "canonical_id": "technology.security",
+      "name": "Security",
+      "url": "https://developer.apple.com/security/"
+    },
+    {
+      "canonical_id": "technology.sf-symbols",
+      "name": "SF Symbols",
+      "url": "https://developer.apple.com/sf-symbols/"
+    },
+    {
+      "canonical_id": "technology.shareplay",
+      "name": "SharePlay",
+      "url": "https://developer.apple.com/shareplay/"
+    },
+    {
+      "canonical_id": "technology.shazamkit",
+      "name": "ShazamKit",
+      "url": "https://developer.apple.com/shazamkit/"
+    },
+    {
+      "canonical_id": "technology.sign-in-with-apple",
+      "name": "Sign in with Apple",
+      "url": "https://developer.apple.com/sign-in-with-apple/"
+    },
+    {
+      "canonical_id": "technology.siri",
+      "name": "Siri",
+      "url": "https://developer.apple.com/siri/"
+    },
+    {
+      "canonical_id": "technology.storekit",
+      "name": "StoreKit",
+      "url": "https://developer.apple.com/storekit/"
+    },
+    {
+      "canonical_id": "technology.swift",
+      "name": "Swift",
+      "url": "https://developer.apple.com/swift/"
+    },
+    {
+      "canonical_id": "technology.swift-playground",
+      "name": "Swift Playground",
+      "url": "https://developer.apple.com/swift-playgrounds/"
+    },
+    {
+      "canonical_id": "technology.swift-testing",
+      "name": "Swift Testing",
+      "url": "https://developer.apple.com/xcode/swift-testing/"
+    },
+    {
+      "canonical_id": "technology.swiftdata",
+      "name": "SwiftData",
+      "url": "https://developer.apple.com/documentation/SwiftData"
+    },
+    {
+      "canonical_id": "technology.swiftui",
+      "name": "SwiftUI",
+      "url": "https://developer.apple.com/swiftui/"
+    },
+    {
+      "canonical_id": "technology.tap-to-pay-on-iphone",
+      "name": "Tap to Pay on iPhone",
+      "url": "https://developer.apple.com/tap-to-pay/"
+    },
+    {
+      "canonical_id": "technology.testflight",
+      "name": "TestFlight",
+      "url": "https://developer.apple.com/testflight/"
+    },
+    {
+      "canonical_id": "technology.transporter",
+      "name": "Transporter",
+      "url": "https://apps.apple.com/us/app/transporter/id1450874784?mt=12"
+    },
+    {
+      "canonical_id": "technology.uikit",
+      "name": "UIKit",
+      "url": "https://developer.apple.com/documentation/uikit/"
+    },
+    {
+      "canonical_id": "technology.weatherkit",
+      "name": "WeatherKit",
+      "url": "https://developer.apple.com/weatherkit/"
+    },
+    {
+      "canonical_id": "technology.widgets",
+      "name": "Widgets",
+      "url": "https://developer.apple.com/documentation/widgetkit"
+    },
+    {
+      "canonical_id": "technology.xcode",
+      "name": "Xcode",
+      "url": "https://developer.apple.com/xcode/"
+    },
+    {
+      "canonical_id": "technology.xcode-cloud",
+      "name": "Xcode Cloud",
+      "url": "https://developer.apple.com/xcode-cloud/"
+    }
+  ]
+}
