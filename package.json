@@ -8,12 +8,12 @@
   "author": "Ugur Kontel",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ugurkontel/agent-plugins.git"
+    "url": "git+https://github.com/dev-ugurkontel/agent-plugins.git"
   },
   "bugs": {
-    "url": "https://github.com/ugurkontel/agent-plugins/issues"
+    "url": "https://github.com/dev-ugurkontel/agent-plugins/issues"
   },
-  "homepage": "https://github.com/ugurkontel/agent-plugins#readme",
+  "homepage": "https://github.com/dev-ugurkontel/agent-plugins#readme",
   "workspaces": [
     "plugins/*"
   ],
