@@ -1,13 +1,23 @@
-import rawRegistryData from "../data/capabilities.json" with { type: "json" };
-import { capabilityRegistrySchema } from "./schema.js";
-import type { CapabilityRecord, DocumentationReference } from "./types.js";
+import rawRegistryData from "@data/capabilities.json" with { type: "json" };
+import rawTaxonomyData from "@data/taxonomy.json" with { type: "json" };
+import { capabilityRegistrySchema } from "@/schema.js";
+import type { CapabilityRecord, DocumentationReference, RegistryCoverage, TechnologyCatalogEntry } from "@/types.js";
 
-type RawRecord = Partial<CapabilityRecord> & Pick<CapabilityRecord, "id" | "name" | "category" | "entity_type" | "summary" | "keywords" | "official_documentation">;
+type RawRecord = Partial<CapabilityRecord> &
+  Pick<
+    CapabilityRecord,
+    "id" | "name" | "category" | "entity_type" | "summary" | "keywords" | "official_documentation"
+  >;
 
 interface RawRegistry {
   schema_version: "1.0";
   generated_at: string;
   records: RawRecord[];
+}
+
+interface RawTaxonomy {
+  official_index_sources: string[];
+  categories: Array<{ id: string; name: string; examples: string[] }>;
 }
 
 const emptyArrays = {
@@ -50,20 +60,20 @@ function normalizeRecord(raw: RawRecord): CapabilityRecord {
     ...emptyArrays,
     minimum_os_version: {},
     sdk_availability: "Verify availability against the current stable SDK before implementation.",
-    stable_or_beta: "stable",
+    stable_or_beta: "unknown",
     deprecated_status: null,
     on_device_level: "unknown",
     network_requirement: "Depends on the selected API and feature configuration.",
     cloud_dependency: null,
     ...raw,
     last_verified_at: lastVerifiedAt
-  } as CapabilityRecord;
+  } satisfies CapabilityRecord;
 }
 
 let cachedRecords: CapabilityRecord[] | undefined;
 
 export async function loadRegistry(): Promise<CapabilityRecord[]> {
-  if (cachedRecords) return cachedRecords;
+  if (cachedRecords) return structuredClone(cachedRecords);
 
   const raw = rawRegistryData as unknown as RawRegistry;
   const normalized = {
@@ -72,7 +82,7 @@ export async function loadRegistry(): Promise<CapabilityRecord[]> {
     records: raw.records.map(normalizeRecord)
   };
   cachedRecords = capabilityRegistrySchema.parse(normalized).records;
-  return cachedRecords;
+  return structuredClone(cachedRecords);
 }
 
 export function resetRegistryCache(): void {
@@ -80,21 +90,30 @@ export function resetRegistryCache(): void {
 }
 
 function searchableText(record: CapabilityRecord): string {
-  return [record.id, record.name, ...record.aliases, ...record.keywords, record.summary].join(" ").toLocaleLowerCase("en-US");
+  return [record.id, record.name, ...record.aliases, ...record.keywords, record.summary]
+    .join(" ")
+    .toLocaleLowerCase("en-US");
 }
 
 export async function findRecord(idOrName: string): Promise<CapabilityRecord | undefined> {
   const query = idOrName.trim().toLocaleLowerCase("en-US");
+  if (!query) return undefined;
   const records = await loadRegistry();
-  return records.find((record) =>
-    record.id === query ||
-    record.name.toLocaleLowerCase("en-US") === query ||
-    record.aliases.some((alias) => alias.toLocaleLowerCase("en-US") === query)
-  ) ?? records.find((record) => searchableText(record).includes(query));
+  return (
+    records.find(
+      (record) =>
+        record.id === query ||
+        record.name.toLocaleLowerCase("en-US") === query ||
+        record.aliases.some((alias) => alias.toLocaleLowerCase("en-US") === query)
+    ) ?? records.find((record) => searchableText(record).includes(query))
+  );
 }
 
 export async function searchRecords(query: string, limit = 10): Promise<CapabilityRecord[]> {
-  const tokens = query.toLocaleLowerCase("en-US").split(/[^\p{L}\p{N}]+/u).filter((token) => token.length > 1);
+  const tokens = query
+    .toLocaleLowerCase("en-US")
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter((token) => token.length > 2);
   const records = await loadRegistry();
   return records
     .map((record) => {
@@ -116,4 +135,91 @@ export function deduplicateDocumentation(records: CapabilityRecord[]): Documenta
     }
   }
   return [...byUrl.values()];
+}
+
+function normalizedCatalogKey(value: string): string {
+  return value
+    .normalize("NFKD")
+    .toLocaleLowerCase("en-US")
+    .replace(/[^a-z0-9]+/g, "");
+}
+
+function catalogId(name: string): string {
+  return name
+    .normalize("NFKD")
+    .toLocaleLowerCase("en-US")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+export async function loadTechnologyCatalog(): Promise<TechnologyCatalogEntry[]> {
+  const taxonomy = rawTaxonomyData as RawTaxonomy;
+  const profiles = await loadRegistry();
+  const byName = new Map<string, TechnologyCatalogEntry>();
+
+  for (const category of taxonomy.categories) {
+    for (const name of category.examples) {
+      const key = normalizedCatalogKey(name);
+      const matchingProfiles = profiles.filter((profile) =>
+        [profile.id, profile.name, ...profile.aliases].some((candidate) => normalizedCatalogKey(candidate) === key)
+      );
+      const existing = byName.get(key);
+      if (existing) {
+        existing.category_ids.push(category.id);
+        existing.category_names.push(category.name);
+        existing.profile_ids = [
+          ...new Set([...existing.profile_ids, ...matchingProfiles.map((profile) => profile.id)])
+        ];
+        if (existing.profile_ids.length > 0) existing.coverage_status = "profiled";
+        continue;
+      }
+      byName.set(key, {
+        id: `technology.${catalogId(name)}`,
+        name,
+        category_ids: [category.id],
+        category_names: [category.name],
+        coverage_status: matchingProfiles.length > 0 ? "profiled" : "catalogued",
+        profile_ids: matchingProfiles.map((profile) => profile.id),
+        source_urls: [...taxonomy.official_index_sources]
+      });
+    }
+  }
+
+  return [...byName.values()].sort((left, right) => left.name.localeCompare(right.name, "en-US"));
+}
+
+export async function getRegistryCoverage(): Promise<RegistryCoverage> {
+  const taxonomy = rawTaxonomyData as RawTaxonomy;
+  const [catalog, profiles] = await Promise.all([loadTechnologyCatalog(), loadRegistry()]);
+  const profiled = catalog.filter((entry) => entry.coverage_status === "profiled").length;
+  return {
+    category_count: taxonomy.categories.length,
+    catalogued_technology_count: catalog.length,
+    profiled_technology_count: profiled,
+    catalog_only_technology_count: catalog.length - profiled,
+    profile_coverage_percent: Number(((profiled / catalog.length) * 100).toFixed(1)),
+    verified_profile_count: profiles.length,
+    official_index_sources: [...taxonomy.official_index_sources]
+  };
+}
+
+export async function searchTechnologyCatalog(query: string, limit = 20): Promise<TechnologyCatalogEntry[]> {
+  const tokens = query
+    .trim()
+    .toLocaleLowerCase("en-US")
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter((token) => token.length > 1);
+  if (tokens.length === 0) return [];
+  const catalog = await loadTechnologyCatalog();
+  return catalog
+    .map((entry) => {
+      const haystack = [entry.id, entry.name, ...entry.category_ids, ...entry.category_names]
+        .join(" ")
+        .toLocaleLowerCase("en-US");
+      return { entry, score: tokens.filter((token) => haystack.includes(token)).length };
+    })
+    .filter(({ score }) => score > 0)
+    .sort((left, right) => right.score - left.score || left.entry.name.localeCompare(right.entry.name, "en-US"))
+    .slice(0, limit)
+    .map(({ entry }) => entry);
 }

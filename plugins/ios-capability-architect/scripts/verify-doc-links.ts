@@ -1,6 +1,6 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
-import { deduplicateDocumentation, loadRegistry } from "../src/registry.js";
+import { deduplicateDocumentation, loadRegistry } from "@/registry.js";
 
 interface PreviousResult {
   url: string;
@@ -28,7 +28,14 @@ try {
 async function verify(url: string): Promise<LinkResult> {
   const parsed = new URL(url);
   if (parsed.protocol !== "https:" || parsed.hostname !== "developer.apple.com") {
-    return { url, ok: false, status: 0, final_url: url, checked_at: new Date().toISOString(), error: "Source host is not allowlisted" };
+    return {
+      url,
+      ok: false,
+      status: 0,
+      final_url: url,
+      checked_at: new Date().toISOString(),
+      error: "Source host is not allowlisted"
+    };
   }
 
   const cached = previous.get(url);
@@ -46,14 +53,17 @@ async function verify(url: string): Promise<LinkResult> {
       redirect: "follow",
       signal: AbortSignal.timeout(15_000)
     });
-    const ok = response.status === 304 || response.ok;
+    const finalUrl = new URL(response.url || url);
+    const finalHostAllowed = finalUrl.protocol === "https:" && finalUrl.hostname === "developer.apple.com";
+    const ok = finalHostAllowed && (response.status === 304 || response.ok);
     await response.body?.cancel();
     return {
       url,
       ok,
       status: response.status,
-      final_url: response.url || url,
+      final_url: finalUrl.toString(),
       checked_at: new Date().toISOString(),
+      ...(!finalHostAllowed ? { error: "Redirect target host is not allowlisted" } : {}),
       ...(response.headers.get("etag") ? { etag: response.headers.get("etag")! } : {}),
       ...(response.headers.get("last-modified") ? { last_modified: response.headers.get("last-modified")! } : {})
     };
@@ -72,13 +82,14 @@ async function verify(url: string): Promise<LinkResult> {
 const urls = deduplicateDocumentation(await loadRegistry()).map((reference) => reference.url);
 const results: LinkResult[] = [];
 for (let index = 0; index < urls.length; index += 6) {
-  results.push(...await Promise.all(urls.slice(index, index + 6).map(verify)));
+  results.push(...(await Promise.all(urls.slice(index, index + 6).map(verify))));
 }
 
 const report = {
   schema_version: "1.0",
   generated_at: new Date().toISOString(),
-  strategy: "Conditional GET with ETag/Last-Modified cache; developer.apple.com allowlist; 15-second timeout; no registry mutation.",
+  strategy:
+    "Conditional GET with ETag/Last-Modified cache; developer.apple.com allowlist; 15-second timeout; no registry mutation.",
   results
 };
 await writeFile(fileURLToPath(reportUrl), `${JSON.stringify(report, null, 2)}\n`, "utf8");

@@ -10,7 +10,7 @@ describe("technology taxonomy", () => {
     };
     expect(taxonomy.categories.length).toBeGreaterThanOrEqual(30);
     expect(new Set(taxonomy.categories.map((category) => category.id)).size).toBe(taxonomy.categories.length);
-    expect(taxonomy.description).toContain("not verified capability records");
+    expect(taxonomy.description).toContain("cannot produce recommendations");
     expect(taxonomy.categories.every((category) => category.examples.length > 0)).toBe(true);
   });
 });

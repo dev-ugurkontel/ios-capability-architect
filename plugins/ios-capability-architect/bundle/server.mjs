@@ -35699,9 +35699,15 @@ var stabilityLevels = ["stable", "beta", "deprecated", "unknown"];
 // src/schema.ts
 var documentationReferenceSchema = external_exports.object({
   title: external_exports.string().min(1),
-  url: external_exports.url().refine((url2) => url2.startsWith("https://developer.apple.com/") || url2.startsWith("https://developers.openai.com/"), {
-    message: "Only official Apple Developer or OpenAI Developer documentation URLs are allowed"
-  }),
+  url: external_exports.url().refine(
+    (url2) => {
+      const parsed = new URL(url2);
+      return parsed.protocol === "https:" && (parsed.hostname === "developer.apple.com" || parsed.hostname === "developers.openai.com");
+    },
+    {
+      message: "Only official Apple Developer or OpenAI Developer documentation URLs are allowed"
+    }
+  ),
   source_type: external_exports.enum([
     "apple_developer_documentation",
     "release_notes",
@@ -35794,25 +35800,27 @@ var analyzeIdeaInputSchema = external_exports.object({
   privacy_level: external_exports.enum(["standard", "sensitive", "regulated"]).default("standard")
 });
 var resolveCapabilitiesInputSchema = external_exports.object({
-  requirements: external_exports.array(external_exports.object({
-    id: external_exports.string(),
-    kind: external_exports.enum([
-      "product_goal",
-      "data",
-      "hardware",
-      "background",
-      "notification",
-      "on_device",
-      "networking",
-      "ai_ml",
-      "privacy",
-      "monetization",
-      "platform"
-    ]),
-    description: external_exports.string(),
-    keywords: external_exports.array(external_exports.string()).default([]),
-    confidence: external_exports.enum(["explicit", "inferred"]).default("explicit")
-  })).min(1),
+  requirements: external_exports.array(
+    external_exports.object({
+      id: external_exports.string(),
+      kind: external_exports.enum([
+        "product_goal",
+        "data",
+        "hardware",
+        "background",
+        "notification",
+        "on_device",
+        "networking",
+        "ai_ml",
+        "privacy",
+        "monetization",
+        "platform"
+      ]),
+      description: external_exports.string(),
+      keywords: external_exports.array(external_exports.string()).default([]),
+      confidence: external_exports.enum(["explicit", "inferred"]).default("explicit")
+    })
+  ).min(1),
   include_beta: external_exports.boolean().default(false),
   maximum_results_per_requirement: external_exports.number().int().min(1).max(10).default(4)
 });
@@ -35821,19 +35829,21 @@ var getProfileInputSchema = external_exports.object({
 });
 var compareOptionsInputSchema = external_exports.object({
   capability_ids: external_exports.array(external_exports.string()).min(2).max(6),
-  criteria: external_exports.array(external_exports.enum([
-    "complexity",
-    "minimum_os",
-    "on_device",
-    "privacy",
-    "performance",
-    "energy",
-    "hardware",
-    "entitlement",
-    "app_review",
-    "maintenance",
-    "testability"
-  ])).default(["complexity", "minimum_os", "on_device", "privacy", "app_review", "testability"])
+  criteria: external_exports.array(
+    external_exports.enum([
+      "complexity",
+      "minimum_os",
+      "on_device",
+      "privacy",
+      "performance",
+      "energy",
+      "hardware",
+      "entitlement",
+      "app_review",
+      "maintenance",
+      "testability"
+    ])
+  ).default(["complexity", "minimum_os", "on_device", "privacy", "app_review", "testability"])
 });
 var checkAvailabilityInputSchema = external_exports.object({
   capability_ids: external_exports.array(external_exports.string()).min(1).max(30),
@@ -35861,6 +35871,12 @@ var officialDocsSearchInputSchema = external_exports.object({
   capability_ids: external_exports.array(external_exports.string()).max(20).default([]),
   maximum_results: external_exports.number().int().min(1).max(20).default(10)
 });
+var technologyCatalogSearchInputSchema = external_exports.object({
+  query: external_exports.string().trim().min(2).max(200),
+  coverage_status: external_exports.enum(["all", "catalogued", "profiled"]).default("all"),
+  maximum_results: external_exports.number().int().min(1).max(50).default(20)
+});
+var registryCoverageInputSchema = external_exports.object({});
 var refreshRegistryInputSchema = external_exports.object({
   dry_run: external_exports.boolean().default(true),
   source_urls: external_exports.array(external_exports.url()).max(50).default([])
@@ -35878,23 +35894,57 @@ var capabilities_default = {
       category: "health_fitness",
       entity_type: "framework",
       summary: "Apple's permission-gated repository and APIs for health and fitness data on supported devices.",
-      supported_use_cases: ["Read user-authorized health samples", "Write user-authorized health samples", "Observe selected sample changes"],
-      unsupported_use_cases: ["Inferring whether read access was denied", "Using HealthKit data for advertising", "Guaranteed execution while a device is locked"],
+      supported_use_cases: [
+        "Read user-authorized health samples",
+        "Write user-authorized health samples",
+        "Observe selected sample changes"
+      ],
+      unsupported_use_cases: [
+        "Inferring whether read access was denied",
+        "Using HealthKit data for advertising",
+        "Guaranteed execution while a device is locked"
+      ],
       platforms: ["iOS", "iPadOS", "watchOS", "visionOS"],
       on_device_level: "primarily_on_device",
       user_permissions: ["Per-data-type HealthKit read authorization", "Per-data-type HealthKit write authorization"],
       info_plist_keys: ["NSHealthShareUsageDescription", "NSHealthUpdateUsageDescription"],
       xcode_capabilities: ["HealthKit"],
       entitlements: ["com.apple.developer.healthkit"],
-      privacy_manifest_requirements: ["Declare collected health data and applicable data use in App Store privacy disclosures; audit SDK privacy manifests separately"],
-      app_review_considerations: ["HealthKit use must be clearly health or fitness related", "A privacy policy is required", "HealthKit data cannot be used for advertising"],
-      security_considerations: ["Minimize requested sample types", "Protect exported health data", "The HealthKit store is encrypted when the device is locked"],
-      implementation_notes: ["Call HKHealthStore.isHealthDataAvailable() before other HealthKit APIs", "Treat missing samples as unknown rather than evidence of denied read permission"],
-      limitations: ["Background reads may fail while the device is locked", "Authorization can change outside the app"],
+      privacy_manifest_requirements: [
+        "Declare collected health data and applicable data use in App Store privacy disclosures; audit SDK privacy manifests separately"
+      ],
+      app_review_considerations: [
+        "HealthKit use must be clearly health or fitness related",
+        "A privacy policy is required",
+        "HealthKit data cannot be used for advertising"
+      ],
+      security_considerations: [
+        "Minimize requested sample types",
+        "Protect exported health data",
+        "The HealthKit store is encrypted when the device is locked"
+      ],
+      implementation_notes: [
+        "Call HKHealthStore.isHealthDataAvailable() before other HealthKit APIs",
+        "Treat missing samples as unknown rather than evidence of denied read permission"
+      ],
+      limitations: [
+        "Background reads may fail while the device is locked",
+        "Authorization can change outside the app"
+      ],
       keywords: ["health", "sleep", "workout", "heart", "fitness", "medical", "healthkit"],
       official_documentation: [
-        { title: "HealthKit", url: "https://developer.apple.com/documentation/healthkit/", source_type: "apple_developer_documentation", verified_at: "2026-08-30" },
-        { title: "Protecting user privacy", url: "https://developer.apple.com/documentation/healthkit/protecting-user-privacy", source_type: "apple_developer_documentation", verified_at: "2026-08-30" }
+        {
+          title: "HealthKit",
+          url: "https://developer.apple.com/documentation/healthkit/",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Protecting user privacy",
+          url: "https://developer.apple.com/documentation/healthkit/protecting-user-privacy",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
       ]
     },
     {
@@ -35913,11 +35963,24 @@ var capabilities_default = {
       entitlements: ["com.apple.developer.healthkit.background-delivery"],
       xcode_capabilities: ["HealthKit > Background Delivery"],
       implementation_notes: ["Pair HKObserverQuery with enableBackgroundDelivery(for:frequency:withCompletion:)"],
-      limitations: ["The system controls wake timing", "Encrypted data may be unavailable while the device is locked"],
+      limitations: [
+        "The system controls wake timing",
+        "Encrypted data may be unavailable while the device is locked"
+      ],
       keywords: ["health", "background", "observer", "sleep", "delivery"],
       official_documentation: [
-        { title: "Configuring HealthKit access", url: "https://developer.apple.com/documentation/xcode/configuring-healthkit-access", source_type: "apple_developer_documentation", verified_at: "2026-08-30" },
-        { title: "HealthKit background delivery entitlement", url: "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.healthkit.background-delivery", source_type: "apple_developer_documentation", verified_at: "2026-08-30" }
+        {
+          title: "Configuring HealthKit access",
+          url: "https://developer.apple.com/documentation/xcode/configuring-healthkit-access",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "HealthKit background delivery entitlement",
+          url: "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.healthkit.background-delivery",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
       ]
     },
     {
@@ -35927,18 +35990,36 @@ var capabilities_default = {
       category: "ai_ml",
       entity_type: "framework",
       summary: "Runs and can personalize supported machine-learning models on device using CPU, GPU, and Neural Engine resources.",
-      supported_use_cases: ["Offline inference", "On-device model personalization", "Image, text, audio, and tabular predictions"],
-      unsupported_use_cases: ["Arbitrary cloud-hosted model execution without an app-managed network layer", "Assuming every model fits device memory or energy budgets"],
+      supported_use_cases: [
+        "Offline inference",
+        "On-device model personalization",
+        "Image, text, audio, and tabular predictions"
+      ],
+      unsupported_use_cases: [
+        "Arbitrary cloud-hosted model execution without an app-managed network layer",
+        "Assuming every model fits device memory or energy budgets"
+      ],
       platforms: ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
       on_device_level: "fully_on_device",
       network_requirement: "No network is required after the model is present on device.",
       hardware_requirements: ["Performance varies by model and available CPU, GPU, and Neural Engine"],
-      security_considerations: ["Keep sensitive inputs on device when network upload is unnecessary", "Validate downloaded model integrity if models are updated remotely"],
-      implementation_notes: ["Benchmark representative devices", "Provide a fallback for unsupported or resource-constrained models"],
+      security_considerations: [
+        "Keep sensitive inputs on device when network upload is unnecessary",
+        "Validate downloaded model integrity if models are updated remotely"
+      ],
+      implementation_notes: [
+        "Benchmark representative devices",
+        "Provide a fallback for unsupported or resource-constrained models"
+      ],
       limitations: ["Model size, memory, latency, thermal state, and power use constrain feasibility"],
       keywords: ["ai", "ml", "offline", "model", "inference", "vision", "coreml"],
       official_documentation: [
-        { title: "Core ML", url: "https://developer.apple.com/documentation/coreml", source_type: "apple_developer_documentation", verified_at: "2026-08-30" }
+        {
+          title: "Core ML",
+          url: "https://developer.apple.com/documentation/coreml",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
       ]
     },
     {
@@ -35949,7 +36030,10 @@ var capabilities_default = {
       entity_type: "framework",
       summary: "A Swift framework for guided generation and tool use with the on-device language model that powers Apple Intelligence.",
       supported_use_cases: ["On-device text generation", "Guided structured generation", "Tool calling"],
-      unsupported_use_cases: ["Assuming availability on every iPhone", "Using without a fallback when Apple Intelligence is unavailable"],
+      unsupported_use_cases: [
+        "Assuming availability on every iPhone",
+        "Using without a fallback when Apple Intelligence is unavailable"
+      ],
       platforms: ["iOS", "iPadOS", "macOS", "visionOS"],
       minimum_os_version: { iOS: "26.0", iPadOS: "26.0", macOS: "26.0", visionOS: "26.0" },
       sdk_availability: "Stable APIs in the iOS 26 SDK; iOS 27 additions are tracked separately as beta.",
@@ -35959,12 +36043,28 @@ var capabilities_default = {
       hardware_requirements: ["Apple Intelligence-capable hardware", "Apple Intelligence enabled and model ready"],
       region_restrictions: ["Availability depends on Apple Intelligence regional support"],
       language_restrictions: ["Availability depends on Apple Intelligence language support"],
-      implementation_notes: ["Check SystemLanguageModel.default.availability before use", "Provide deterministic fallback behavior"],
-      limitations: ["The system model and behavior can change with OS updates", "Context, latency, and safety guardrails constrain output"],
+      implementation_notes: [
+        "Check SystemLanguageModel.default.availability before use",
+        "Provide deterministic fallback behavior"
+      ],
+      limitations: [
+        "The system model and behavior can change with OS updates",
+        "Context, latency, and safety guardrails constrain output"
+      ],
       keywords: ["ai", "llm", "offline", "apple intelligence", "generation", "foundation models"],
       official_documentation: [
-        { title: "Foundation Models", url: "https://developer.apple.com/documentation/foundationmodels", source_type: "apple_developer_documentation", verified_at: "2026-08-30" },
-        { title: "Generating content and performing tasks with Foundation Models", url: "https://developer.apple.com/documentation/foundationmodels/generating-content-and-performing-tasks-with-foundation-models", source_type: "apple_developer_documentation", verified_at: "2026-08-30" }
+        {
+          title: "Foundation Models",
+          url: "https://developer.apple.com/documentation/foundationmodels",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Generating content and performing tasks with Foundation Models",
+          url: "https://developer.apple.com/documentation/foundationmodels/generating-content-and-performing-tasks-with-foundation-models",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
       ]
     },
     {
@@ -35977,20 +36077,42 @@ var capabilities_default = {
       supported_use_cases: ["Evaluate iOS 27 multimodal and provider-based designs in beta builds"],
       unsupported_use_cases: ["Shipping as a stable production dependency before the SDK exits beta"],
       platforms: ["iOS", "iPadOS", "macOS", "visionOS"],
-      minimum_os_version: { iOS: "27.0 beta", iPadOS: "27.0 beta", macOS: "27.0 beta", visionOS: "27.0 beta" },
+      minimum_os_version: {
+        iOS: "27.0 beta",
+        iPadOS: "27.0 beta",
+        macOS: "27.0 beta",
+        visionOS: "27.0 beta"
+      },
       sdk_availability: "Xcode 27 beta SDK",
       stable_or_beta: "beta",
       on_device_level: "hybrid",
       network_requirement: "Depends on the selected LanguageModel provider; Apple on-device models can run locally while cloud providers require network access.",
-      implementation_notes: ["Keep beta-only code behind availability checks and isolate it from the stable architecture"],
+      implementation_notes: [
+        "Keep beta-only code behind availability checks and isolate it from the stable architecture"
+      ],
       limitations: ["Beta API and behavior may change", "Provider-specific privacy and cost terms apply"],
       keywords: ["ios 27", "beta", "multimodal", "dynamic profiles", "language model provider"],
       official_documentation: [
-        { title: "Foundation Models updates", url: "https://developer.apple.com/documentation/updates/foundationmodels", source_type: "apple_developer_documentation", verified_at: "2026-08-30" },
-        { title: "WWDC26 iOS guide", url: "https://developer.apple.com/wwdc26/guides/ios/", source_type: "wwdc", verified_at: "2026-08-30" }
+        {
+          title: "Foundation Models updates",
+          url: "https://developer.apple.com/documentation/updates/foundationmodels",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "WWDC26 iOS guide",
+          url: "https://developer.apple.com/wwdc26/guides/ios/",
+          source_type: "wwdc",
+          verified_at: "2026-08-30"
+        }
       ],
       release_notes: [
-        { title: "iOS and iPadOS 27 beta release notes", url: "https://developer.apple.com/documentation/ios-ipados-release-notes/ios-ipados-27-release-notes", source_type: "release_notes", verified_at: "2026-08-30" }
+        {
+          title: "iOS and iPadOS 27 beta release notes",
+          url: "https://developer.apple.com/documentation/ios-ipados-release-notes/ios-ipados-27-release-notes",
+          source_type: "release_notes",
+          verified_at: "2026-08-30"
+        }
       ]
     },
     {
@@ -36001,20 +36123,48 @@ var capabilities_default = {
       entity_type: "framework",
       summary: "Provides permission-controlled location, heading, monitoring, and ranging services.",
       supported_use_cases: ["Foreground location", "Region monitoring", "User-justified background location"],
-      unsupported_use_cases: ["Invisible tracking without disclosure", "Guaranteed continuous updates", "Background location on visionOS"],
+      unsupported_use_cases: [
+        "Invisible tracking without disclosure",
+        "Guaranteed continuous updates",
+        "Background location on visionOS"
+      ],
       platforms: ["iOS", "iPadOS", "macOS", "watchOS", "visionOS"],
       on_device_level: "primarily_on_device",
-      user_permissions: ["When In Use location authorization", "Always location authorization when strictly required", "Precise location when needed"],
+      user_permissions: [
+        "When In Use location authorization",
+        "Always location authorization when strictly required",
+        "Precise location when needed"
+      ],
       info_plist_keys: ["NSLocationWhenInUseUsageDescription", "NSLocationAlwaysAndWhenInUseUsageDescription"],
       background_modes: ["UIBackgroundModes: location"],
-      app_review_considerations: ["Background and Always location require a clear, user-visible product need", "Request the least intrusive authorization level"],
+      app_review_considerations: [
+        "Background and Always location require a clear, user-visible product need",
+        "Request the least intrusive authorization level"
+      ],
       security_considerations: ["Location is sensitive personal data", "Minimize retention and precision"],
-      implementation_notes: ["Prefer When In Use authorization", "Set allowsBackgroundLocationUpdates only while the user-enabled feature is active"],
-      limitations: ["The OS can suspend or terminate the app", "Energy use can be substantial", "Delivery and accuracy vary"],
+      implementation_notes: [
+        "Prefer When In Use authorization",
+        "Set allowsBackgroundLocationUpdates only while the user-enabled feature is active"
+      ],
+      limitations: [
+        "The OS can suspend or terminate the app",
+        "Energy use can be substantial",
+        "Delivery and accuracy vary"
+      ],
       keywords: ["location", "gps", "geofence", "tracking", "background", "maps"],
       official_documentation: [
-        { title: "Core Location", url: "https://developer.apple.com/documentation/corelocation", source_type: "apple_developer_documentation", verified_at: "2026-08-30" },
-        { title: "Handling location updates in the background", url: "https://developer.apple.com/documentation/corelocation/handling-location-updates-in-the-background", source_type: "apple_developer_documentation", verified_at: "2026-08-30" }
+        {
+          title: "Core Location",
+          url: "https://developer.apple.com/documentation/corelocation",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Handling location updates in the background",
+          url: "https://developer.apple.com/documentation/corelocation/handling-location-updates-in-the-background",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
       ]
     },
     {
@@ -36025,19 +36175,35 @@ var capabilities_default = {
       entity_type: "framework",
       summary: "Schedules local notifications and handles user-authorized notification presentation and actions.",
       supported_use_cases: ["Local reminders", "Remote notification presentation", "Notification actions"],
-      unsupported_use_cases: ["Guaranteed delivery at an exact time", "Silent background execution without system policy"],
+      unsupported_use_cases: [
+        "Guaranteed delivery at an exact time",
+        "Silent background execution without system policy"
+      ],
       platforms: ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
       on_device_level: "hybrid",
       network_requirement: "Local notifications do not require network; remote notifications require APNs and a provider.",
       user_permissions: ["Notification authorization for alerts, sounds, and badges as requested"],
       xcode_capabilities: ["Push Notifications for remote notifications"],
       entitlements: ["aps-environment for APNs"],
-      app_review_considerations: ["Notification prompts must be contextual and purpose strings must match actual use"],
-      implementation_notes: ["Handle denied authorization and in-app alternatives", "APNs is not a general-purpose data transport"],
-      limitations: ["The system controls presentation and delivery", "Users can change notification settings at any time"],
+      app_review_considerations: [
+        "Notification prompts must be contextual and purpose strings must match actual use"
+      ],
+      implementation_notes: [
+        "Handle denied authorization and in-app alternatives",
+        "APNs is not a general-purpose data transport"
+      ],
+      limitations: [
+        "The system controls presentation and delivery",
+        "Users can change notification settings at any time"
+      ],
       keywords: ["notification", "reminder", "push", "apns", "alert"],
       official_documentation: [
-        { title: "UserNotifications", url: "https://developer.apple.com/documentation/usernotifications", source_type: "apple_developer_documentation", verified_at: "2026-08-30" }
+        {
+          title: "UserNotifications",
+          url: "https://developer.apple.com/documentation/usernotifications",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
       ]
     },
     {
@@ -36048,16 +36214,28 @@ var capabilities_default = {
       entity_type: "framework",
       summary: "Asks the system to schedule bounded background refresh or processing work at an opportune time.",
       supported_use_cases: ["Deferred refresh", "Maintenance and processing work"],
-      unsupported_use_cases: ["Continuous execution", "Exact schedules", "Replacing a server for always-on processing"],
+      unsupported_use_cases: [
+        "Continuous execution",
+        "Exact schedules",
+        "Replacing a server for always-on processing"
+      ],
       platforms: ["iOS", "iPadOS", "tvOS", "visionOS"],
       on_device_level: "fully_on_device",
       info_plist_keys: ["BGTaskSchedulerPermittedIdentifiers"],
       background_modes: ["UIBackgroundModes: fetch", "UIBackgroundModes: processing"],
-      implementation_notes: ["Register task identifiers before launch completion", "Set expiration handlers and make work resumable"],
+      implementation_notes: [
+        "Register task identifiers before launch completion",
+        "Set expiration handlers and make work resumable"
+      ],
       limitations: ["The system decides whether and when to launch tasks", "Execution time is bounded"],
       keywords: ["background", "refresh", "processing", "schedule", "deferred"],
       official_documentation: [
-        { title: "BackgroundTasks", url: "https://developer.apple.com/documentation/backgroundtasks", source_type: "apple_developer_documentation", verified_at: "2026-08-30" }
+        {
+          title: "BackgroundTasks",
+          url: "https://developer.apple.com/documentation/backgroundtasks",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
       ]
     },
     {
@@ -36073,12 +36251,29 @@ var capabilities_default = {
       related_extensions: ["Widget Extension"],
       platforms: ["iOS", "iPadOS", "macOS", "watchOS", "visionOS"],
       on_device_level: "primarily_on_device",
-      implementation_notes: ["Use a widget extension target", "Use App Intents for buttons and toggles", "Use an App Group when app and extension need shared storage"],
-      limitations: ["Timeline reload frequency is system controlled", "The extension has separate process and resource constraints"],
+      implementation_notes: [
+        "Use a widget extension target",
+        "Use App Intents for buttons and toggles",
+        "Use an App Group when app and extension need shared storage"
+      ],
+      limitations: [
+        "Timeline reload frequency is system controlled",
+        "The extension has separate process and resource constraints"
+      ],
       keywords: ["widget", "extension", "lock screen", "control", "timeline"],
       official_documentation: [
-        { title: "WidgetKit", url: "https://developer.apple.com/documentation/widgetkit", source_type: "apple_developer_documentation", verified_at: "2026-08-30" },
-        { title: "Adding interactivity to widgets and Live Activities", url: "https://developer.apple.com/documentation/widgetkit/adding-interactivity-to-widgets-and-live-activities", source_type: "apple_developer_documentation", verified_at: "2026-08-30" }
+        {
+          title: "WidgetKit",
+          url: "https://developer.apple.com/documentation/widgetkit",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Adding interactivity to widgets and Live Activities",
+          url: "https://developer.apple.com/documentation/widgetkit/adding-interactivity-to-widgets-and-live-activities",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
       ]
     },
     {
@@ -36089,18 +36284,33 @@ var capabilities_default = {
       entity_type: "framework",
       summary: "Starts, updates, and ends Live Activities while WidgetKit and SwiftUI render their UI.",
       supported_use_cases: ["Time-bound live event status", "Lock Screen and Dynamic Island updates"],
-      unsupported_use_cases: ["General background execution", "Indefinite static widgets", "Live Activities on visionOS"],
+      unsupported_use_cases: [
+        "General background execution",
+        "Indefinite static widgets",
+        "Live Activities on visionOS"
+      ],
       related_frameworks: ["WidgetKit", "SwiftUI", "AppIntents"],
       related_extensions: ["Widget Extension"],
       platforms: ["iOS", "iPadOS", "watchOS", "macOS"],
       on_device_level: "hybrid",
       network_requirement: "Local updates can originate from the app; remote updates require ActivityKit push notifications through APNs.",
       info_plist_keys: ["NSSupportsLiveActivities", "NSSupportsLiveActivitiesFrequentUpdates when justified"],
-      implementation_notes: ["Define ActivityAttributes shared by the app and widget extension", "Use ActivityKit pushes rather than widget timelines for remote updates"],
-      limitations: ["The system controls presentation, lifetime, and update budgets", "visionOS does not support Live Activities"],
+      implementation_notes: [
+        "Define ActivityAttributes shared by the app and widget extension",
+        "Use ActivityKit pushes rather than widget timelines for remote updates"
+      ],
+      limitations: [
+        "The system controls presentation, lifetime, and update budgets",
+        "visionOS does not support Live Activities"
+      ],
       keywords: ["live activity", "dynamic island", "lock screen", "activitykit", "widget"],
       official_documentation: [
-        { title: "ActivityKit", url: "https://developer.apple.com/documentation/activitykit", source_type: "apple_developer_documentation", verified_at: "2026-08-30" }
+        {
+          title: "ActivityKit",
+          url: "https://developer.apple.com/documentation/activitykit",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
       ]
     },
     {
@@ -36111,15 +36321,31 @@ var capabilities_default = {
       entity_type: "framework",
       summary: "Exposes app actions and entities to system experiences including Shortcuts, Siri, Spotlight, widgets, and Live Activities.",
       supported_use_cases: ["App Shortcuts", "Interactive widget actions", "System-discoverable app actions"],
-      unsupported_use_cases: ["Unbounded background work", "Bypassing user authorization required by the underlying action"],
+      unsupported_use_cases: [
+        "Unbounded background work",
+        "Bypassing user authorization required by the underlying action"
+      ],
       platforms: ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
       on_device_level: "primarily_on_device",
-      implementation_notes: ["Keep intents focused, parameterized, and safe to retry", "Add an intent to each target that must discover or execute it"],
+      implementation_notes: [
+        "Keep intents focused, parameterized, and safe to retry",
+        "Add an intent to each target that must discover or execute it"
+      ],
       limitations: ["Execution context varies by intent protocol and system surface"],
       keywords: ["siri", "shortcut", "intent", "widget interaction", "spotlight", "app actions"],
       official_documentation: [
-        { title: "App Intents", url: "https://developer.apple.com/documentation/appintents", source_type: "apple_developer_documentation", verified_at: "2026-08-30" },
-        { title: "Widgets, Live Activities, and Controls", url: "https://developer.apple.com/documentation/appintents/widgets-live-activities-and-controls", source_type: "apple_developer_documentation", verified_at: "2026-08-30" }
+        {
+          title: "App Intents",
+          url: "https://developer.apple.com/documentation/appintents",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Widgets, Live Activities, and Controls",
+          url: "https://developer.apple.com/documentation/appintents/widgets-live-activities-and-controls",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
       ]
     },
     {
@@ -36129,17 +36355,31 @@ var capabilities_default = {
       category: "data_sharing",
       entity_type: "system_capability",
       summary: "Provides a shared container and controlled data sharing between related apps and extensions from the same developer team.",
-      supported_use_cases: ["Share small state or files with a widget extension", "Share Keychain items among related targets when separately configured"],
-      unsupported_use_cases: ["Sharing data with unrelated developers", "Using UserDefaults.standard across processes"],
+      supported_use_cases: [
+        "Share small state or files with a widget extension",
+        "Share Keychain items among related targets when separately configured"
+      ],
+      unsupported_use_cases: [
+        "Sharing data with unrelated developers",
+        "Using UserDefaults.standard across processes"
+      ],
       platforms: ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
       on_device_level: "fully_on_device",
       xcode_capabilities: ["App Groups"],
       entitlements: ["com.apple.security.application-groups"],
       security_considerations: ["Treat every target in the group as having access to shared container data"],
-      implementation_notes: ["Use a group identifier owned by the developer team", "Coordinate concurrent file access"],
+      implementation_notes: [
+        "Use a group identifier owned by the developer team",
+        "Coordinate concurrent file access"
+      ],
       keywords: ["app group", "shared container", "widget data", "extension data"],
       official_documentation: [
-        { title: "Configuring App Groups", url: "https://developer.apple.com/documentation/xcode/configuring-app-groups", source_type: "apple_developer_documentation", verified_at: "2026-08-30" }
+        {
+          title: "Configuring App Groups",
+          url: "https://developer.apple.com/documentation/xcode/configuring-app-groups",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
       ]
     },
     {
@@ -36150,22 +36390,55 @@ var capabilities_default = {
       entity_type: "managed_entitlement",
       summary: "A managed distribution entitlement Apple must approve for apps and applicable Screen Time API extensions that use Family Controls.",
       supported_use_cases: ["Approved parental-control and individual authorization experiences"],
-      unsupported_use_cases: ["General surveillance", "Assuming development capability access guarantees App Store distribution approval"],
+      unsupported_use_cases: [
+        "General surveillance",
+        "Assuming development capability access guarantees App Store distribution approval"
+      ],
       related_frameworks: ["FamilyControls", "ManagedSettings", "DeviceActivity"],
-      related_extensions: ["Device Activity Monitor", "Device Activity Report", "Shield Action", "Shield Configuration"],
+      related_extensions: [
+        "Device Activity Monitor",
+        "Device Activity Report",
+        "Shield Action",
+        "Shield Configuration"
+      ],
       platforms: ["iOS", "iPadOS"],
       on_device_level: "primarily_on_device",
       xcode_capabilities: ["Family Controls"],
       entitlements: ["com.apple.developer.family-controls"],
       managed_entitlements: ["Family Controls distribution approval for the app and each applicable extension"],
       user_permissions: ["FamilyControls AuthorizationCenter authorization"],
-      app_review_considerations: ["Apple reviews entitlement requests", "Request the entitlement separately for applicable extensions"],
-      recommended_alternatives: ["Use ordinary app-level timers, focus features, or notification reminders when device-wide control is unnecessary"],
-      limitations: ["Distribution requires Apple approval", "Authorization and extension architecture are mandatory for supported scenarios"],
-      keywords: ["managed entitlement", "screen time", "parental controls", "family controls", "device activity", "shield"],
+      app_review_considerations: [
+        "Apple reviews entitlement requests",
+        "Request the entitlement separately for applicable extensions"
+      ],
+      recommended_alternatives: [
+        "Use ordinary app-level timers, focus features, or notification reminders when device-wide control is unnecessary"
+      ],
+      limitations: [
+        "Distribution requires Apple approval",
+        "Authorization and extension architecture are mandatory for supported scenarios"
+      ],
+      keywords: [
+        "managed entitlement",
+        "screen time",
+        "parental controls",
+        "family controls",
+        "device activity",
+        "shield"
+      ],
       official_documentation: [
-        { title: "Requesting the Family Controls entitlement", url: "https://developer.apple.com/documentation/familycontrols/requesting-the-family-controls-entitlement", source_type: "apple_developer_documentation", verified_at: "2026-08-30" },
-        { title: "Configuring Family Controls", url: "https://developer.apple.com/documentation/xcode/configuring-family-controls", source_type: "apple_developer_documentation", verified_at: "2026-08-30" }
+        {
+          title: "Requesting the Family Controls entitlement",
+          url: "https://developer.apple.com/documentation/familycontrols/requesting-the-family-controls-entitlement",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Configuring Family Controls",
+          url: "https://developer.apple.com/documentation/xcode/configuring-family-controls",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
       ]
     },
     {
@@ -36175,17 +36448,42 @@ var capabilities_default = {
       category: "persistence",
       entity_type: "framework",
       summary: "A Swift-native persistence framework integrated with SwiftUI and built for model storage, queries, and optional CloudKit-backed synchronization.",
-      supported_use_cases: ["Local structured persistence", "SwiftUI-integrated data models", "Eligible CloudKit synchronization"],
-      unsupported_use_cases: ["A cross-platform server database", "Assuming cloud synchronization requires no conflict or schema planning"],
+      supported_use_cases: [
+        "Local structured persistence",
+        "SwiftUI-integrated data models",
+        "Eligible CloudKit synchronization"
+      ],
+      unsupported_use_cases: [
+        "A cross-platform server database",
+        "Assuming cloud synchronization requires no conflict or schema planning"
+      ],
       platforms: ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
-      minimum_os_version: { iOS: "17.0", iPadOS: "17.0", macOS: "14.0", watchOS: "10.0", tvOS: "17.0", visionOS: "1.0" },
+      minimum_os_version: {
+        iOS: "17.0",
+        iPadOS: "17.0",
+        macOS: "14.0",
+        watchOS: "10.0",
+        tvOS: "17.0",
+        visionOS: "1.0"
+      },
       on_device_level: "primarily_on_device",
       cloud_dependency: "Optional CloudKit integration",
-      implementation_notes: ["Use an actor-aware data access boundary for nontrivial apps", "Plan migrations and test real schema evolution"],
-      recommended_alternatives: ["Core Data for older OS targets or mature migration requirements", "Files for simple document-oriented data"],
+      implementation_notes: [
+        "Use an actor-aware data access boundary for nontrivial apps",
+        "Plan migrations and test real schema evolution"
+      ],
+      recommended_alternatives: [
+        "Core Data for older OS targets or mature migration requirements",
+        "Files for simple document-oriented data"
+      ],
       keywords: ["database", "persistence", "swiftdata", "storage", "sync"],
       official_documentation: [
-        { title: "SwiftData", url: "https://developer.apple.com/documentation/swiftdata", source_type: "apple_developer_documentation", verified_at: "2026-08-30" }
+        {
+          title: "SwiftData",
+          url: "https://developer.apple.com/documentation/swiftdata",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
       ]
     },
     {
@@ -36199,12 +36497,22 @@ var capabilities_default = {
       unsupported_use_cases: ["Replacing App Store privacy answers", "Replacing runtime permission purpose strings"],
       platforms: ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
       on_device_level: "unknown",
-      privacy_manifest_requirements: ["PrivacyInfo.xcprivacy when the app or included SDK uses covered APIs or requires declarations"],
-      implementation_notes: ["Aggregate and inspect third-party SDK manifests", "Keep declarations aligned with actual code paths and App Store Connect answers"],
+      privacy_manifest_requirements: [
+        "PrivacyInfo.xcprivacy when the app or included SDK uses covered APIs or requires declarations"
+      ],
+      implementation_notes: [
+        "Aggregate and inspect third-party SDK manifests",
+        "Keep declarations aligned with actual code paths and App Store Connect answers"
+      ],
       limitations: ["Requirements evolve; verify against current Apple documentation before submission"],
       keywords: ["privacy manifest", "xcprivacy", "required reason", "app store privacy"],
       official_documentation: [
-        { title: "Privacy manifest files", url: "https://developer.apple.com/documentation/bundleresources/privacy-manifest-files", source_type: "apple_developer_documentation", verified_at: "2026-08-30" }
+        {
+          title: "Privacy manifest files",
+          url: "https://developer.apple.com/documentation/bundleresources/privacy-manifest-files",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
       ]
     },
     {
@@ -36223,7 +36531,12 @@ var capabilities_default = {
       implementation_notes: ["Generate Xcode privacy reports and inspect binary dependencies before submission"],
       keywords: ["required reason api", "privacy", "approved reason", "xcprivacy"],
       official_documentation: [
-        { title: "Describing use of required reason API", url: "https://developer.apple.com/documentation/bundleresources/describing-use-of-required-reason-api", source_type: "apple_developer_documentation", verified_at: "2026-08-30" }
+        {
+          title: "Describing use of required reason API",
+          url: "https://developer.apple.com/documentation/bundleresources/describing-use-of-required-reason-api",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
       ]
     },
     {
@@ -36233,16 +36546,32 @@ var capabilities_default = {
       category: "commerce",
       entity_type: "framework",
       summary: "Swift APIs for discovering products, conducting App Store purchases, and verifying transaction state.",
-      supported_use_cases: ["Consumables", "Non-consumables", "Auto-renewable subscriptions", "Transaction verification"],
-      unsupported_use_cases: ["Bypassing App Store commerce rules", "Treating client-only state as authoritative for server-delivered value"],
+      supported_use_cases: [
+        "Consumables",
+        "Non-consumables",
+        "Auto-renewable subscriptions",
+        "Transaction verification"
+      ],
+      unsupported_use_cases: [
+        "Bypassing App Store commerce rules",
+        "Treating client-only state as authoritative for server-delivered value"
+      ],
       platforms: ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
       on_device_level: "hybrid",
       network_requirement: "App Store product and transaction operations require Apple services; cached entitlement state can support limited offline behavior.",
-      security_considerations: ["Verify transactions", "Use App Store Server API and notifications when server-side fulfillment or reconciliation is required"],
+      security_considerations: [
+        "Verify transactions",
+        "Use App Store Server API and notifications when server-side fulfillment or reconciliation is required"
+      ],
       implementation_notes: ["Test with StoreKit Testing and sandbox", "Finish handled transactions"],
       keywords: ["purchase", "subscription", "monetization", "storekit", "iap"],
       official_documentation: [
-        { title: "StoreKit", url: "https://developer.apple.com/documentation/storekit", source_type: "apple_developer_documentation", verified_at: "2026-08-30" }
+        {
+          title: "StoreKit",
+          url: "https://developer.apple.com/documentation/storekit",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
       ]
     },
     {
@@ -36258,13 +36587,278 @@ var capabilities_default = {
       stable_or_beta: "deprecated",
       deprecated_status: "Deprecated; Apple directs apps to use WKWebView or a purpose-specific system browser/authentication API.",
       on_device_level: "hybrid",
-      recommended_alternatives: ["WKWebView for configurable embedded web content", "SFSafariViewController for an in-app browser", "ASWebAuthenticationSession for authentication"],
+      recommended_alternatives: [
+        "WKWebView for configurable embedded web content",
+        "SFSafariViewController for an in-app browser",
+        "ASWebAuthenticationSession for authentication"
+      ],
       implementation_notes: ["Plan for asynchronous WKWebView navigation and different cookie/process architecture"],
       keywords: ["uiwebview", "deprecated", "webview", "wkwebview", "legacy"],
       official_documentation: [
-        { title: "UIWebView", url: "https://developer.apple.com/documentation/uikit/uiwebview", source_type: "apple_developer_documentation", verified_at: "2026-08-30" },
-        { title: "Replacing UIWebView in your app", url: "https://developer.apple.com/documentation/webkit/replacing-uiwebview-in-your-app", source_type: "apple_developer_documentation", verified_at: "2026-08-30" }
+        {
+          title: "UIWebView",
+          url: "https://developer.apple.com/documentation/uikit/uiwebview",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Replacing UIWebView in your app",
+          url: "https://developer.apple.com/documentation/webkit/replacing-uiwebview-in-your-app",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
       ]
+    }
+  ]
+};
+
+// data/taxonomy.json
+var taxonomy_default = {
+  schema_version: "1.0",
+  description: "Apple-platform discovery catalog. Catalogued entries establish measured coverage only; they cannot produce recommendations until promoted to reviewed capability profiles with official evidence.",
+  official_index_sources: [
+    "https://developer.apple.com/technologies/",
+    "https://developer.apple.com/documentation/updates",
+    "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+    "https://developer.apple.com/documentation/bundleresources"
+  ],
+  categories: [
+    {
+      id: "language_core",
+      name: "Swift and core development",
+      examples: ["Swift", "Swift Concurrency", "Foundation", "Swift Package Manager"]
+    },
+    { id: "ui", name: "User interface", examples: ["SwiftUI", "UIKit", "Observation", "Accessibility"] },
+    {
+      id: "networking",
+      name: "Foundation and networking",
+      examples: ["URLSession", "Network", "WebSocket", "Bonjour"]
+    },
+    {
+      id: "persistence_sync",
+      name: "Persistence and synchronization",
+      examples: ["SwiftData", "Core Data", "CloudKit", "FileManager"]
+    },
+    {
+      id: "security_identity",
+      name: "Security and identity",
+      examples: ["Keychain Services", "CryptoKit", "Secure Enclave", "AuthenticationServices", "LocalAuthentication"]
+    },
+    {
+      id: "ai_ml",
+      name: "Apple Intelligence and machine learning",
+      examples: ["Foundation Models", "Core ML", "Core AI", "Vision", "Natural Language", "Speech"]
+    },
+    {
+      id: "system_intelligence",
+      name: "System intelligence and discovery",
+      examples: ["App Intents", "App Shortcuts", "Siri", "Core Spotlight"]
+    },
+    {
+      id: "location_maps_weather",
+      name: "Location, maps, and weather",
+      examples: ["Core Location", "MapKit", "WeatherKit"]
+    },
+    {
+      id: "health_fitness_sensors",
+      name: "Health, fitness, and sensors",
+      examples: ["HealthKit", "WorkoutKit", "Core Motion", "SensorKit"]
+    },
+    {
+      id: "notifications_background",
+      name: "Notifications and background execution",
+      examples: ["UserNotifications", "APNs", "BackgroundTasks", "Background URLSession"]
+    },
+    {
+      id: "widgets_live_activities",
+      name: "Widgets and live system experiences",
+      examples: ["WidgetKit", "ActivityKit", "Live Activities", "Dynamic Island"]
+    },
+    {
+      id: "commerce_wallet",
+      name: "Commerce, payments, and Wallet",
+      examples: ["StoreKit", "Apple Pay", "PassKit", "Wallet", "FinanceKit"]
+    },
+    {
+      id: "audio_video_media",
+      name: "Audio, video, and media",
+      examples: ["AVFoundation", "Core Audio", "MediaPlayer", "MusicKit", "ShazamKit"]
+    },
+    {
+      id: "camera_photos_vision",
+      name: "Camera, photos, and image capture",
+      examples: ["AVFoundation capture", "PhotoKit", "PhotosUI", "VisionKit"]
+    },
+    {
+      id: "nearby_accessories",
+      name: "Nearby devices and accessories",
+      examples: ["Core Bluetooth", "Nearby Interaction", "Core NFC", "MultipeerConnectivity", "AccessorySetupKit"]
+    },
+    {
+      id: "network_extensions",
+      name: "Advanced networking and extensions",
+      examples: ["NetworkExtension", "VPN", "DNS Proxy", "Content Filter"]
+    },
+    { id: "home_matter", name: "Home and Matter", examples: ["HomeKit", "Matter", "MatterSupport"] },
+    {
+      id: "graphics_spatial",
+      name: "Graphics, AR, and spatial",
+      examples: ["ARKit", "RealityKit", "RoomPlan", "Metal", "Core Image"]
+    },
+    {
+      id: "personal_information",
+      name: "Contacts, calendars, and communication",
+      examples: ["Contacts", "EventKit", "CallKit", "MessageUI"]
+    },
+    {
+      id: "parental_controls",
+      name: "Family and Screen Time controls",
+      examples: ["FamilyControls", "DeviceActivity", "ManagedSettings"]
+    },
+    {
+      id: "web_links",
+      name: "Web, browsers, and links",
+      examples: ["WebKit", "SafariServices", "Universal Links", "Associated Domains"]
+    },
+    {
+      id: "files_documents",
+      name: "Files, documents, and providers",
+      examples: ["FileProvider", "UIDocument", "PDFKit", "QuickLook", "PencilKit"]
+    },
+    {
+      id: "app_extensions",
+      name: "App extensions",
+      examples: [
+        "Widget Extension",
+        "Share Extension",
+        "Notification Service Extension",
+        "Credential Provider Extension"
+      ]
+    },
+    {
+      id: "privacy_integrity",
+      name: "Privacy and app integrity",
+      examples: ["Privacy Manifests", "Required Reason APIs", "AppTrackingTransparency", "App Attest", "DeviceCheck"]
+    },
+    {
+      id: "testing_diagnostics",
+      name: "Testing and diagnostics",
+      examples: ["Swift Testing", "XCTest", "XCUITest", "OSLog", "MetricKit", "Instruments"]
+    },
+    {
+      id: "developer_delivery",
+      name: "Development and delivery tools",
+      examples: ["Xcode", "Simulator", "TestFlight", "App Store Connect"]
+    },
+    {
+      id: "provisioning_capabilities",
+      name: "iOS provisioning capabilities",
+      examples: [
+        "5G Network Slicing",
+        "Access WiFi Information",
+        "App Attest",
+        "App Groups",
+        "Apple Pay",
+        "Associated Domains",
+        "AutoFill Credential Provider",
+        "Background Modes",
+        "ClassKit",
+        "Communication Notifications",
+        "Data Protection",
+        "DriverKit Family MIDI",
+        "Extended Virtual Addressing",
+        "Family Controls Development",
+        "FileProvider Testing Mode",
+        "Fonts",
+        "Game Center",
+        "Group Activities",
+        "Head Pose",
+        "HealthKit",
+        "HealthKit Estimate Recalibration",
+        "HLS Interstitial Previews",
+        "HomeKit",
+        "Hotspot",
+        "iCloud CloudKit",
+        "iCloud Documents",
+        "iCloud Key-Value Storage",
+        "ID Verifier Display Only",
+        "In-App Purchase",
+        "Increased Debugging Memory Limit",
+        "Inter-App Audio",
+        "Journaling Suggestions",
+        "Keychain Sharing",
+        "Low Latency HLS",
+        "Maps",
+        "Matter Allow Setup Payload",
+        "MDM Managed Associated Domains",
+        "Media Device Discovery",
+        "Messages Collaboration",
+        "Multipath",
+        "Near Field Communication Tag Reading",
+        "Network Extensions",
+        "On Demand Install Capable",
+        "Personal VPN",
+        "Push to Talk",
+        "Push Notifications",
+        "Sensitive Content Analysis",
+        "Shared with You",
+        "Sign in with Apple",
+        "SIM Inserted for Wireless Carriers",
+        "Siri",
+        "Spatial Audio Profile",
+        "Sustained Execution",
+        "Time Sensitive Notifications",
+        "Wallet",
+        "WeatherKit",
+        "Wireless Accessory Configuration"
+      ]
+    },
+    {
+      id: "emerging_platform_technologies",
+      name: "Current and emerging Apple platform technologies",
+      examples: [
+        "AlarmKit",
+        "AppIntentsTesting",
+        "AVSystemRouting",
+        "Core AI",
+        "CrashReportExtension",
+        "DeclaredAgeRange",
+        "EnergyKit",
+        "Evaluations",
+        "MediaDevice",
+        "MediaIntents",
+        "MusicUnderstanding",
+        "NowPlaying",
+        "PermissionKit",
+        "Private Cloud Compute Entitlement",
+        "ProximityReader",
+        "SpatialPreview",
+        "StateReporting",
+        "SuggestedActions",
+        "TrustInsights",
+        "VisualIntelligence",
+        "Wi-Fi Aware"
+      ]
+    },
+    {
+      id: "gaming",
+      name: "Games",
+      examples: ["GameKit", "Game Center", "Game Controller", "SpriteKit", "GameplayKit"]
+    },
+    {
+      id: "automotive",
+      name: "Automotive experiences",
+      examples: ["CarPlay", "Now Playing", "Core Location", "MapKit"]
+    },
+    {
+      id: "education_enterprise",
+      name: "Education and managed deployment",
+      examples: ["ClassKit", "Managed App Configuration", "ManagedAppDistribution"]
+    },
+    {
+      id: "localization_accessibility",
+      name: "Localization and inclusive design",
+      examples: ["String Catalogs", "FormatStyle", "Translation", "VoiceOver", "Dynamic Type"]
     }
   ]
 };
@@ -36308,7 +36902,7 @@ function normalizeRecord(raw) {
     ...emptyArrays,
     minimum_os_version: {},
     sdk_availability: "Verify availability against the current stable SDK before implementation.",
-    stable_or_beta: "stable",
+    stable_or_beta: "unknown",
     deprecated_status: null,
     on_device_level: "unknown",
     network_requirement: "Depends on the selected API and feature configuration.",
@@ -36319,7 +36913,7 @@ function normalizeRecord(raw) {
 }
 var cachedRecords;
 async function loadRegistry() {
-  if (cachedRecords) return cachedRecords;
+  if (cachedRecords) return structuredClone(cachedRecords);
   const raw = capabilities_default;
   const normalized = {
     schema_version: raw.schema_version,
@@ -36327,20 +36921,21 @@ async function loadRegistry() {
     records: raw.records.map(normalizeRecord)
   };
   cachedRecords = capabilityRegistrySchema.parse(normalized).records;
-  return cachedRecords;
+  return structuredClone(cachedRecords);
 }
 function searchableText(record2) {
   return [record2.id, record2.name, ...record2.aliases, ...record2.keywords, record2.summary].join(" ").toLocaleLowerCase("en-US");
 }
 async function findRecord(idOrName) {
   const query = idOrName.trim().toLocaleLowerCase("en-US");
+  if (!query) return void 0;
   const records = await loadRegistry();
   return records.find(
     (record2) => record2.id === query || record2.name.toLocaleLowerCase("en-US") === query || record2.aliases.some((alias) => alias.toLocaleLowerCase("en-US") === query)
   ) ?? records.find((record2) => searchableText(record2).includes(query));
 }
 async function searchRecords(query, limit = 10) {
-  const tokens = query.toLocaleLowerCase("en-US").split(/[^\p{L}\p{N}]+/u).filter((token) => token.length > 1);
+  const tokens = query.toLocaleLowerCase("en-US").split(/[^\p{L}\p{N}]+/u).filter((token) => token.length > 2);
   const records = await loadRegistry();
   return records.map((record2) => {
     const haystack = searchableText(record2);
@@ -36357,19 +36952,130 @@ function deduplicateDocumentation(records) {
   }
   return [...byUrl.values()];
 }
+function normalizedCatalogKey(value) {
+  return value.normalize("NFKD").toLocaleLowerCase("en-US").replace(/[^a-z0-9]+/g, "");
+}
+function catalogId(name) {
+  return name.normalize("NFKD").toLocaleLowerCase("en-US").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+async function loadTechnologyCatalog() {
+  const taxonomy = taxonomy_default;
+  const profiles = await loadRegistry();
+  const byName = /* @__PURE__ */ new Map();
+  for (const category of taxonomy.categories) {
+    for (const name of category.examples) {
+      const key = normalizedCatalogKey(name);
+      const matchingProfiles = profiles.filter(
+        (profile) => [profile.id, profile.name, ...profile.aliases].some((candidate) => normalizedCatalogKey(candidate) === key)
+      );
+      const existing = byName.get(key);
+      if (existing) {
+        existing.category_ids.push(category.id);
+        existing.category_names.push(category.name);
+        existing.profile_ids = [
+          .../* @__PURE__ */ new Set([...existing.profile_ids, ...matchingProfiles.map((profile) => profile.id)])
+        ];
+        if (existing.profile_ids.length > 0) existing.coverage_status = "profiled";
+        continue;
+      }
+      byName.set(key, {
+        id: `technology.${catalogId(name)}`,
+        name,
+        category_ids: [category.id],
+        category_names: [category.name],
+        coverage_status: matchingProfiles.length > 0 ? "profiled" : "catalogued",
+        profile_ids: matchingProfiles.map((profile) => profile.id),
+        source_urls: [...taxonomy.official_index_sources]
+      });
+    }
+  }
+  return [...byName.values()].sort((left, right) => left.name.localeCompare(right.name, "en-US"));
+}
+async function getRegistryCoverage() {
+  const taxonomy = taxonomy_default;
+  const [catalog, profiles] = await Promise.all([loadTechnologyCatalog(), loadRegistry()]);
+  const profiled = catalog.filter((entry) => entry.coverage_status === "profiled").length;
+  return {
+    category_count: taxonomy.categories.length,
+    catalogued_technology_count: catalog.length,
+    profiled_technology_count: profiled,
+    catalog_only_technology_count: catalog.length - profiled,
+    profile_coverage_percent: Number((profiled / catalog.length * 100).toFixed(1)),
+    verified_profile_count: profiles.length,
+    official_index_sources: [...taxonomy.official_index_sources]
+  };
+}
+async function searchTechnologyCatalog(query, limit = 20) {
+  const tokens = query.trim().toLocaleLowerCase("en-US").split(/[^\p{L}\p{N}]+/u).filter((token) => token.length > 1);
+  if (tokens.length === 0) return [];
+  const catalog = await loadTechnologyCatalog();
+  return catalog.map((entry) => {
+    const haystack = [entry.id, entry.name, ...entry.category_ids, ...entry.category_names].join(" ").toLocaleLowerCase("en-US");
+    return { entry, score: tokens.filter((token) => haystack.includes(token)).length };
+  }).filter(({ score }) => score > 0).sort((left, right) => right.score - left.score || left.entry.name.localeCompare(right.entry.name, "en-US")).slice(0, limit).map(({ entry }) => entry);
+}
 
 // src/engine.ts
 var DOCUMENTATION_CUTOFF = "2026-08-30";
 var requirementRules = [
-  { kind: "data", description: "Access or store health and fitness data", terms: ["health", "sleep", "workout", "heart", "sa\u011Fl\u0131k", "uyku", "egzersiz"] },
-  { kind: "hardware", description: "Use device location or movement sensors", terms: ["location", "gps", "geofence", "konum", "takip", "sensor", "motion"] },
-  { kind: "background", description: "Continue or resume work while the app is not foregrounded", terms: ["background", "arka plan", "continuous", "s\xFCrekli"] },
-  { kind: "notification", description: "Notify the user about time-sensitive or scheduled events", terms: ["notification", "notify", "reminder", "bildirim", "hat\u0131rlat"] },
-  { kind: "on_device", description: "Keep processing on device and support offline operation", terms: ["on-device", "on device", "offline", "cihazda", "internetsiz", "local"] },
-  { kind: "ai_ml", description: "Use machine learning or generative AI", terms: ["ai", "artificial intelligence", "machine learning", "model", "yapay zek\xE2", "yapay zeka", "ml"] },
-  { kind: "monetization", description: "Monetize through App Store purchases or subscriptions", terms: ["subscription", "purchase", "monetization", "abonelik", "sat\u0131n alma", "\xFCcret"] },
-  { kind: "platform", description: "Expose glanceable or system-integrated experiences", terms: ["widget", "live activity", "dynamic island", "siri", "shortcut", "kestirme"] },
-  { kind: "privacy", description: "Handle sensitive personal data with elevated privacy controls", terms: ["health", "location", "child", "finance", "identity", "biometric", "sa\u011Fl\u0131k", "konum", "\xE7ocuk", "finans", "kimlik", "biyometr"] }
+  {
+    kind: "data",
+    description: "Access or store health and fitness data",
+    terms: ["health", "sleep", "workout", "heart", "sa\u011Fl\u0131k", "uyku", "egzersiz"]
+  },
+  {
+    kind: "hardware",
+    description: "Use device location or movement sensors",
+    terms: ["location", "gps", "geofence", "konum", "takip", "sensor", "motion"]
+  },
+  {
+    kind: "background",
+    description: "Continue or resume work while the app is not foregrounded",
+    terms: ["background", "arka plan", "continuous", "s\xFCrekli"]
+  },
+  {
+    kind: "notification",
+    description: "Notify the user about time-sensitive or scheduled events",
+    terms: ["notification", "notify", "reminder", "bildirim", "hat\u0131rlat"]
+  },
+  {
+    kind: "on_device",
+    description: "Keep processing on device and support offline operation",
+    terms: ["on-device", "on device", "offline", "cihazda", "internetsiz", "local"]
+  },
+  {
+    kind: "ai_ml",
+    description: "Use machine learning or generative AI",
+    terms: ["ai", "artificial intelligence", "machine learning", "model", "yapay zek\xE2", "yapay zeka", "ml"]
+  },
+  {
+    kind: "monetization",
+    description: "Monetize through App Store purchases or subscriptions",
+    terms: ["subscription", "purchase", "monetization", "abonelik", "sat\u0131n alma", "\xFCcret"]
+  },
+  {
+    kind: "platform",
+    description: "Expose glanceable or system-integrated experiences",
+    terms: ["widget", "live activity", "dynamic island", "siri", "shortcut", "kestirme"]
+  },
+  {
+    kind: "privacy",
+    description: "Handle sensitive personal data with elevated privacy controls",
+    terms: [
+      "health",
+      "location",
+      "child",
+      "finance",
+      "identity",
+      "biometric",
+      "sa\u011Fl\u0131k",
+      "konum",
+      "\xE7ocuk",
+      "finans",
+      "kimlik",
+      "biyometr"
+    ]
+  }
 ];
 function envelope(data, warnings = []) {
   return {
@@ -36382,13 +37088,15 @@ function envelope(data, warnings = []) {
 }
 function analyzeAppIdea(input2) {
   const normalized = input2.idea.toLocaleLowerCase("tr-TR");
-  const requirements = [{
-    id: "req-product-goal",
-    kind: "product_goal",
-    description: input2.idea.trim(),
-    keywords: normalized.split(/[^\p{L}\p{N}-]+/u).filter((token) => token.length > 3).slice(0, 20),
-    confidence: "explicit"
-  }];
+  const requirements = [
+    {
+      id: "req-product-goal",
+      kind: "product_goal",
+      description: input2.idea.trim(),
+      keywords: normalized.split(/[^\p{L}\p{N}-]+/u).filter((token) => token.length > 3).slice(0, 20),
+      confidence: "explicit"
+    }
+  ];
   for (const rule of requirementRules) {
     const matched = rule.terms.filter((term) => normalized.includes(term));
     if (matched.length === 0) continue;
@@ -36432,8 +37140,18 @@ function analyzeAppIdea(input2) {
   return envelope({ requirements, assumptions, constraints, open_questions: openQuestions.slice(0, 3) });
 }
 function scoreRecord(requirement, record2) {
-  const haystack = [record2.id, record2.name, record2.summary, ...record2.aliases, ...record2.keywords, ...record2.supported_use_cases].join(" ").toLocaleLowerCase("en-US");
-  const tokens = [...requirement.keywords, ...requirement.description.toLocaleLowerCase("en-US").split(/[^\p{L}\p{N}-]+/u)].filter((token) => token.length > 2);
+  const haystack = [
+    record2.id,
+    record2.name,
+    record2.summary,
+    ...record2.aliases,
+    ...record2.keywords,
+    ...record2.supported_use_cases
+  ].join(" ").toLocaleLowerCase("en-US");
+  const tokens = [
+    ...requirement.keywords,
+    ...requirement.description.toLocaleLowerCase("en-US").split(/[^\p{L}\p{N}-]+/u)
+  ].filter((token) => token.length > 2);
   const matches = [...new Set(tokens.filter((token) => haystack.includes(token.toLocaleLowerCase("en-US"))))];
   let score = matches.length;
   const reasons = matches.length > 0 ? [`Matched: ${matches.slice(0, 5).join(", ")}`] : [];
@@ -36452,9 +37170,22 @@ function scoreRecord(requirement, record2) {
   return { score, reasons };
 }
 async function resolveCapabilities(input2) {
-  const records = (await loadRegistry()).filter((record2) => input2.include_beta || record2.stable_or_beta !== "beta");
-  const matches = input2.requirements.flatMap((requirement) => records.map((record2) => ({ record: record2, ...scoreRecord(requirement, record2) })).filter(({ score }) => score > 0).sort((left, right) => right.score - left.score).slice(0, input2.maximum_results_per_requirement).map(({ record: record2, score, reasons }) => ({ requirement_id: requirement.id, capability_id: record2.id, score, reasons, record: record2 })));
-  return envelope({ matches }, matches.length === 0 ? ["No verified registry match was found; refine the requirements instead of inventing a technology."] : []);
+  const records = (await loadRegistry()).filter(
+    (record2) => record2.stable_or_beta !== "deprecated" && (input2.include_beta || record2.stable_or_beta !== "beta")
+  );
+  const matches = input2.requirements.flatMap(
+    (requirement) => records.map((record2) => ({ record: record2, ...scoreRecord(requirement, record2) })).filter(({ score }) => score > 0).sort((left, right) => right.score - left.score).slice(0, input2.maximum_results_per_requirement).map(({ record: record2, score, reasons }) => ({
+      requirement_id: requirement.id,
+      capability_id: record2.id,
+      score,
+      reasons,
+      record: record2
+    }))
+  );
+  return envelope(
+    { matches },
+    matches.length === 0 ? ["No verified registry match was found; refine the requirements instead of inventing a technology."] : []
+  );
 }
 async function getCapabilityProfile(idOrName) {
   const record2 = await findRecord(idOrName);
@@ -36493,11 +37224,19 @@ async function checkAvailability(input2) {
     const minimumMajor = parseMajor(minimum ?? void 0);
     const reasons = [];
     if (!record2.platforms.includes(input2.platform)) reasons.push(`${input2.platform} is not listed as supported.`);
-    if (record2.stable_or_beta === "beta" && !input2.allow_beta) reasons.push("This record is beta and beta use was not allowed.");
-    if (requestedMajor !== void 0 && minimumMajor !== void 0 && requestedMajor < minimumMajor) reasons.push(`Requires ${input2.platform} ${minimum} or later.`);
-    if (record2.hardware_requirements.length > 0 && !input2.device) reasons.push("Runtime hardware eligibility must be checked.");
-    if (record2.region_restrictions.length > 0 && !input2.region) reasons.push("Runtime region availability must be checked.");
-    if (record2.language_restrictions.length > 0 && !input2.language) reasons.push("Runtime language availability must be checked.");
+    if (!input2.os_version) reasons.push("No target OS version was provided.");
+    if (minimum === void 0 || minimum === null)
+      reasons.push(`The minimum ${input2.platform} version is not verified in this record.`);
+    if (record2.stable_or_beta === "beta" && !input2.allow_beta)
+      reasons.push("This record is beta and beta use was not allowed.");
+    if (requestedMajor !== void 0 && minimumMajor !== void 0 && requestedMajor < minimumMajor)
+      reasons.push(`Requires ${input2.platform} ${minimum} or later.`);
+    if (record2.hardware_requirements.length > 0 && !input2.device)
+      reasons.push("Runtime hardware eligibility must be checked.");
+    if (record2.region_restrictions.length > 0 && !input2.region)
+      reasons.push("Runtime region availability must be checked.");
+    if (record2.language_restrictions.length > 0 && !input2.language)
+      reasons.push("Runtime language availability must be checked.");
     return {
       capability_id: record2.id,
       status: reasons.length === 0 ? "compatible_on_declared_constraints" : "conditional_or_incompatible",
@@ -36509,7 +37248,9 @@ async function checkAvailability(input2) {
       reasons
     };
   });
-  return envelope({ results }, ["Availability checks are advisory; use Swift #available and runtime capability checks in the app."]);
+  return envelope({ results }, [
+    "Availability checks are advisory; use Swift #available and runtime capability checks in the app."
+  ]);
 }
 async function auditPermissionsAndEntitlements(capabilityIds) {
   const records = await resolveIds(capabilityIds);
@@ -36542,16 +37283,44 @@ async function generateArchitecture(idea, capabilityIds, projectScale) {
   const records = await resolveIds(capabilityIds);
   const has = (id) => records.some((record2) => record2.id === id);
   const components = [
-    { layer: "Presentation", recommendation: "SwiftUI feature views and explicit permission-state UI; use UIKit adapters only for APIs without suitable SwiftUI surfaces." },
+    {
+      layer: "Presentation",
+      recommendation: "SwiftUI feature views and explicit permission-state UI; use UIKit adapters only for APIs without suitable SwiftUI surfaces."
+    },
     { layer: "Domain", recommendation: "Small use-case types and value models that do not import Apple frameworks." },
-    { layer: "Data", recommendation: has("swiftdata") ? "Repository protocols backed by SwiftData, with migrations tested from release fixtures." : "Repository protocols with the smallest persistence mechanism that meets the data model." },
-    { layer: "Device services", recommendation: "Actor-isolated service protocols for permissions, sensors, notifications, and background scheduling." },
+    {
+      layer: "Data",
+      recommendation: has("swiftdata") ? "Repository protocols backed by SwiftData, with migrations tested from release fixtures." : "Repository protocols with the smallest persistence mechanism that meets the data model."
+    },
+    {
+      layer: "Device services",
+      recommendation: "Actor-isolated service protocols for permissions, sensors, notifications, and background scheduling."
+    },
     { layer: "Apple framework adapters", recommendation: records.map((record2) => record2.name).join(", ") },
-    { layer: "Persistence", recommendation: has("app-groups") ? "Use an App Group container only for state shared with extensions; coordinate concurrent access." : "Keep private app state in the app container." },
-    { layer: "Networking", recommendation: records.some((record2) => record2.on_device_level === "cloud_required" || record2.on_device_level === "hybrid") ? "Use a narrow URLSession client only for requirements that cannot remain local; make offline state explicit." : "No server by default." },
-    { layer: "AI/ML", recommendation: has("foundation-models") || has("core-ml") ? "Runtime availability gate, model/service protocol, deterministic fallback, evaluation fixtures, and device performance budgets." : "Not required." },
-    { layer: "Background execution", recommendation: records.some((record2) => record2.background_modes.length > 0 || record2.category === "background_execution") ? "Event-driven, resumable jobs with expiration handling; never promise exact timing." : "Foreground-only unless a verified capability is added." },
-    { layer: "Security and privacy", recommendation: "Data minimization, least-privilege authorization, protected storage, privacy-manifest audit, and App Store disclosure review." }
+    {
+      layer: "Persistence",
+      recommendation: has("app-groups") ? "Use an App Group container only for state shared with extensions; coordinate concurrent access." : "Keep private app state in the app container."
+    },
+    {
+      layer: "Networking",
+      recommendation: records.some(
+        (record2) => record2.on_device_level === "cloud_required" || record2.on_device_level === "hybrid"
+      ) ? "Use a narrow URLSession client only for requirements that cannot remain local; make offline state explicit." : "No server by default."
+    },
+    {
+      layer: "AI/ML",
+      recommendation: has("foundation-models") || has("core-ml") ? "Runtime availability gate, model/service protocol, deterministic fallback, evaluation fixtures, and device performance budgets." : "Not required."
+    },
+    {
+      layer: "Background execution",
+      recommendation: records.some(
+        (record2) => record2.background_modes.length > 0 || record2.category === "background_execution"
+      ) ? "Event-driven, resumable jobs with expiration handling; never promise exact timing." : "Foreground-only unless a verified capability is added."
+    },
+    {
+      layer: "Security and privacy",
+      recommendation: "Data minimization, least-privilege authorization, protected storage, privacy-manifest audit, and App Store disclosure review."
+    }
   ];
   return envelope({
     idea,
@@ -36565,28 +37334,88 @@ async function generateArchitecture(idea, capabilityIds, projectScale) {
 async function generateImplementationPlan(capabilityIds, includeCodeSpike) {
   const records = await resolveIds(capabilityIds);
   const phases = [
-    { id: "poc", depends_on: [], goal: "Prove the riskiest hardware, permission, background, or model assumption on real devices.", deliverables: includeCodeSpike ? ["Small Swift spike", "Measured availability and failure notes"] : ["Documented feasibility result"] },
-    { id: "mvp-foundation", depends_on: ["poc"], goal: "Create the SwiftUI shell, domain models, service protocols, and local persistence.", deliverables: ["Buildable app", "Dependency-injected adapters", "Unit tests"] },
-    { id: "framework-integration", depends_on: ["mvp-foundation"], goal: "Integrate selected Apple frameworks one at a time.", deliverables: records.map((record2) => `${record2.name} adapter and integration tests`) },
-    { id: "permissions", depends_on: ["framework-integration"], goal: "Implement contextual permission requests, denial states, and Settings recovery.", deliverables: ["Purpose strings", "Permission-state UI", "Denied/restricted tests"] },
-    { id: "background-and-extensions", depends_on: ["permissions"], goal: "Add only verified background modes and extension targets.", deliverables: unique(records.flatMap((record2) => [...record2.background_modes, ...record2.related_extensions])) },
-    { id: "privacy-review", depends_on: ["framework-integration"], goal: "Audit data flow, privacy manifests, required-reason APIs, retention, and App Store disclosures.", deliverables: ["Privacy inventory", "Review-risk checklist"] },
-    { id: "release", depends_on: ["background-and-extensions", "privacy-review"], goal: "Run device matrix, energy, offline, accessibility, TestFlight, and App Store readiness checks.", deliverables: ["Acceptance evidence", "Known limitations", "Submission notes"] }
+    {
+      id: "poc",
+      depends_on: [],
+      goal: "Prove the riskiest hardware, permission, background, or model assumption on real devices.",
+      deliverables: includeCodeSpike ? ["Small Swift spike", "Measured availability and failure notes"] : ["Documented feasibility result"]
+    },
+    {
+      id: "mvp-foundation",
+      depends_on: ["poc"],
+      goal: "Create the SwiftUI shell, domain models, service protocols, and local persistence.",
+      deliverables: ["Buildable app", "Dependency-injected adapters", "Unit tests"]
+    },
+    {
+      id: "framework-integration",
+      depends_on: ["mvp-foundation"],
+      goal: "Integrate selected Apple frameworks one at a time.",
+      deliverables: records.map((record2) => `${record2.name} adapter and integration tests`)
+    },
+    {
+      id: "permissions",
+      depends_on: ["framework-integration"],
+      goal: "Implement contextual permission requests, denial states, and Settings recovery.",
+      deliverables: ["Purpose strings", "Permission-state UI", "Denied/restricted tests"]
+    },
+    {
+      id: "background-and-extensions",
+      depends_on: ["permissions"],
+      goal: "Add only verified background modes and extension targets.",
+      deliverables: unique(records.flatMap((record2) => [...record2.background_modes, ...record2.related_extensions]))
+    },
+    {
+      id: "privacy-review",
+      depends_on: ["framework-integration"],
+      goal: "Audit data flow, privacy manifests, required-reason APIs, retention, and App Store disclosures.",
+      deliverables: ["Privacy inventory", "Review-risk checklist"]
+    },
+    {
+      id: "release",
+      depends_on: ["background-and-extensions", "privacy-review"],
+      goal: "Run device matrix, energy, offline, accessibility, TestFlight, and App Store readiness checks.",
+      deliverables: ["Acceptance evidence", "Known limitations", "Submission notes"]
+    }
   ];
   return envelope({ phases });
 }
 async function searchOfficialAppleDocs(query, capabilityIds, maximumResults) {
   const records = capabilityIds.length > 0 ? await resolveIds(capabilityIds) : await searchRecords(query, maximumResults);
   const queryTokens = query.toLocaleLowerCase("en-US").split(/\W+/).filter(Boolean);
-  const references = deduplicateDocumentation(records).map((reference) => ({ reference, score: queryTokens.filter((token) => `${reference.title} ${reference.url}`.toLocaleLowerCase("en-US").includes(token)).length })).sort((left, right) => right.score - left.score).slice(0, maximumResults).map(({ reference }) => ({ title: reference.title, url: reference.url, source_type: reference.source_type, verified_at: reference.verified_at }));
-  return envelope({ results: references }, ["This tool searches the verified local source index; it does not perform live web search. Re-run the repository link verifier for live status."]);
+  const references = deduplicateDocumentation(records).map((reference) => ({
+    reference,
+    score: queryTokens.filter(
+      (token) => `${reference.title} ${reference.url}`.toLocaleLowerCase("en-US").includes(token)
+    ).length
+  })).sort((left, right) => right.score - left.score).slice(0, maximumResults).map(({ reference }) => ({
+    title: reference.title,
+    url: reference.url,
+    source_type: reference.source_type,
+    verified_at: reference.verified_at
+  }));
+  return envelope({ results: references }, [
+    "This tool searches the verified local source index; it does not perform live web search. Re-run the repository link verifier for live status."
+  ]);
+}
+async function searchAppleTechnologyCatalog(query, coverageStatus, maximumResults) {
+  const entries = (await searchTechnologyCatalog(query, maximumResults * 2)).filter((entry) => coverageStatus === "all" || entry.coverage_status === coverageStatus).slice(0, maximumResults);
+  return envelope({ results: entries }, [
+    "Catalogued entries prove discovery coverage only. Use a profiled entry for architecture recommendations."
+  ]);
+}
+async function reportRegistryCoverage() {
+  return envelope(await getRegistryCoverage(), [
+    "Coverage is measured against the committed official-index catalog and changes as Apple publishes technologies."
+  ]);
 }
 async function refreshCapabilityRegistry(dryRun, sourceUrls) {
   const records = await loadRegistry();
   const indexedUrls = deduplicateDocumentation(records).map((reference) => reference.url);
   const requestedUrls = sourceUrls.length > 0 ? sourceUrls : indexedUrls;
   if (!dryRun) {
-    return envelope({ updated: false, checked_sources: requestedUrls }, ["Registry mutation is intentionally disabled in the MCP runtime. Run npm run verify:docs, review official-source diffs, edit records, and validate in version control."]);
+    return envelope({ updated: false, checked_sources: requestedUrls }, [
+      "Registry mutation is intentionally disabled in the MCP runtime. Run npm run verify:docs, review official-source diffs, edit records, and validate in version control."
+    ]);
   }
   return envelope({
     updated: false,
@@ -36635,83 +37464,149 @@ function result(payload) {
     structuredContent: payload
   };
 }
-server.registerTool("analyze_app_idea", {
-  title: "Analyze an iOS app idea",
-  description: "Turn a natural-language Apple-platform app idea into explicit requirements, assumptions, constraints, and at most three architecture-changing questions. Use before capability resolution.",
-  inputSchema: analyzeIdeaInputSchema,
-  outputSchema,
-  annotations: readOnlyAnnotations
-}, async (input2) => result(analyzeAppIdea(input2)));
-server.registerTool("resolve_ios_capabilities", {
-  title: "Resolve iOS capabilities",
-  description: "Match structured requirements to relevant verified Apple frameworks, APIs, capabilities, entitlements, permissions, and extensions. Excludes beta records unless explicitly requested.",
-  inputSchema: resolveCapabilitiesInputSchema,
-  outputSchema,
-  annotations: readOnlyAnnotations
-}, async (input2) => result(await resolveCapabilities(input2)));
-server.registerTool("get_capability_profile", {
-  title: "Get an Apple capability profile",
-  description: "Return the full verified registry profile for one Apple technology or capability, including availability, permissions, entitlements, constraints, review risks, and official sources.",
-  inputSchema: getProfileInputSchema,
-  outputSchema,
-  annotations: readOnlyAnnotations
-}, async ({ capability_id_or_name }) => result(await getCapabilityProfile(capability_id_or_name)));
-server.registerTool("compare_implementation_options", {
-  title: "Compare iOS implementation options",
-  description: "Compare two to six verified Apple technology options across deployment, on-device behavior, privacy, hardware, entitlement, review, and maintenance constraints.",
-  inputSchema: compareOptionsInputSchema,
-  outputSchema,
-  annotations: readOnlyAnnotations
-}, async ({ capability_ids, criteria }) => result(await compareImplementationOptions(capability_ids, criteria)));
-server.registerTool("check_availability", {
-  title: "Check Apple API availability",
-  description: "Check selected records against declared platform, OS, device, region, language, and beta constraints. Results are advisory and identify required runtime checks.",
-  inputSchema: checkAvailabilityInputSchema,
-  outputSchema,
-  annotations: readOnlyAnnotations
-}, async (input2) => result(await checkAvailability(input2)));
-server.registerTool("audit_permissions_and_entitlements", {
-  title: "Audit permissions and entitlements",
-  description: "Separate and aggregate runtime user permissions, Info.plist keys, Xcode capabilities, ordinary entitlements, managed entitlements, background modes, and extension targets.",
-  inputSchema: auditInputSchema,
-  outputSchema,
-  annotations: readOnlyAnnotations
-}, async ({ capability_ids }) => result(await auditPermissionsAndEntitlements(capability_ids)));
-server.registerTool("audit_privacy_and_app_review", {
-  title: "Audit privacy and App Review risks",
-  description: "Assess privacy manifests, required-reason APIs, sensitive data handling, security controls, and App Store review considerations for selected capabilities.",
-  inputSchema: auditInputSchema,
-  outputSchema,
-  annotations: readOnlyAnnotations
-}, async ({ capability_ids }) => result(await auditPrivacyAndReview(capability_ids)));
-server.registerTool("generate_ios_architecture", {
-  title: "Generate an iOS architecture",
-  description: "Generate a proportionate SwiftUI-first layered architecture and data flow from a product idea and selected verified Apple capabilities.",
-  inputSchema: architectureInputSchema,
-  outputSchema,
-  annotations: readOnlyAnnotations
-}, async ({ idea, capability_ids, project_scale }) => result(await generateArchitecture(idea, capability_ids, project_scale)));
-server.registerTool("generate_implementation_plan", {
-  title: "Generate an iOS implementation plan",
-  description: "Create a dependency-ordered proof-of-concept, MVP, integration, permission, background, privacy, testing, and release plan for selected capabilities.",
-  inputSchema: implementationPlanInputSchema,
-  outputSchema,
-  annotations: readOnlyAnnotations
-}, async ({ capability_ids, include_code_spike }) => result(await generateImplementationPlan(capability_ids, include_code_spike)));
-server.registerTool("search_official_apple_docs", {
-  title: "Search verified Apple documentation",
-  description: "Search the plugin's verified local index of official Apple documentation. This does not perform live web search; use the link-verification workflow to refresh source status.",
-  inputSchema: officialDocsSearchInputSchema,
-  outputSchema,
-  annotations: readOnlyAnnotations
-}, async ({ query, capability_ids, maximum_results }) => result(await searchOfficialAppleDocs(query, capability_ids, maximum_results)));
-server.registerTool("refresh_capability_registry", {
-  title: "Plan a capability registry refresh",
-  description: "Return a dry-run refresh plan and source inventory. Runtime mutation is intentionally disabled; reviewed repository changes are required for registry updates.",
-  inputSchema: refreshRegistryInputSchema,
-  outputSchema,
-  annotations: readOnlyAnnotations
-}, async ({ dry_run, source_urls }) => result(await refreshCapabilityRegistry(dry_run, source_urls)));
+server.registerTool(
+  "analyze_app_idea",
+  {
+    title: "Analyze an iOS app idea",
+    description: "Turn a natural-language Apple-platform app idea into explicit requirements, assumptions, constraints, and at most three architecture-changing questions. Use before capability resolution.",
+    inputSchema: analyzeIdeaInputSchema,
+    outputSchema,
+    annotations: readOnlyAnnotations
+  },
+  (input2) => result(analyzeAppIdea(input2))
+);
+server.registerTool(
+  "resolve_ios_capabilities",
+  {
+    title: "Resolve iOS capabilities",
+    description: "Match structured requirements to relevant verified Apple frameworks, APIs, capabilities, entitlements, permissions, and extensions. Excludes beta records unless explicitly requested.",
+    inputSchema: resolveCapabilitiesInputSchema,
+    outputSchema,
+    annotations: readOnlyAnnotations
+  },
+  async (input2) => result(await resolveCapabilities(input2))
+);
+server.registerTool(
+  "get_capability_profile",
+  {
+    title: "Get an Apple capability profile",
+    description: "Return the full verified registry profile for one Apple technology or capability, including availability, permissions, entitlements, constraints, review risks, and official sources.",
+    inputSchema: getProfileInputSchema,
+    outputSchema,
+    annotations: readOnlyAnnotations
+  },
+  async ({ capability_id_or_name }) => result(await getCapabilityProfile(capability_id_or_name))
+);
+server.registerTool(
+  "compare_implementation_options",
+  {
+    title: "Compare iOS implementation options",
+    description: "Compare two to six verified Apple technology options across deployment, on-device behavior, privacy, hardware, entitlement, review, and maintenance constraints.",
+    inputSchema: compareOptionsInputSchema,
+    outputSchema,
+    annotations: readOnlyAnnotations
+  },
+  async ({ capability_ids, criteria }) => result(await compareImplementationOptions(capability_ids, criteria))
+);
+server.registerTool(
+  "check_availability",
+  {
+    title: "Check Apple API availability",
+    description: "Check selected records against declared platform, OS, device, region, language, and beta constraints. Results are advisory and identify required runtime checks.",
+    inputSchema: checkAvailabilityInputSchema,
+    outputSchema,
+    annotations: readOnlyAnnotations
+  },
+  async (input2) => result(await checkAvailability(input2))
+);
+server.registerTool(
+  "audit_permissions_and_entitlements",
+  {
+    title: "Audit permissions and entitlements",
+    description: "Separate and aggregate runtime user permissions, Info.plist keys, Xcode capabilities, ordinary entitlements, managed entitlements, background modes, and extension targets.",
+    inputSchema: auditInputSchema,
+    outputSchema,
+    annotations: readOnlyAnnotations
+  },
+  async ({ capability_ids }) => result(await auditPermissionsAndEntitlements(capability_ids))
+);
+server.registerTool(
+  "audit_privacy_and_app_review",
+  {
+    title: "Audit privacy and App Review risks",
+    description: "Assess privacy manifests, required-reason APIs, sensitive data handling, security controls, and App Store review considerations for selected capabilities.",
+    inputSchema: auditInputSchema,
+    outputSchema,
+    annotations: readOnlyAnnotations
+  },
+  async ({ capability_ids }) => result(await auditPrivacyAndReview(capability_ids))
+);
+server.registerTool(
+  "generate_ios_architecture",
+  {
+    title: "Generate an iOS architecture",
+    description: "Generate a proportionate SwiftUI-first layered architecture and data flow from a product idea and selected verified Apple capabilities.",
+    inputSchema: architectureInputSchema,
+    outputSchema,
+    annotations: readOnlyAnnotations
+  },
+  async ({ idea, capability_ids, project_scale }) => result(await generateArchitecture(idea, capability_ids, project_scale))
+);
+server.registerTool(
+  "generate_implementation_plan",
+  {
+    title: "Generate an iOS implementation plan",
+    description: "Create a dependency-ordered proof-of-concept, MVP, integration, permission, background, privacy, testing, and release plan for selected capabilities.",
+    inputSchema: implementationPlanInputSchema,
+    outputSchema,
+    annotations: readOnlyAnnotations
+  },
+  async ({ capability_ids, include_code_spike }) => result(await generateImplementationPlan(capability_ids, include_code_spike))
+);
+server.registerTool(
+  "search_official_apple_docs",
+  {
+    title: "Search verified Apple documentation",
+    description: "Search the plugin's verified local index of official Apple documentation. This does not perform live web search; use the link-verification workflow to refresh source status.",
+    inputSchema: officialDocsSearchInputSchema,
+    outputSchema,
+    annotations: readOnlyAnnotations
+  },
+  async ({ query, capability_ids, maximum_results }) => result(await searchOfficialAppleDocs(query, capability_ids, maximum_results))
+);
+server.registerTool(
+  "search_apple_technology_catalog",
+  {
+    title: "Search the Apple technology catalog",
+    description: "Discover profiled and catalog-only Apple technologies without treating catalog presence as implementation evidence.",
+    inputSchema: technologyCatalogSearchInputSchema,
+    outputSchema,
+    annotations: readOnlyAnnotations
+  },
+  async ({ query, coverage_status, maximum_results }) => result(await searchAppleTechnologyCatalog(query, coverage_status, maximum_results))
+);
+server.registerTool(
+  "get_registry_coverage",
+  {
+    title: "Measure registry coverage",
+    description: "Report catalog size, reviewed profile count, profile coverage percentage, categories, and official index sources.",
+    inputSchema: registryCoverageInputSchema,
+    outputSchema,
+    annotations: readOnlyAnnotations
+  },
+  async () => result(await reportRegistryCoverage())
+);
+server.registerTool(
+  "refresh_capability_registry",
+  {
+    title: "Plan a capability registry refresh",
+    description: "Return a dry-run refresh plan and source inventory. Runtime mutation is intentionally disabled; reviewed repository changes are required for registry updates.",
+    inputSchema: refreshRegistryInputSchema,
+    outputSchema,
+    annotations: readOnlyAnnotations
+  },
+  async ({ dry_run, source_urls }) => result(await refreshCapabilityRegistry(dry_run, source_urls))
+);
 async function main() {
   await server.connect(new StdioServerTransport());
   console.error("ios-capability-architect MCP server running on stdio");

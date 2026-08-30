@@ -113,7 +113,7 @@ For a full app-idea analysis, use these sections:
 The capability map uses these columns:
 
 | Requirement | Recommended technology | Why | On-device status | Minimum OS | Permission / Info.plist | Capability / Entitlement | Background / Extension | Risks | Alternative | Official documentation |
-|---|---|---|---|---|---|---|---|---|---|---|
+| ----------- | ---------------------- | --- | ---------------- | ---------- | ----------------------- | ------------------------ | ---------------------- | ----- | ----------- | ---------------------- |
 
 Keep citations close to claims. Link directly to the framework, API, entitlement, release note, or guideline page rather than a marketing page when possible.
 

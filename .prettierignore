@@ -1,0 +1,5 @@
+.git/
+node_modules/
+coverage/
+plugins/ios-capability-architect/bundle/
+plugins/ios-capability-architect/data/link-verification-report.json

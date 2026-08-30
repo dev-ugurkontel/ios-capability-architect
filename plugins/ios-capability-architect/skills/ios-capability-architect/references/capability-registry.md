@@ -17,4 +17,6 @@ Authoring rules:
 7. Use `deprecated_api` and `stable_or_beta: deprecated` together, explain status, and provide alternatives.
 8. Do not fill unknown fields with guesses. Omitted raw fields normalize to conservative empty or unknown values.
 9. Run `npm run validate:registry`, `npm run verify:docs`, and `npm test` after changes.
-10. Review source diffs manually before updating a record. Link success alone does not prove the claim is unchanged.
+10. Keep catalog-only technologies out of recommendation results until a reviewed profile and official evidence are committed.
+11. Treat `get_registry_coverage` as the source of truth for measured coverage; never describe the moving Apple ecosystem as permanently complete.
+12. Review source diffs manually before updating a record. Link success alone does not prove the claim is unchanged.

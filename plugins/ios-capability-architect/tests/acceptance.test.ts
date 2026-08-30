@@ -6,7 +6,7 @@ import {
   compareImplementationOptions,
   getCapabilityProfile,
   resolveCapabilities
-} from "../src/engine.js";
+} from "@/engine.js";
 
 describe("acceptance scenarios", () => {
   it("maps a health app to permissions, sensitive-data rules, and bounded background delivery", async () => {
@@ -17,20 +17,34 @@ describe("acceptance scenarios", () => {
       on_device_priority: "required",
       privacy_level: "regulated"
     });
-    const resolved = await resolveCapabilities({ requirements: analysis.data.requirements, include_beta: false, maximum_results_per_requirement: 5 });
+    const resolved = await resolveCapabilities({
+      requirements: analysis.data.requirements,
+      include_beta: false,
+      maximum_results_per_requirement: 5
+    });
     expect(resolved.data.matches.some((match) => match.capability_id === "healthkit")).toBe(true);
     const audit = await auditPermissionsAndEntitlements(["healthkit", "healthkit-background-delivery"]);
     expect(audit.data.user_permissions?.join(" ")).toContain("HealthKit");
     expect(audit.data.info_plist_keys).toContain("NSHealthShareUsageDescription");
     expect(audit.data.entitlements).toContain("com.apple.developer.healthkit.background-delivery");
-    expect((await getCapabilityProfile("healthkit-background-delivery")).data.limitations.join(" ")).toContain("system controls");
+    expect((await getCapabilityProfile("healthkit-background-delivery")).data.limitations.join(" ")).toContain(
+      "system controls"
+    );
   });
 
   it("compares offline AI and rejects unqualified Foundation Models availability", async () => {
-    const comparison = await compareImplementationOptions(["core-ml", "foundation-models"], ["on_device", "hardware", "minimum_os"]);
+    const comparison = await compareImplementationOptions(
+      ["core-ml", "foundation-models"],
+      ["on_device", "hardware", "minimum_os"]
+    );
     expect(comparison.data.options).toHaveLength(2);
     expect(comparison.data.options.every((option) => option.on_device === "fully_on_device")).toBe(true);
-    const availability = await checkAvailability({ capability_ids: ["foundation-models"], platform: "iOS", os_version: "26.0", allow_beta: false });
+    const availability = await checkAvailability({
+      capability_ids: ["foundation-models"],
+      platform: "iOS",
+      os_version: "26.0",
+      allow_beta: false
+    });
     expect(availability.data.results[0]?.status).toBe("conditional_or_incompatible");
     expect((availability.data.results[0]?.reasons as string[]).join(" ")).toContain("hardware");
   });
@@ -81,9 +95,25 @@ describe("acceptance scenarios", () => {
   });
 
   it("excludes iOS 27 beta records by default", async () => {
-    const requirement = [{ id: "req-beta", kind: "ai_ml" as const, description: "multimodal dynamic profiles", keywords: ["multimodal", "dynamic profiles"], confidence: "explicit" as const }];
-    const stable = await resolveCapabilities({ requirements: requirement, include_beta: false, maximum_results_per_requirement: 10 });
-    const beta = await resolveCapabilities({ requirements: requirement, include_beta: true, maximum_results_per_requirement: 10 });
+    const requirement = [
+      {
+        id: "req-beta",
+        kind: "ai_ml" as const,
+        description: "multimodal dynamic profiles",
+        keywords: ["multimodal", "dynamic profiles"],
+        confidence: "explicit" as const
+      }
+    ];
+    const stable = await resolveCapabilities({
+      requirements: requirement,
+      include_beta: false,
+      maximum_results_per_requirement: 10
+    });
+    const beta = await resolveCapabilities({
+      requirements: requirement,
+      include_beta: true,
+      maximum_results_per_requirement: 10
+    });
     expect(stable.data.matches.some((match) => match.capability_id === "foundation-models-ios27-beta")).toBe(false);
     expect(beta.data.matches.some((match) => match.capability_id === "foundation-models-ios27-beta")).toBe(true);
   });

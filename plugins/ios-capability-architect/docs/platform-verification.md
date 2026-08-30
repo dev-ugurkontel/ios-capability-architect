@@ -4,19 +4,19 @@ Verification date: 2026-08-30.
 
 ## Confirmed
 
-| Concern | Confirmed contract |
-|---|---|
-| Required manifest | `.codex-plugin/plugin.json` |
-| Workflow instructions | One or more skill folders containing `SKILL.md` |
-| Actions/tools | MCP server tools with explicit input/output schemas and safety annotations |
-| Bundled local server | `.mcp.json`, referenced by `mcpServers` |
-| Registered remote server | `.app.json` compatibility mapping after registration |
-| Authentication | Defined by the MCP connection/server when needed; not needed for this local read-only plugin |
-| Files/resources | Skills may package references, scripts, templates, and assets; MCP may expose resources |
-| Marketplace | `.agents/plugins/marketplace.json` for a Codex marketplace |
-| Local testing | Add a marketplace, install the plugin, and start a new task |
-| Public publication | Submission portal, automated scanning, policy metadata, review, then explicit publish |
-| Security | Accurate tool boundaries, least privilege, schema validation, safe annotations, privacy/legal metadata for public submission |
+| Concern                  | Confirmed contract                                                                                                           |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| Required manifest        | `.codex-plugin/plugin.json`                                                                                                  |
+| Workflow instructions    | One or more skill folders containing `SKILL.md`                                                                              |
+| Actions/tools            | MCP server tools with explicit input/output schemas and safety annotations                                                   |
+| Bundled local server     | `.mcp.json`, referenced by `mcpServers`                                                                                      |
+| Registered remote server | `.app.json` compatibility mapping after registration                                                                         |
+| Authentication           | Defined by the MCP connection/server when needed; not needed for this local read-only plugin                                 |
+| Files/resources          | Skills may package references, scripts, templates, and assets; MCP may expose resources                                      |
+| Marketplace              | `.agents/plugins/marketplace.json` for a Codex marketplace                                                                   |
+| Local testing            | Add a marketplace, install the plugin, and start a new task                                                                  |
+| Public publication       | Submission portal, automated scanning, policy metadata, review, then explicit publish                                        |
+| Security                 | Accurate tool boundaries, least privilege, schema validation, safe annotations, privacy/legal metadata for public submission |
 
 ## Runtime constraints
 

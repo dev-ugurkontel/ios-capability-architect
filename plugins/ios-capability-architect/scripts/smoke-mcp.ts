@@ -14,12 +14,21 @@ const transport = new StdioClientTransport({
 try {
   await client.connect(transport);
   const tools = await client.listTools();
-  if (tools.tools.length !== 11) throw new Error(`Expected 11 tools, received ${tools.tools.length}`);
+  if (tools.tools.length !== 13) throw new Error(`Expected 13 tools, received ${tools.tools.length}`);
   const expected = [
-    "analyze_app_idea", "resolve_ios_capabilities", "get_capability_profile",
-    "compare_implementation_options", "check_availability", "audit_permissions_and_entitlements",
-    "audit_privacy_and_app_review", "generate_ios_architecture", "generate_implementation_plan",
-    "search_official_apple_docs", "refresh_capability_registry"
+    "analyze_app_idea",
+    "resolve_ios_capabilities",
+    "get_capability_profile",
+    "compare_implementation_options",
+    "check_availability",
+    "audit_permissions_and_entitlements",
+    "audit_privacy_and_app_review",
+    "generate_ios_architecture",
+    "generate_implementation_plan",
+    "search_official_apple_docs",
+    "search_apple_technology_catalog",
+    "get_registry_coverage",
+    "refresh_capability_registry"
   ];
   for (const name of expected) {
     if (!tools.tools.some((tool) => tool.name === name)) throw new Error(`Missing tool: ${name}`);
@@ -33,12 +42,18 @@ try {
   const structuredContent = response.structuredContent as Record<string, unknown> | undefined;
   if (structuredContent?.schema_version !== "1.0") throw new Error("Missing structured output envelope");
 
-  console.log(JSON.stringify({
-    connected: true,
-    tool_count: tools.tools.length,
-    profile_smoke: "healthkit",
-    structured_output: true
-  }, null, 2));
+  console.log(
+    JSON.stringify(
+      {
+        connected: true,
+        tool_count: tools.tools.length,
+        profile_smoke: "healthkit",
+        structured_output: true
+      },
+      null,
+      2
+    )
+  );
 } finally {
   await client.close();
 }

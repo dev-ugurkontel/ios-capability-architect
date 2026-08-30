@@ -3,4 +3,4 @@ dist/
 coverage/
 .DS_Store
 *.log
-data/link-verification-report.json
+**/data/link-verification-report.json

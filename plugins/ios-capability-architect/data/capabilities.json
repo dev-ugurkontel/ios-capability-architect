@@ -9,23 +9,57 @@
       "category": "health_fitness",
       "entity_type": "framework",
       "summary": "Apple's permission-gated repository and APIs for health and fitness data on supported devices.",
-      "supported_use_cases": ["Read user-authorized health samples", "Write user-authorized health samples", "Observe selected sample changes"],
-      "unsupported_use_cases": ["Inferring whether read access was denied", "Using HealthKit data for advertising", "Guaranteed execution while a device is locked"],
+      "supported_use_cases": [
+        "Read user-authorized health samples",
+        "Write user-authorized health samples",
+        "Observe selected sample changes"
+      ],
+      "unsupported_use_cases": [
+        "Inferring whether read access was denied",
+        "Using HealthKit data for advertising",
+        "Guaranteed execution while a device is locked"
+      ],
       "platforms": ["iOS", "iPadOS", "watchOS", "visionOS"],
       "on_device_level": "primarily_on_device",
       "user_permissions": ["Per-data-type HealthKit read authorization", "Per-data-type HealthKit write authorization"],
       "info_plist_keys": ["NSHealthShareUsageDescription", "NSHealthUpdateUsageDescription"],
       "xcode_capabilities": ["HealthKit"],
       "entitlements": ["com.apple.developer.healthkit"],
-      "privacy_manifest_requirements": ["Declare collected health data and applicable data use in App Store privacy disclosures; audit SDK privacy manifests separately"],
-      "app_review_considerations": ["HealthKit use must be clearly health or fitness related", "A privacy policy is required", "HealthKit data cannot be used for advertising"],
-      "security_considerations": ["Minimize requested sample types", "Protect exported health data", "The HealthKit store is encrypted when the device is locked"],
-      "implementation_notes": ["Call HKHealthStore.isHealthDataAvailable() before other HealthKit APIs", "Treat missing samples as unknown rather than evidence of denied read permission"],
-      "limitations": ["Background reads may fail while the device is locked", "Authorization can change outside the app"],
+      "privacy_manifest_requirements": [
+        "Declare collected health data and applicable data use in App Store privacy disclosures; audit SDK privacy manifests separately"
+      ],
+      "app_review_considerations": [
+        "HealthKit use must be clearly health or fitness related",
+        "A privacy policy is required",
+        "HealthKit data cannot be used for advertising"
+      ],
+      "security_considerations": [
+        "Minimize requested sample types",
+        "Protect exported health data",
+        "The HealthKit store is encrypted when the device is locked"
+      ],
+      "implementation_notes": [
+        "Call HKHealthStore.isHealthDataAvailable() before other HealthKit APIs",
+        "Treat missing samples as unknown rather than evidence of denied read permission"
+      ],
+      "limitations": [
+        "Background reads may fail while the device is locked",
+        "Authorization can change outside the app"
+      ],
       "keywords": ["health", "sleep", "workout", "heart", "fitness", "medical", "healthkit"],
       "official_documentation": [
-        {"title": "HealthKit", "url": "https://developer.apple.com/documentation/healthkit/", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"},
-        {"title": "Protecting user privacy", "url": "https://developer.apple.com/documentation/healthkit/protecting-user-privacy", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"}
+        {
+          "title": "HealthKit",
+          "url": "https://developer.apple.com/documentation/healthkit/",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Protecting user privacy",
+          "url": "https://developer.apple.com/documentation/healthkit/protecting-user-privacy",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
       ]
     },
     {
@@ -44,11 +78,24 @@
       "entitlements": ["com.apple.developer.healthkit.background-delivery"],
       "xcode_capabilities": ["HealthKit > Background Delivery"],
       "implementation_notes": ["Pair HKObserverQuery with enableBackgroundDelivery(for:frequency:withCompletion:)"],
-      "limitations": ["The system controls wake timing", "Encrypted data may be unavailable while the device is locked"],
+      "limitations": [
+        "The system controls wake timing",
+        "Encrypted data may be unavailable while the device is locked"
+      ],
       "keywords": ["health", "background", "observer", "sleep", "delivery"],
       "official_documentation": [
-        {"title": "Configuring HealthKit access", "url": "https://developer.apple.com/documentation/xcode/configuring-healthkit-access", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"},
-        {"title": "HealthKit background delivery entitlement", "url": "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.healthkit.background-delivery", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"}
+        {
+          "title": "Configuring HealthKit access",
+          "url": "https://developer.apple.com/documentation/xcode/configuring-healthkit-access",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "HealthKit background delivery entitlement",
+          "url": "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.healthkit.background-delivery",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
       ]
     },
     {
@@ -58,18 +105,36 @@
       "category": "ai_ml",
       "entity_type": "framework",
       "summary": "Runs and can personalize supported machine-learning models on device using CPU, GPU, and Neural Engine resources.",
-      "supported_use_cases": ["Offline inference", "On-device model personalization", "Image, text, audio, and tabular predictions"],
-      "unsupported_use_cases": ["Arbitrary cloud-hosted model execution without an app-managed network layer", "Assuming every model fits device memory or energy budgets"],
+      "supported_use_cases": [
+        "Offline inference",
+        "On-device model personalization",
+        "Image, text, audio, and tabular predictions"
+      ],
+      "unsupported_use_cases": [
+        "Arbitrary cloud-hosted model execution without an app-managed network layer",
+        "Assuming every model fits device memory or energy budgets"
+      ],
       "platforms": ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
       "on_device_level": "fully_on_device",
       "network_requirement": "No network is required after the model is present on device.",
       "hardware_requirements": ["Performance varies by model and available CPU, GPU, and Neural Engine"],
-      "security_considerations": ["Keep sensitive inputs on device when network upload is unnecessary", "Validate downloaded model integrity if models are updated remotely"],
-      "implementation_notes": ["Benchmark representative devices", "Provide a fallback for unsupported or resource-constrained models"],
+      "security_considerations": [
+        "Keep sensitive inputs on device when network upload is unnecessary",
+        "Validate downloaded model integrity if models are updated remotely"
+      ],
+      "implementation_notes": [
+        "Benchmark representative devices",
+        "Provide a fallback for unsupported or resource-constrained models"
+      ],
       "limitations": ["Model size, memory, latency, thermal state, and power use constrain feasibility"],
       "keywords": ["ai", "ml", "offline", "model", "inference", "vision", "coreml"],
       "official_documentation": [
-        {"title": "Core ML", "url": "https://developer.apple.com/documentation/coreml", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"}
+        {
+          "title": "Core ML",
+          "url": "https://developer.apple.com/documentation/coreml",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
       ]
     },
     {
@@ -80,9 +145,12 @@
       "entity_type": "framework",
       "summary": "A Swift framework for guided generation and tool use with the on-device language model that powers Apple Intelligence.",
       "supported_use_cases": ["On-device text generation", "Guided structured generation", "Tool calling"],
-      "unsupported_use_cases": ["Assuming availability on every iPhone", "Using without a fallback when Apple Intelligence is unavailable"],
+      "unsupported_use_cases": [
+        "Assuming availability on every iPhone",
+        "Using without a fallback when Apple Intelligence is unavailable"
+      ],
       "platforms": ["iOS", "iPadOS", "macOS", "visionOS"],
-      "minimum_os_version": {"iOS": "26.0", "iPadOS": "26.0", "macOS": "26.0", "visionOS": "26.0"},
+      "minimum_os_version": { "iOS": "26.0", "iPadOS": "26.0", "macOS": "26.0", "visionOS": "26.0" },
       "sdk_availability": "Stable APIs in the iOS 26 SDK; iOS 27 additions are tracked separately as beta.",
       "on_device_level": "fully_on_device",
       "network_requirement": "No network is required after the system model is available; initial system model readiness is controlled by the OS.",
@@ -90,12 +158,28 @@
       "hardware_requirements": ["Apple Intelligence-capable hardware", "Apple Intelligence enabled and model ready"],
       "region_restrictions": ["Availability depends on Apple Intelligence regional support"],
       "language_restrictions": ["Availability depends on Apple Intelligence language support"],
-      "implementation_notes": ["Check SystemLanguageModel.default.availability before use", "Provide deterministic fallback behavior"],
-      "limitations": ["The system model and behavior can change with OS updates", "Context, latency, and safety guardrails constrain output"],
+      "implementation_notes": [
+        "Check SystemLanguageModel.default.availability before use",
+        "Provide deterministic fallback behavior"
+      ],
+      "limitations": [
+        "The system model and behavior can change with OS updates",
+        "Context, latency, and safety guardrails constrain output"
+      ],
       "keywords": ["ai", "llm", "offline", "apple intelligence", "generation", "foundation models"],
       "official_documentation": [
-        {"title": "Foundation Models", "url": "https://developer.apple.com/documentation/foundationmodels", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"},
-        {"title": "Generating content and performing tasks with Foundation Models", "url": "https://developer.apple.com/documentation/foundationmodels/generating-content-and-performing-tasks-with-foundation-models", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"}
+        {
+          "title": "Foundation Models",
+          "url": "https://developer.apple.com/documentation/foundationmodels",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Generating content and performing tasks with Foundation Models",
+          "url": "https://developer.apple.com/documentation/foundationmodels/generating-content-and-performing-tasks-with-foundation-models",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
       ]
     },
     {
@@ -108,20 +192,42 @@
       "supported_use_cases": ["Evaluate iOS 27 multimodal and provider-based designs in beta builds"],
       "unsupported_use_cases": ["Shipping as a stable production dependency before the SDK exits beta"],
       "platforms": ["iOS", "iPadOS", "macOS", "visionOS"],
-      "minimum_os_version": {"iOS": "27.0 beta", "iPadOS": "27.0 beta", "macOS": "27.0 beta", "visionOS": "27.0 beta"},
+      "minimum_os_version": {
+        "iOS": "27.0 beta",
+        "iPadOS": "27.0 beta",
+        "macOS": "27.0 beta",
+        "visionOS": "27.0 beta"
+      },
       "sdk_availability": "Xcode 27 beta SDK",
       "stable_or_beta": "beta",
       "on_device_level": "hybrid",
       "network_requirement": "Depends on the selected LanguageModel provider; Apple on-device models can run locally while cloud providers require network access.",
-      "implementation_notes": ["Keep beta-only code behind availability checks and isolate it from the stable architecture"],
+      "implementation_notes": [
+        "Keep beta-only code behind availability checks and isolate it from the stable architecture"
+      ],
       "limitations": ["Beta API and behavior may change", "Provider-specific privacy and cost terms apply"],
       "keywords": ["ios 27", "beta", "multimodal", "dynamic profiles", "language model provider"],
       "official_documentation": [
-        {"title": "Foundation Models updates", "url": "https://developer.apple.com/documentation/updates/foundationmodels", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"},
-        {"title": "WWDC26 iOS guide", "url": "https://developer.apple.com/wwdc26/guides/ios/", "source_type": "wwdc", "verified_at": "2026-08-30"}
+        {
+          "title": "Foundation Models updates",
+          "url": "https://developer.apple.com/documentation/updates/foundationmodels",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "WWDC26 iOS guide",
+          "url": "https://developer.apple.com/wwdc26/guides/ios/",
+          "source_type": "wwdc",
+          "verified_at": "2026-08-30"
+        }
       ],
       "release_notes": [
-        {"title": "iOS and iPadOS 27 beta release notes", "url": "https://developer.apple.com/documentation/ios-ipados-release-notes/ios-ipados-27-release-notes", "source_type": "release_notes", "verified_at": "2026-08-30"}
+        {
+          "title": "iOS and iPadOS 27 beta release notes",
+          "url": "https://developer.apple.com/documentation/ios-ipados-release-notes/ios-ipados-27-release-notes",
+          "source_type": "release_notes",
+          "verified_at": "2026-08-30"
+        }
       ]
     },
     {
@@ -132,20 +238,48 @@
       "entity_type": "framework",
       "summary": "Provides permission-controlled location, heading, monitoring, and ranging services.",
       "supported_use_cases": ["Foreground location", "Region monitoring", "User-justified background location"],
-      "unsupported_use_cases": ["Invisible tracking without disclosure", "Guaranteed continuous updates", "Background location on visionOS"],
+      "unsupported_use_cases": [
+        "Invisible tracking without disclosure",
+        "Guaranteed continuous updates",
+        "Background location on visionOS"
+      ],
       "platforms": ["iOS", "iPadOS", "macOS", "watchOS", "visionOS"],
       "on_device_level": "primarily_on_device",
-      "user_permissions": ["When In Use location authorization", "Always location authorization when strictly required", "Precise location when needed"],
+      "user_permissions": [
+        "When In Use location authorization",
+        "Always location authorization when strictly required",
+        "Precise location when needed"
+      ],
       "info_plist_keys": ["NSLocationWhenInUseUsageDescription", "NSLocationAlwaysAndWhenInUseUsageDescription"],
       "background_modes": ["UIBackgroundModes: location"],
-      "app_review_considerations": ["Background and Always location require a clear, user-visible product need", "Request the least intrusive authorization level"],
+      "app_review_considerations": [
+        "Background and Always location require a clear, user-visible product need",
+        "Request the least intrusive authorization level"
+      ],
       "security_considerations": ["Location is sensitive personal data", "Minimize retention and precision"],
-      "implementation_notes": ["Prefer When In Use authorization", "Set allowsBackgroundLocationUpdates only while the user-enabled feature is active"],
-      "limitations": ["The OS can suspend or terminate the app", "Energy use can be substantial", "Delivery and accuracy vary"],
+      "implementation_notes": [
+        "Prefer When In Use authorization",
+        "Set allowsBackgroundLocationUpdates only while the user-enabled feature is active"
+      ],
+      "limitations": [
+        "The OS can suspend or terminate the app",
+        "Energy use can be substantial",
+        "Delivery and accuracy vary"
+      ],
       "keywords": ["location", "gps", "geofence", "tracking", "background", "maps"],
       "official_documentation": [
-        {"title": "Core Location", "url": "https://developer.apple.com/documentation/corelocation", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"},
-        {"title": "Handling location updates in the background", "url": "https://developer.apple.com/documentation/corelocation/handling-location-updates-in-the-background", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"}
+        {
+          "title": "Core Location",
+          "url": "https://developer.apple.com/documentation/corelocation",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Handling location updates in the background",
+          "url": "https://developer.apple.com/documentation/corelocation/handling-location-updates-in-the-background",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
       ]
     },
     {
@@ -156,19 +290,35 @@
       "entity_type": "framework",
       "summary": "Schedules local notifications and handles user-authorized notification presentation and actions.",
       "supported_use_cases": ["Local reminders", "Remote notification presentation", "Notification actions"],
-      "unsupported_use_cases": ["Guaranteed delivery at an exact time", "Silent background execution without system policy"],
+      "unsupported_use_cases": [
+        "Guaranteed delivery at an exact time",
+        "Silent background execution without system policy"
+      ],
       "platforms": ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
       "on_device_level": "hybrid",
       "network_requirement": "Local notifications do not require network; remote notifications require APNs and a provider.",
       "user_permissions": ["Notification authorization for alerts, sounds, and badges as requested"],
       "xcode_capabilities": ["Push Notifications for remote notifications"],
       "entitlements": ["aps-environment for APNs"],
-      "app_review_considerations": ["Notification prompts must be contextual and purpose strings must match actual use"],
-      "implementation_notes": ["Handle denied authorization and in-app alternatives", "APNs is not a general-purpose data transport"],
-      "limitations": ["The system controls presentation and delivery", "Users can change notification settings at any time"],
+      "app_review_considerations": [
+        "Notification prompts must be contextual and purpose strings must match actual use"
+      ],
+      "implementation_notes": [
+        "Handle denied authorization and in-app alternatives",
+        "APNs is not a general-purpose data transport"
+      ],
+      "limitations": [
+        "The system controls presentation and delivery",
+        "Users can change notification settings at any time"
+      ],
       "keywords": ["notification", "reminder", "push", "apns", "alert"],
       "official_documentation": [
-        {"title": "UserNotifications", "url": "https://developer.apple.com/documentation/usernotifications", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"}
+        {
+          "title": "UserNotifications",
+          "url": "https://developer.apple.com/documentation/usernotifications",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
       ]
     },
     {
@@ -179,16 +329,28 @@
       "entity_type": "framework",
       "summary": "Asks the system to schedule bounded background refresh or processing work at an opportune time.",
       "supported_use_cases": ["Deferred refresh", "Maintenance and processing work"],
-      "unsupported_use_cases": ["Continuous execution", "Exact schedules", "Replacing a server for always-on processing"],
+      "unsupported_use_cases": [
+        "Continuous execution",
+        "Exact schedules",
+        "Replacing a server for always-on processing"
+      ],
       "platforms": ["iOS", "iPadOS", "tvOS", "visionOS"],
       "on_device_level": "fully_on_device",
       "info_plist_keys": ["BGTaskSchedulerPermittedIdentifiers"],
       "background_modes": ["UIBackgroundModes: fetch", "UIBackgroundModes: processing"],
-      "implementation_notes": ["Register task identifiers before launch completion", "Set expiration handlers and make work resumable"],
+      "implementation_notes": [
+        "Register task identifiers before launch completion",
+        "Set expiration handlers and make work resumable"
+      ],
       "limitations": ["The system decides whether and when to launch tasks", "Execution time is bounded"],
       "keywords": ["background", "refresh", "processing", "schedule", "deferred"],
       "official_documentation": [
-        {"title": "BackgroundTasks", "url": "https://developer.apple.com/documentation/backgroundtasks", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"}
+        {
+          "title": "BackgroundTasks",
+          "url": "https://developer.apple.com/documentation/backgroundtasks",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
       ]
     },
     {
@@ -204,12 +366,29 @@
       "related_extensions": ["Widget Extension"],
       "platforms": ["iOS", "iPadOS", "macOS", "watchOS", "visionOS"],
       "on_device_level": "primarily_on_device",
-      "implementation_notes": ["Use a widget extension target", "Use App Intents for buttons and toggles", "Use an App Group when app and extension need shared storage"],
-      "limitations": ["Timeline reload frequency is system controlled", "The extension has separate process and resource constraints"],
+      "implementation_notes": [
+        "Use a widget extension target",
+        "Use App Intents for buttons and toggles",
+        "Use an App Group when app and extension need shared storage"
+      ],
+      "limitations": [
+        "Timeline reload frequency is system controlled",
+        "The extension has separate process and resource constraints"
+      ],
       "keywords": ["widget", "extension", "lock screen", "control", "timeline"],
       "official_documentation": [
-        {"title": "WidgetKit", "url": "https://developer.apple.com/documentation/widgetkit", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"},
-        {"title": "Adding interactivity to widgets and Live Activities", "url": "https://developer.apple.com/documentation/widgetkit/adding-interactivity-to-widgets-and-live-activities", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"}
+        {
+          "title": "WidgetKit",
+          "url": "https://developer.apple.com/documentation/widgetkit",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Adding interactivity to widgets and Live Activities",
+          "url": "https://developer.apple.com/documentation/widgetkit/adding-interactivity-to-widgets-and-live-activities",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
       ]
     },
     {
@@ -220,18 +399,33 @@
       "entity_type": "framework",
       "summary": "Starts, updates, and ends Live Activities while WidgetKit and SwiftUI render their UI.",
       "supported_use_cases": ["Time-bound live event status", "Lock Screen and Dynamic Island updates"],
-      "unsupported_use_cases": ["General background execution", "Indefinite static widgets", "Live Activities on visionOS"],
+      "unsupported_use_cases": [
+        "General background execution",
+        "Indefinite static widgets",
+        "Live Activities on visionOS"
+      ],
       "related_frameworks": ["WidgetKit", "SwiftUI", "AppIntents"],
       "related_extensions": ["Widget Extension"],
       "platforms": ["iOS", "iPadOS", "watchOS", "macOS"],
       "on_device_level": "hybrid",
       "network_requirement": "Local updates can originate from the app; remote updates require ActivityKit push notifications through APNs.",
       "info_plist_keys": ["NSSupportsLiveActivities", "NSSupportsLiveActivitiesFrequentUpdates when justified"],
-      "implementation_notes": ["Define ActivityAttributes shared by the app and widget extension", "Use ActivityKit pushes rather than widget timelines for remote updates"],
-      "limitations": ["The system controls presentation, lifetime, and update budgets", "visionOS does not support Live Activities"],
+      "implementation_notes": [
+        "Define ActivityAttributes shared by the app and widget extension",
+        "Use ActivityKit pushes rather than widget timelines for remote updates"
+      ],
+      "limitations": [
+        "The system controls presentation, lifetime, and update budgets",
+        "visionOS does not support Live Activities"
+      ],
       "keywords": ["live activity", "dynamic island", "lock screen", "activitykit", "widget"],
       "official_documentation": [
-        {"title": "ActivityKit", "url": "https://developer.apple.com/documentation/activitykit", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"}
+        {
+          "title": "ActivityKit",
+          "url": "https://developer.apple.com/documentation/activitykit",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
       ]
     },
     {
@@ -242,15 +436,31 @@
       "entity_type": "framework",
       "summary": "Exposes app actions and entities to system experiences including Shortcuts, Siri, Spotlight, widgets, and Live Activities.",
       "supported_use_cases": ["App Shortcuts", "Interactive widget actions", "System-discoverable app actions"],
-      "unsupported_use_cases": ["Unbounded background work", "Bypassing user authorization required by the underlying action"],
+      "unsupported_use_cases": [
+        "Unbounded background work",
+        "Bypassing user authorization required by the underlying action"
+      ],
       "platforms": ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
       "on_device_level": "primarily_on_device",
-      "implementation_notes": ["Keep intents focused, parameterized, and safe to retry", "Add an intent to each target that must discover or execute it"],
+      "implementation_notes": [
+        "Keep intents focused, parameterized, and safe to retry",
+        "Add an intent to each target that must discover or execute it"
+      ],
       "limitations": ["Execution context varies by intent protocol and system surface"],
       "keywords": ["siri", "shortcut", "intent", "widget interaction", "spotlight", "app actions"],
       "official_documentation": [
-        {"title": "App Intents", "url": "https://developer.apple.com/documentation/appintents", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"},
-        {"title": "Widgets, Live Activities, and Controls", "url": "https://developer.apple.com/documentation/appintents/widgets-live-activities-and-controls", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"}
+        {
+          "title": "App Intents",
+          "url": "https://developer.apple.com/documentation/appintents",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Widgets, Live Activities, and Controls",
+          "url": "https://developer.apple.com/documentation/appintents/widgets-live-activities-and-controls",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
       ]
     },
     {
@@ -260,17 +470,31 @@
       "category": "data_sharing",
       "entity_type": "system_capability",
       "summary": "Provides a shared container and controlled data sharing between related apps and extensions from the same developer team.",
-      "supported_use_cases": ["Share small state or files with a widget extension", "Share Keychain items among related targets when separately configured"],
-      "unsupported_use_cases": ["Sharing data with unrelated developers", "Using UserDefaults.standard across processes"],
+      "supported_use_cases": [
+        "Share small state or files with a widget extension",
+        "Share Keychain items among related targets when separately configured"
+      ],
+      "unsupported_use_cases": [
+        "Sharing data with unrelated developers",
+        "Using UserDefaults.standard across processes"
+      ],
       "platforms": ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
       "on_device_level": "fully_on_device",
       "xcode_capabilities": ["App Groups"],
       "entitlements": ["com.apple.security.application-groups"],
       "security_considerations": ["Treat every target in the group as having access to shared container data"],
-      "implementation_notes": ["Use a group identifier owned by the developer team", "Coordinate concurrent file access"],
+      "implementation_notes": [
+        "Use a group identifier owned by the developer team",
+        "Coordinate concurrent file access"
+      ],
       "keywords": ["app group", "shared container", "widget data", "extension data"],
       "official_documentation": [
-        {"title": "Configuring App Groups", "url": "https://developer.apple.com/documentation/xcode/configuring-app-groups", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"}
+        {
+          "title": "Configuring App Groups",
+          "url": "https://developer.apple.com/documentation/xcode/configuring-app-groups",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
       ]
     },
     {
@@ -281,22 +505,55 @@
       "entity_type": "managed_entitlement",
       "summary": "A managed distribution entitlement Apple must approve for apps and applicable Screen Time API extensions that use Family Controls.",
       "supported_use_cases": ["Approved parental-control and individual authorization experiences"],
-      "unsupported_use_cases": ["General surveillance", "Assuming development capability access guarantees App Store distribution approval"],
+      "unsupported_use_cases": [
+        "General surveillance",
+        "Assuming development capability access guarantees App Store distribution approval"
+      ],
       "related_frameworks": ["FamilyControls", "ManagedSettings", "DeviceActivity"],
-      "related_extensions": ["Device Activity Monitor", "Device Activity Report", "Shield Action", "Shield Configuration"],
+      "related_extensions": [
+        "Device Activity Monitor",
+        "Device Activity Report",
+        "Shield Action",
+        "Shield Configuration"
+      ],
       "platforms": ["iOS", "iPadOS"],
       "on_device_level": "primarily_on_device",
       "xcode_capabilities": ["Family Controls"],
       "entitlements": ["com.apple.developer.family-controls"],
       "managed_entitlements": ["Family Controls distribution approval for the app and each applicable extension"],
       "user_permissions": ["FamilyControls AuthorizationCenter authorization"],
-      "app_review_considerations": ["Apple reviews entitlement requests", "Request the entitlement separately for applicable extensions"],
-      "recommended_alternatives": ["Use ordinary app-level timers, focus features, or notification reminders when device-wide control is unnecessary"],
-      "limitations": ["Distribution requires Apple approval", "Authorization and extension architecture are mandatory for supported scenarios"],
-      "keywords": ["managed entitlement", "screen time", "parental controls", "family controls", "device activity", "shield"],
+      "app_review_considerations": [
+        "Apple reviews entitlement requests",
+        "Request the entitlement separately for applicable extensions"
+      ],
+      "recommended_alternatives": [
+        "Use ordinary app-level timers, focus features, or notification reminders when device-wide control is unnecessary"
+      ],
+      "limitations": [
+        "Distribution requires Apple approval",
+        "Authorization and extension architecture are mandatory for supported scenarios"
+      ],
+      "keywords": [
+        "managed entitlement",
+        "screen time",
+        "parental controls",
+        "family controls",
+        "device activity",
+        "shield"
+      ],
       "official_documentation": [
-        {"title": "Requesting the Family Controls entitlement", "url": "https://developer.apple.com/documentation/familycontrols/requesting-the-family-controls-entitlement", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"},
-        {"title": "Configuring Family Controls", "url": "https://developer.apple.com/documentation/xcode/configuring-family-controls", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"}
+        {
+          "title": "Requesting the Family Controls entitlement",
+          "url": "https://developer.apple.com/documentation/familycontrols/requesting-the-family-controls-entitlement",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Configuring Family Controls",
+          "url": "https://developer.apple.com/documentation/xcode/configuring-family-controls",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
       ]
     },
     {
@@ -306,17 +563,42 @@
       "category": "persistence",
       "entity_type": "framework",
       "summary": "A Swift-native persistence framework integrated with SwiftUI and built for model storage, queries, and optional CloudKit-backed synchronization.",
-      "supported_use_cases": ["Local structured persistence", "SwiftUI-integrated data models", "Eligible CloudKit synchronization"],
-      "unsupported_use_cases": ["A cross-platform server database", "Assuming cloud synchronization requires no conflict or schema planning"],
+      "supported_use_cases": [
+        "Local structured persistence",
+        "SwiftUI-integrated data models",
+        "Eligible CloudKit synchronization"
+      ],
+      "unsupported_use_cases": [
+        "A cross-platform server database",
+        "Assuming cloud synchronization requires no conflict or schema planning"
+      ],
       "platforms": ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
-      "minimum_os_version": {"iOS": "17.0", "iPadOS": "17.0", "macOS": "14.0", "watchOS": "10.0", "tvOS": "17.0", "visionOS": "1.0"},
+      "minimum_os_version": {
+        "iOS": "17.0",
+        "iPadOS": "17.0",
+        "macOS": "14.0",
+        "watchOS": "10.0",
+        "tvOS": "17.0",
+        "visionOS": "1.0"
+      },
       "on_device_level": "primarily_on_device",
       "cloud_dependency": "Optional CloudKit integration",
-      "implementation_notes": ["Use an actor-aware data access boundary for nontrivial apps", "Plan migrations and test real schema evolution"],
-      "recommended_alternatives": ["Core Data for older OS targets or mature migration requirements", "Files for simple document-oriented data"],
+      "implementation_notes": [
+        "Use an actor-aware data access boundary for nontrivial apps",
+        "Plan migrations and test real schema evolution"
+      ],
+      "recommended_alternatives": [
+        "Core Data for older OS targets or mature migration requirements",
+        "Files for simple document-oriented data"
+      ],
       "keywords": ["database", "persistence", "swiftdata", "storage", "sync"],
       "official_documentation": [
-        {"title": "SwiftData", "url": "https://developer.apple.com/documentation/swiftdata", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"}
+        {
+          "title": "SwiftData",
+          "url": "https://developer.apple.com/documentation/swiftdata",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
       ]
     },
     {
@@ -330,12 +612,22 @@
       "unsupported_use_cases": ["Replacing App Store privacy answers", "Replacing runtime permission purpose strings"],
       "platforms": ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
       "on_device_level": "unknown",
-      "privacy_manifest_requirements": ["PrivacyInfo.xcprivacy when the app or included SDK uses covered APIs or requires declarations"],
-      "implementation_notes": ["Aggregate and inspect third-party SDK manifests", "Keep declarations aligned with actual code paths and App Store Connect answers"],
+      "privacy_manifest_requirements": [
+        "PrivacyInfo.xcprivacy when the app or included SDK uses covered APIs or requires declarations"
+      ],
+      "implementation_notes": [
+        "Aggregate and inspect third-party SDK manifests",
+        "Keep declarations aligned with actual code paths and App Store Connect answers"
+      ],
       "limitations": ["Requirements evolve; verify against current Apple documentation before submission"],
       "keywords": ["privacy manifest", "xcprivacy", "required reason", "app store privacy"],
       "official_documentation": [
-        {"title": "Privacy manifest files", "url": "https://developer.apple.com/documentation/bundleresources/privacy-manifest-files", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"}
+        {
+          "title": "Privacy manifest files",
+          "url": "https://developer.apple.com/documentation/bundleresources/privacy-manifest-files",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
       ]
     },
     {
@@ -354,7 +646,12 @@
       "implementation_notes": ["Generate Xcode privacy reports and inspect binary dependencies before submission"],
       "keywords": ["required reason api", "privacy", "approved reason", "xcprivacy"],
       "official_documentation": [
-        {"title": "Describing use of required reason API", "url": "https://developer.apple.com/documentation/bundleresources/describing-use-of-required-reason-api", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"}
+        {
+          "title": "Describing use of required reason API",
+          "url": "https://developer.apple.com/documentation/bundleresources/describing-use-of-required-reason-api",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
       ]
     },
     {
@@ -364,16 +661,32 @@
       "category": "commerce",
       "entity_type": "framework",
       "summary": "Swift APIs for discovering products, conducting App Store purchases, and verifying transaction state.",
-      "supported_use_cases": ["Consumables", "Non-consumables", "Auto-renewable subscriptions", "Transaction verification"],
-      "unsupported_use_cases": ["Bypassing App Store commerce rules", "Treating client-only state as authoritative for server-delivered value"],
+      "supported_use_cases": [
+        "Consumables",
+        "Non-consumables",
+        "Auto-renewable subscriptions",
+        "Transaction verification"
+      ],
+      "unsupported_use_cases": [
+        "Bypassing App Store commerce rules",
+        "Treating client-only state as authoritative for server-delivered value"
+      ],
       "platforms": ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
       "on_device_level": "hybrid",
       "network_requirement": "App Store product and transaction operations require Apple services; cached entitlement state can support limited offline behavior.",
-      "security_considerations": ["Verify transactions", "Use App Store Server API and notifications when server-side fulfillment or reconciliation is required"],
+      "security_considerations": [
+        "Verify transactions",
+        "Use App Store Server API and notifications when server-side fulfillment or reconciliation is required"
+      ],
       "implementation_notes": ["Test with StoreKit Testing and sandbox", "Finish handled transactions"],
       "keywords": ["purchase", "subscription", "monetization", "storekit", "iap"],
       "official_documentation": [
-        {"title": "StoreKit", "url": "https://developer.apple.com/documentation/storekit", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"}
+        {
+          "title": "StoreKit",
+          "url": "https://developer.apple.com/documentation/storekit",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
       ]
     },
     {
@@ -389,12 +702,26 @@
       "stable_or_beta": "deprecated",
       "deprecated_status": "Deprecated; Apple directs apps to use WKWebView or a purpose-specific system browser/authentication API.",
       "on_device_level": "hybrid",
-      "recommended_alternatives": ["WKWebView for configurable embedded web content", "SFSafariViewController for an in-app browser", "ASWebAuthenticationSession for authentication"],
+      "recommended_alternatives": [
+        "WKWebView for configurable embedded web content",
+        "SFSafariViewController for an in-app browser",
+        "ASWebAuthenticationSession for authentication"
+      ],
       "implementation_notes": ["Plan for asynchronous WKWebView navigation and different cookie/process architecture"],
       "keywords": ["uiwebview", "deprecated", "webview", "wkwebview", "legacy"],
       "official_documentation": [
-        {"title": "UIWebView", "url": "https://developer.apple.com/documentation/uikit/uiwebview", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"},
-        {"title": "Replacing UIWebView in your app", "url": "https://developer.apple.com/documentation/webkit/replacing-uiwebview-in-your-app", "source_type": "apple_developer_documentation", "verified_at": "2026-08-30"}
+        {
+          "title": "UIWebView",
+          "url": "https://developer.apple.com/documentation/uikit/uiwebview",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        },
+        {
+          "title": "Replacing UIWebView in your app",
+          "url": "https://developer.apple.com/documentation/webkit/replacing-uiwebview-in-your-app",
+          "source_type": "apple_developer_documentation",
+          "verified_at": "2026-08-30"
+        }
       ]
     }
   ]

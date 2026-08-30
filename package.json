@@ -2,17 +2,49 @@
   "name": "agent-plugins-marketplace",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
+  "description": "Open-source marketplace for production-grade Codex plugins.",
+  "license": "MIT",
+  "author": "Ugur Kontel",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ugurkontel/agent-plugins.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ugurkontel/agent-plugins/issues"
+  },
+  "homepage": "https://github.com/ugurkontel/agent-plugins#readme",
   "workspaces": [
     "plugins/*"
   ],
   "scripts": {
     "build": "npm run build --workspace ios-capability-architect",
-    "check": "npm run check --workspace ios-capability-architect",
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm run validate:registry",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint . --max-warnings 0",
+    "smoke:mcp": "npm run smoke:mcp --workspace ios-capability-architect",
     "test": "npm run test --workspace ios-capability-architect",
+    "test:coverage": "npm run test:coverage --workspace ios-capability-architect",
+    "typecheck": "npm run typecheck --workspace ios-capability-architect",
+    "validate:plugin": "npm run validate:plugin --workspace ios-capability-architect",
     "validate:registry": "npm run validate:registry --workspace ios-capability-architect",
-    "verify:docs": "npm run verify:docs --workspace ios-capability-architect"
+    "verify:docs": "npm run verify:docs --workspace ios-capability-architect",
+    "verify": "npm run check && npm run validate:plugin && npm run test:coverage && npm run build && npm run smoke:mcp"
   },
+  "packageManager": "npm@11.17.0",
   "engines": {
     "node": ">=24 <25"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@vitest/coverage-v8": "4.1.11",
+    "eslint": "10.9.1",
+    "prettier": "3.9.6",
+    "typescript-eslint": "8.68.0"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "fsevents@2.3.3": true
   }
 }

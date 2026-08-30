@@ -4,11 +4,11 @@
 
 1. Plugin manifest: identity, discovery metadata, skill path, and MCP path.
 2. Skill: complete expert behavior, source policy, analysis workflow, standard output, code rules, tests, and safety boundaries.
-3. MCP server: eleven read-only tools over stdio.
+3. MCP server: thirteen read-only tools over stdio.
 4. Schema layer: Zod contracts for tool input and normalized registry records.
 5. Registry loader: conservative defaults, uniqueness checks, official-source validation, and in-process cache.
 6. Recommendation engine: deterministic requirement extraction, relevance scoring, availability checks, audits, architecture, and delivery plan.
-7. Registry: versioned starter records with direct Apple documentation and verification dates.
+7. Registry: reviewed recommendation profiles plus a separate measured discovery catalog sourced from official Apple indexes.
 8. Developer scripts: schema validation and live link verification.
 9. Tests: registry integrity plus the seven acceptance scenarios.
 

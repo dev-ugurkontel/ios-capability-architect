@@ -1,36 +1,249 @@
 {
   "schema_version": "1.0",
-  "description": "Extensible Apple-platform technology taxonomy. Entries are discovery categories, not verified capability records; facts must be added to capabilities.json with official sources before recommendation.",
+  "description": "Apple-platform discovery catalog. Catalogued entries establish measured coverage only; they cannot produce recommendations until promoted to reviewed capability profiles with official evidence.",
+  "official_index_sources": [
+    "https://developer.apple.com/technologies/",
+    "https://developer.apple.com/documentation/updates",
+    "https://developer.apple.com/help/account/reference/supported-capabilities-ios/",
+    "https://developer.apple.com/documentation/bundleresources"
+  ],
   "categories": [
-    {"id": "language_core", "name": "Swift and core development", "examples": ["Swift", "Swift Concurrency", "Foundation", "Swift Package Manager"]},
-    {"id": "ui", "name": "User interface", "examples": ["SwiftUI", "UIKit", "Observation", "Accessibility"]},
-    {"id": "networking", "name": "Foundation and networking", "examples": ["URLSession", "Network", "WebSocket", "Bonjour"]},
-    {"id": "persistence_sync", "name": "Persistence and synchronization", "examples": ["SwiftData", "Core Data", "CloudKit", "FileManager"]},
-    {"id": "security_identity", "name": "Security and identity", "examples": ["Keychain Services", "CryptoKit", "Secure Enclave", "AuthenticationServices", "LocalAuthentication"]},
-    {"id": "ai_ml", "name": "Apple Intelligence and machine learning", "examples": ["Foundation Models", "Core ML", "Core AI", "Vision", "Natural Language", "Speech"]},
-    {"id": "system_intelligence", "name": "System intelligence and discovery", "examples": ["App Intents", "App Shortcuts", "Siri", "Core Spotlight"]},
-    {"id": "location_maps_weather", "name": "Location, maps, and weather", "examples": ["Core Location", "MapKit", "WeatherKit"]},
-    {"id": "health_fitness_sensors", "name": "Health, fitness, and sensors", "examples": ["HealthKit", "WorkoutKit", "Core Motion", "SensorKit"]},
-    {"id": "notifications_background", "name": "Notifications and background execution", "examples": ["UserNotifications", "APNs", "BackgroundTasks", "Background URLSession"]},
-    {"id": "widgets_live_activities", "name": "Widgets and live system experiences", "examples": ["WidgetKit", "ActivityKit", "Live Activities", "Dynamic Island"]},
-    {"id": "commerce_wallet", "name": "Commerce, payments, and Wallet", "examples": ["StoreKit", "Apple Pay", "PassKit", "Wallet", "FinanceKit"]},
-    {"id": "audio_video_media", "name": "Audio, video, and media", "examples": ["AVFoundation", "Core Audio", "MediaPlayer", "MusicKit", "ShazamKit"]},
-    {"id": "camera_photos_vision", "name": "Camera, photos, and image capture", "examples": ["AVFoundation capture", "PhotoKit", "PhotosUI", "VisionKit"]},
-    {"id": "nearby_accessories", "name": "Nearby devices and accessories", "examples": ["Core Bluetooth", "Nearby Interaction", "Core NFC", "MultipeerConnectivity", "AccessorySetupKit"]},
-    {"id": "network_extensions", "name": "Advanced networking and extensions", "examples": ["NetworkExtension", "VPN", "DNS Proxy", "Content Filter"]},
-    {"id": "home_matter", "name": "Home and Matter", "examples": ["HomeKit", "Matter", "MatterSupport"]},
-    {"id": "graphics_spatial", "name": "Graphics, AR, and spatial", "examples": ["ARKit", "RealityKit", "RoomPlan", "Metal", "Core Image"]},
-    {"id": "personal_information", "name": "Contacts, calendars, and communication", "examples": ["Contacts", "EventKit", "CallKit", "MessageUI"]},
-    {"id": "parental_controls", "name": "Family and Screen Time controls", "examples": ["FamilyControls", "DeviceActivity", "ManagedSettings"]},
-    {"id": "web_links", "name": "Web, browsers, and links", "examples": ["WebKit", "SafariServices", "Universal Links", "Associated Domains"]},
-    {"id": "files_documents", "name": "Files, documents, and providers", "examples": ["FileProvider", "UIDocument", "PDFKit", "QuickLook", "PencilKit"]},
-    {"id": "app_extensions", "name": "App extensions", "examples": ["Widget Extension", "Share Extension", "Notification Service Extension", "Credential Provider Extension"]},
-    {"id": "privacy_integrity", "name": "Privacy and app integrity", "examples": ["Privacy Manifests", "Required Reason APIs", "AppTrackingTransparency", "App Attest", "DeviceCheck"]},
-    {"id": "testing_diagnostics", "name": "Testing and diagnostics", "examples": ["Swift Testing", "XCTest", "XCUITest", "OSLog", "MetricKit", "Instruments"]},
-    {"id": "developer_delivery", "name": "Development and delivery tools", "examples": ["Xcode", "Simulator", "TestFlight", "App Store Connect"]},
-    {"id": "gaming", "name": "Games", "examples": ["GameKit", "Game Center", "Game Controller", "SpriteKit", "GameplayKit"]},
-    {"id": "automotive", "name": "Automotive experiences", "examples": ["CarPlay", "Now Playing", "Core Location", "MapKit"]},
-    {"id": "education_enterprise", "name": "Education and managed deployment", "examples": ["ClassKit", "Managed App Configuration", "ManagedAppDistribution"]},
-    {"id": "localization_accessibility", "name": "Localization and inclusive design", "examples": ["String Catalogs", "FormatStyle", "Translation", "VoiceOver", "Dynamic Type"]}
+    {
+      "id": "language_core",
+      "name": "Swift and core development",
+      "examples": ["Swift", "Swift Concurrency", "Foundation", "Swift Package Manager"]
+    },
+    { "id": "ui", "name": "User interface", "examples": ["SwiftUI", "UIKit", "Observation", "Accessibility"] },
+    {
+      "id": "networking",
+      "name": "Foundation and networking",
+      "examples": ["URLSession", "Network", "WebSocket", "Bonjour"]
+    },
+    {
+      "id": "persistence_sync",
+      "name": "Persistence and synchronization",
+      "examples": ["SwiftData", "Core Data", "CloudKit", "FileManager"]
+    },
+    {
+      "id": "security_identity",
+      "name": "Security and identity",
+      "examples": ["Keychain Services", "CryptoKit", "Secure Enclave", "AuthenticationServices", "LocalAuthentication"]
+    },
+    {
+      "id": "ai_ml",
+      "name": "Apple Intelligence and machine learning",
+      "examples": ["Foundation Models", "Core ML", "Core AI", "Vision", "Natural Language", "Speech"]
+    },
+    {
+      "id": "system_intelligence",
+      "name": "System intelligence and discovery",
+      "examples": ["App Intents", "App Shortcuts", "Siri", "Core Spotlight"]
+    },
+    {
+      "id": "location_maps_weather",
+      "name": "Location, maps, and weather",
+      "examples": ["Core Location", "MapKit", "WeatherKit"]
+    },
+    {
+      "id": "health_fitness_sensors",
+      "name": "Health, fitness, and sensors",
+      "examples": ["HealthKit", "WorkoutKit", "Core Motion", "SensorKit"]
+    },
+    {
+      "id": "notifications_background",
+      "name": "Notifications and background execution",
+      "examples": ["UserNotifications", "APNs", "BackgroundTasks", "Background URLSession"]
+    },
+    {
+      "id": "widgets_live_activities",
+      "name": "Widgets and live system experiences",
+      "examples": ["WidgetKit", "ActivityKit", "Live Activities", "Dynamic Island"]
+    },
+    {
+      "id": "commerce_wallet",
+      "name": "Commerce, payments, and Wallet",
+      "examples": ["StoreKit", "Apple Pay", "PassKit", "Wallet", "FinanceKit"]
+    },
+    {
+      "id": "audio_video_media",
+      "name": "Audio, video, and media",
+      "examples": ["AVFoundation", "Core Audio", "MediaPlayer", "MusicKit", "ShazamKit"]
+    },
+    {
+      "id": "camera_photos_vision",
+      "name": "Camera, photos, and image capture",
+      "examples": ["AVFoundation capture", "PhotoKit", "PhotosUI", "VisionKit"]
+    },
+    {
+      "id": "nearby_accessories",
+      "name": "Nearby devices and accessories",
+      "examples": ["Core Bluetooth", "Nearby Interaction", "Core NFC", "MultipeerConnectivity", "AccessorySetupKit"]
+    },
+    {
+      "id": "network_extensions",
+      "name": "Advanced networking and extensions",
+      "examples": ["NetworkExtension", "VPN", "DNS Proxy", "Content Filter"]
+    },
+    { "id": "home_matter", "name": "Home and Matter", "examples": ["HomeKit", "Matter", "MatterSupport"] },
+    {
+      "id": "graphics_spatial",
+      "name": "Graphics, AR, and spatial",
+      "examples": ["ARKit", "RealityKit", "RoomPlan", "Metal", "Core Image"]
+    },
+    {
+      "id": "personal_information",
+      "name": "Contacts, calendars, and communication",
+      "examples": ["Contacts", "EventKit", "CallKit", "MessageUI"]
+    },
+    {
+      "id": "parental_controls",
+      "name": "Family and Screen Time controls",
+      "examples": ["FamilyControls", "DeviceActivity", "ManagedSettings"]
+    },
+    {
+      "id": "web_links",
+      "name": "Web, browsers, and links",
+      "examples": ["WebKit", "SafariServices", "Universal Links", "Associated Domains"]
+    },
+    {
+      "id": "files_documents",
+      "name": "Files, documents, and providers",
+      "examples": ["FileProvider", "UIDocument", "PDFKit", "QuickLook", "PencilKit"]
+    },
+    {
+      "id": "app_extensions",
+      "name": "App extensions",
+      "examples": [
+        "Widget Extension",
+        "Share Extension",
+        "Notification Service Extension",
+        "Credential Provider Extension"
+      ]
+    },
+    {
+      "id": "privacy_integrity",
+      "name": "Privacy and app integrity",
+      "examples": ["Privacy Manifests", "Required Reason APIs", "AppTrackingTransparency", "App Attest", "DeviceCheck"]
+    },
+    {
+      "id": "testing_diagnostics",
+      "name": "Testing and diagnostics",
+      "examples": ["Swift Testing", "XCTest", "XCUITest", "OSLog", "MetricKit", "Instruments"]
+    },
+    {
+      "id": "developer_delivery",
+      "name": "Development and delivery tools",
+      "examples": ["Xcode", "Simulator", "TestFlight", "App Store Connect"]
+    },
+    {
+      "id": "provisioning_capabilities",
+      "name": "iOS provisioning capabilities",
+      "examples": [
+        "5G Network Slicing",
+        "Access WiFi Information",
+        "App Attest",
+        "App Groups",
+        "Apple Pay",
+        "Associated Domains",
+        "AutoFill Credential Provider",
+        "Background Modes",
+        "ClassKit",
+        "Communication Notifications",
+        "Data Protection",
+        "DriverKit Family MIDI",
+        "Extended Virtual Addressing",
+        "Family Controls Development",
+        "FileProvider Testing Mode",
+        "Fonts",
+        "Game Center",
+        "Group Activities",
+        "Head Pose",
+        "HealthKit",
+        "HealthKit Estimate Recalibration",
+        "HLS Interstitial Previews",
+        "HomeKit",
+        "Hotspot",
+        "iCloud CloudKit",
+        "iCloud Documents",
+        "iCloud Key-Value Storage",
+        "ID Verifier Display Only",
+        "In-App Purchase",
+        "Increased Debugging Memory Limit",
+        "Inter-App Audio",
+        "Journaling Suggestions",
+        "Keychain Sharing",
+        "Low Latency HLS",
+        "Maps",
+        "Matter Allow Setup Payload",
+        "MDM Managed Associated Domains",
+        "Media Device Discovery",
+        "Messages Collaboration",
+        "Multipath",
+        "Near Field Communication Tag Reading",
+        "Network Extensions",
+        "On Demand Install Capable",
+        "Personal VPN",
+        "Push to Talk",
+        "Push Notifications",
+        "Sensitive Content Analysis",
+        "Shared with You",
+        "Sign in with Apple",
+        "SIM Inserted for Wireless Carriers",
+        "Siri",
+        "Spatial Audio Profile",
+        "Sustained Execution",
+        "Time Sensitive Notifications",
+        "Wallet",
+        "WeatherKit",
+        "Wireless Accessory Configuration"
+      ]
+    },
+    {
+      "id": "emerging_platform_technologies",
+      "name": "Current and emerging Apple platform technologies",
+      "examples": [
+        "AlarmKit",
+        "AppIntentsTesting",
+        "AVSystemRouting",
+        "Core AI",
+        "CrashReportExtension",
+        "DeclaredAgeRange",
+        "EnergyKit",
+        "Evaluations",
+        "MediaDevice",
+        "MediaIntents",
+        "MusicUnderstanding",
+        "NowPlaying",
+        "PermissionKit",
+        "Private Cloud Compute Entitlement",
+        "ProximityReader",
+        "SpatialPreview",
+        "StateReporting",
+        "SuggestedActions",
+        "TrustInsights",
+        "VisualIntelligence",
+        "Wi-Fi Aware"
+      ]
+    },
+    {
+      "id": "gaming",
+      "name": "Games",
+      "examples": ["GameKit", "Game Center", "Game Controller", "SpriteKit", "GameplayKit"]
+    },
+    {
+      "id": "automotive",
+      "name": "Automotive experiences",
+      "examples": ["CarPlay", "Now Playing", "Core Location", "MapKit"]
+    },
+    {
+      "id": "education_enterprise",
+      "name": "Education and managed deployment",
+      "examples": ["ClassKit", "Managed App Configuration", "ManagedAppDistribution"]
+    },
+    {
+      "id": "localization_accessibility",
+      "name": "Localization and inclusive design",
+      "examples": ["String Catalogs", "FormatStyle", "Translation", "VoiceOver", "Dynamic Type"]
+    }
   ]
 }

@@ -94,6 +94,26 @@ export interface CapabilityRecord {
   keywords: string[];
 }
 
+export interface TechnologyCatalogEntry {
+  id: string;
+  name: string;
+  category_ids: string[];
+  category_names: string[];
+  coverage_status: "catalogued" | "profiled";
+  profile_ids: string[];
+  source_urls: string[];
+}
+
+export interface RegistryCoverage {
+  category_count: number;
+  catalogued_technology_count: number;
+  profiled_technology_count: number;
+  catalog_only_technology_count: number;
+  profile_coverage_percent: number;
+  verified_profile_count: number;
+  official_index_sources: string[];
+}
+
 export interface Requirement {
   id: string;
   kind:

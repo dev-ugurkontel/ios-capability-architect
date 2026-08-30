@@ -4,18 +4,51 @@
   "private": true,
   "type": "module",
   "description": "Read-only MCP tools and workflow guidance for mapping iOS product ideas to documented Apple capabilities.",
+  "license": "MIT",
+  "author": "Ugur Kontel",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ugurkontel/agent-plugins.git",
+    "directory": "plugins/ios-capability-architect"
+  },
+  "homepage": "https://github.com/ugurkontel/agent-plugins/tree/main/plugins/ios-capability-architect#readme",
+  "bugs": {
+    "url": "https://github.com/ugurkontel/agent-plugins/issues"
+  },
+  "keywords": [
+    "apple",
+    "codex",
+    "ios",
+    "mcp",
+    "plugin",
+    "swift",
+    "swiftui"
+  ],
+  "sideEffects": false,
+  "files": [
+    ".codex-plugin",
+    ".mcp.json",
+    "bundle",
+    "data",
+    "docs",
+    "examples",
+    "skills"
+  ],
   "engines": {
     "node": ">=24 <25"
   },
   "main": "bundle/server.mjs",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && node scripts/build-bundle.mjs",
-    "check": "tsc -p tsconfig.json --noEmit",
+    "build": "npm run typecheck && node scripts/build-bundle.mjs",
+    "check": "npm run typecheck",
     "start": "node bundle/server.mjs",
     "smoke:mcp": "tsx scripts/smoke-mcp.ts",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
+    "validate:plugin": "tsx scripts/validate-plugin-layout.ts",
     "validate:registry": "tsx scripts/validate-registry.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
     "verify:docs": "tsx scripts/verify-doc-links.ts"
   },
   "dependencies": {
