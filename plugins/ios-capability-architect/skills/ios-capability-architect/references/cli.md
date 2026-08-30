@@ -29,6 +29,14 @@ Inspect one reviewed profile:
 node <skill-directory>/scripts/ios-capability-architect.mjs profile healthkit
 ```
 
+Inspect one technology identity from the broader Apple catalog:
+
+```bash
+node <skill-directory>/scripts/ios-capability-architect.mjs technology alarmkit
+```
+
+The result is either `kind: reviewed_profile` with `catalog_entry` and `profile`, or a catalog-only research lead with `catalog_entry`, `recommendation_eligible: false`, `verified_scope`, `unverified_profile_fields`, and an official-live-research `next_step`. The latter cannot substitute for `profile`.
+
 Separate permission and entitlement requirements:
 
 ```bash
@@ -63,7 +71,9 @@ node <skill-directory>/scripts/ios-capability-architect.mjs coverage
 ## Interpretation rules
 
 - Preserve `warnings`, `knowledge_gaps`, `unknown`, and `manual_review` fields in the user-facing result.
-- A catalog-only match is a research lead, not a verified architecture recommendation.
+- Keep `resolve` output's `catalog_research_leads` separate from reviewed capability matches; preserve the originating requirement and matched phrase.
+- `profile` returns reviewed capability evidence; `technology` returns a catalog identity and may be catalog-only. Do not silently substitute one for the other.
+- A catalog-only match is a research lead, not implementation evidence or a verified architecture recommendation. Before recommending it, perform live research against current, technology-specific official Apple documentation and cite the sources and actual verification date. A generic Apple Technologies index URL proves discovery only.
 - A detected source string does not prove the generated target, App ID, signing profile, Apple approval, runtime availability, or App Review outcome.
 - A missing source string is actionable evidence, not conclusive proof that externally generated configuration is absent.
 - Live availability and policy claims still require current official Apple documentation.

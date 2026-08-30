@@ -35,7 +35,7 @@ When the bundled MCP tools are available:
 
 1. Call `analyze_app_idea` to separate product intent, technical requirements, assumptions, constraints, and up to three high-value questions.
 2. Ask a question only when the answer materially changes feasibility, entitlement status, sensitive-data handling, hardware support, or architecture. Otherwise state reasonable assumptions and continue.
-3. Call `resolve_ios_capabilities` with the structured requirements. Keep beta excluded unless justified.
+3. Call `resolve_ios_capabilities` with the structured requirements. Keep beta excluded unless justified. Only its reviewed-profile `matches` are recommendation candidates. Keep `catalog_research_leads` separate and preserve each lead's originating requirement and matched phrase.
 4. Call `check_availability` for the declared platform, deployment target, device, region, and language constraints.
 5. Call `audit_permissions_and_entitlements` and keep these concepts distinct:
    - runtime user permission;
@@ -49,10 +49,11 @@ When the bundled MCP tools are available:
 7. Call `audit_privacy_and_app_review` whenever health, location, children, identity, finance, biometrics, photos, contacts, microphone, camera, tracking, or other sensitive data is involved.
 8. Call `generate_ios_architecture` and `generate_implementation_plan` only after capability selection is coherent.
 9. Use `get_capability_profile` or `compare_implementation_options` for focused follow-up analysis.
-10. Use `search_official_apple_docs` only as a verified local index. If the user needs current facts or direct citations, perform live research against official Apple sources and update the verification date. The local search tool is not live web search.
-11. Treat `refresh_capability_registry` as a dry-run inventory. It cannot mutate the registry. Registry changes require reviewed source edits, link verification, tests, and version control.
+10. Use `search_apple_technology_catalog` to discover broader Apple technologies and `get_apple_technology` to inspect one catalog identity. A reviewed lookup returns `kind: reviewed_profile` with its catalog entry and profile. For a catalog-only lookup, preserve `recommendation_eligible: false`, `verified_scope`, `unverified_profile_fields`, and `next_step`. Never present it as implementation evidence, feed it into profile-dependent tools, or recommend it before live research against current, technology-specific official Apple documentation. A generic Apple Technologies index URL proves discovery, not suitability.
+11. Use `search_official_apple_docs` only as a verified local index. If the user needs current facts or direct citations, perform live research against official Apple sources and update the verification date. The local search tool is not live web search.
+12. Treat `refresh_capability_registry` as a dry-run inventory. It cannot mutate the registry. Registry changes require reviewed source edits, link verification, tests, and version control.
 
-When the MCP server is unavailable but this skill contains `scripts/ios-capability-architect.mjs`, use the packaged read-only CLI for deterministic registry and project evidence. Read [cli.md](references/cli.md) before invoking it. Use the CLI for idea analysis, capability resolution, profiles, availability, permission and privacy audits, local project auditing, architecture, implementation planning, indexed source search, catalog discovery, and coverage. Treat CLI output exactly like MCP output: it is structured evidence, not permission to skip live Apple documentation or runtime validation.
+When the MCP server is unavailable but this skill contains `scripts/ios-capability-architect.mjs`, use the packaged read-only CLI for deterministic registry and project evidence. Read [cli.md](references/cli.md) before invoking it. Use the CLI for idea analysis, capability resolution, profiles, availability, permission and privacy audits, local project auditing, architecture, implementation planning, indexed source search, catalog discovery, individual technology lookup, and coverage. Treat CLI output exactly like MCP output: it is structured evidence, not permission to skip live Apple documentation or runtime validation.
 
 If neither MCP nor the packaged CLI is available, follow the same workflow using the packaged registry, the capability-registry reference, and current official Apple documentation. Say which claims could not be tool-verified. Do not imply that skills-only distribution grants network access, persistent storage, or access to files outside the host's normal workspace boundary.
 

@@ -58,7 +58,7 @@ Official platform sources:
     └── docs/
 ```
 
-The skill supplies the full system workflow and output contract. The MCP server supplies fourteen focused, read-only tools. The registry loader expands conservative defaults, validates every normalized field with Zod, and refuses duplicate or malformed records. The recommendation engine is deliberately deterministic; the model provides product reasoning while the server supplies verified facts and structured audits.
+The skill supplies the full system workflow and output contract. The MCP server supplies fifteen focused, read-only tools. The registry loader preserves explicit evidence gaps, validates every normalized field with Zod, and refuses duplicate or malformed records. The recommendation engine is deliberately deterministic; the model provides product reasoning while the server supplies verified facts and structured audits.
 
 ### Why use it instead of generic iOS advice?
 
@@ -139,6 +139,7 @@ Release Please owns version and changelog updates after the `0.2.0` baseline. Co
 - `analyze_app_idea`
 - `resolve_ios_capabilities`
 - `get_capability_profile`
+- `get_apple_technology`
 - `compare_implementation_options`
 - `check_availability`
 - `audit_permissions_and_entitlements`
@@ -159,7 +160,7 @@ The normalized `CapabilityRecord` contains all fields requested by the product b
 
 The 18 reviewed records cover the seven acceptance scenarios and their supporting technologies. Extend the recommendation registry by adding evidence-backed records to `plugins/ios-capability-architect/data/capabilities.json`; omitted stability normalizes to `unknown`, not `stable`. Run the full validation suite before merging.
 
-`plugins/ios-capability-architect/data/taxonomy.json` models the broader Apple ecosystem, including the current official iOS provisioning-capability list and emerging technology families. Its 193 deduplicated entries are discovery aids, not verified recommendation records; promote one to `capabilities.json` only with official evidence. `get_registry_coverage` keeps that distinction machine-visible.
+`plugins/ios-capability-architect/data/taxonomy.json` models the broader Apple ecosystem, including the current official iOS provisioning-capability list and emerging technology families. Its 193 deduplicated entries are discovery aids, not verified recommendation records. `get_apple_technology` performs an exact identity lookup, while `resolve_ios_capabilities` exposes unprofiled names only as separate, non-recommendable `catalog_research_leads`; neither path fabricates availability or configuration facts. Promote a technology to `capabilities.json` only with technology-specific official evidence. `get_registry_coverage` keeps that distinction machine-visible.
 
 ## Engineering quality
 
