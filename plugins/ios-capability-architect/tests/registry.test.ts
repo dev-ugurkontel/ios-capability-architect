@@ -31,6 +31,21 @@ describe("capability registry", () => {
     expect((await findRecord("Dynamic Island"))?.id).toBe("activitykit");
   });
 
+  it("loads the reviewed foundational language and UI profiles", async () => {
+    const expected = ["swift", "swift-concurrency", "swiftui", "uikit", "foundation"];
+    for (const id of expected) {
+      const record = await findRecord(id);
+      expect(record).toMatchObject({ id, stable_or_beta: "stable", last_verified_at: "2026-08-30" });
+      expect(record?.official_documentation.length).toBeGreaterThan(0);
+      expect(record?.sdk_availability).toContain("Xcode 27 was not locally installed");
+    }
+
+    expect((await findRecord("swift-concurrency"))?.minimum_os_version.iOS).toBe("13.0");
+    expect((await findRecord("swiftui"))?.minimum_os_version.watchOS).toBe("6.0");
+    expect((await findRecord("uikit"))?.platforms).not.toContain("macOS");
+    expect((await findRecord("foundation"))?.on_device_level).toBe("hybrid");
+  });
+
   it("looks up catalog technologies by exact id or normalized name only", async () => {
     expect((await findTechnologyCatalogEntry("MapKit"))?.id).toBe("technology.mapkit");
     expect((await findTechnologyCatalogEntry("technology.mapkit"))?.name).toBe("MapKit");
