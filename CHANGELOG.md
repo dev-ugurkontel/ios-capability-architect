@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented in this file. The project follows [Semantic Versioning](https://semver.org/) and uses Conventional Commit messages to drive release automation.
 
+## [0.6.0](https://github.com/fillbyte/ios-capability-architect/compare/v0.5.0...v0.6.0) (2026-08-30)
+
+
+### Features
+
+* **registry:** add foundational Swift and UI profiles ([#33](https://github.com/fillbyte/ios-capability-architect/issues/33)) ([231407f](https://github.com/fillbyte/ios-capability-architect/commit/231407fc3a77bd17531d292bf61e25aa5f5b02b5))
+
 ## [0.5.0](https://github.com/fillbyte/ios-capability-architect/compare/v0.4.2...v0.5.0) (2026-08-30)
 
 
