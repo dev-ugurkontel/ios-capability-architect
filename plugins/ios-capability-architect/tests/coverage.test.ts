@@ -12,6 +12,8 @@ describe("Apple technology catalog coverage", () => {
     expect(coverage.profiled_technology_count).toBeGreaterThanOrEqual(15);
     expect(coverage.catalog_only_technology_count).toBeGreaterThan(100);
     expect(coverage.profile_coverage_percent).toBeLessThan(25);
+    expect(coverage.complete_profile_count + coverage.partial_profile_count).toBe(coverage.verified_profile_count);
+    expect(coverage.partial_profile_count).toBeGreaterThan(0);
     expect(coverage.official_index_sources).toHaveLength(4);
   });
 

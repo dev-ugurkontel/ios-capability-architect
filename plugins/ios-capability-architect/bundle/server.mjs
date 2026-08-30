@@ -35973,14 +35973,21 @@ var capabilities_default = {
       platforms: ["iOS", "iPadOS", "macOS", "watchOS", "visionOS"],
       minimum_os_version: {
         iOS: "8.0",
-        iPadOS: "8.0",
-        macOS: "14.0",
+        iPadOS: "17.0",
+        macOS: null,
         watchOS: "2.0",
         visionOS: "1.0"
       },
-      sdk_availability: "Available in the current stable Apple SDKs for the listed platforms.",
+      sdk_availability: "The framework is linkable on older iPadOS and on macOS, but HealthKit store access is available only on iPadOS 17 or later and remains unavailable on macOS.",
       stable_or_beta: "stable",
       on_device_level: "primarily_on_device",
+      supported_devices: [
+        "iPhone with HealthKit available",
+        "iPad running iPadOS 17 or later",
+        "Apple Watch",
+        "Apple Vision Pro"
+      ],
+      hardware_requirements: ["HKHealthStore.isHealthDataAvailable() must return true"],
       user_permissions: ["Per-data-type HealthKit read authorization", "Per-data-type HealthKit write authorization"],
       info_plist_keys: ["NSHealthShareUsageDescription", "NSHealthUpdateUsageDescription"],
       xcode_capabilities: ["HealthKit"],
@@ -36004,7 +36011,8 @@ var capabilities_default = {
       ],
       limitations: [
         "Background reads may fail while the device is locked",
-        "Authorization can change outside the app"
+        "Authorization can change outside the app",
+        "The framework can link on iPadOS 16 and earlier and on macOS, but those platforms don't provide a HealthKit store"
       ],
       keywords: ["health", "sleep", "workout", "heart", "fitness", "medical", "healthkit"],
       official_documentation: [
@@ -36017,6 +36025,12 @@ var capabilities_default = {
         {
           title: "Protecting user privacy",
           url: "https://developer.apple.com/documentation/healthkit/protecting-user-privacy",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "About the HealthKit framework",
+          url: "https://developer.apple.com/documentation/healthkit/about-the-healthkit-framework",
           source_type: "apple_developer_documentation",
           verified_at: "2026-08-30"
         }
@@ -36035,10 +36049,12 @@ var capabilities_default = {
       related_frameworks: ["HealthKit"],
       related_capabilities: ["HealthKit"],
       platforms: ["iOS", "iPadOS", "watchOS", "visionOS"],
-      minimum_os_version: { iOS: "15.0", iPadOS: "15.0", watchOS: "8.0", visionOS: "1.0" },
-      sdk_availability: "Available in the current stable Apple SDKs for the listed platforms.",
+      minimum_os_version: { iOS: "15.0", iPadOS: "17.0", watchOS: "8.0", visionOS: "1.0" },
+      sdk_availability: "The entitlement is present in the stable SDK from iPadOS 15, but background delivery requires a HealthKit store, which is available on iPad starting with iPadOS 17.",
       stable_or_beta: "stable",
       on_device_level: "fully_on_device",
+      supported_devices: ["iPhone", "iPad running iPadOS 17 or later", "Apple Watch", "Apple Vision Pro"],
+      hardware_requirements: ["HKHealthStore.isHealthDataAvailable() must return true"],
       entitlements: ["com.apple.developer.healthkit.background-delivery"],
       xcode_capabilities: ["HealthKit > Background Delivery"],
       implementation_notes: ["Pair HKObserverQuery with enableBackgroundDelivery(for:frequency:withCompletion:)"],
@@ -37228,6 +37244,8 @@ async function getRegistryCoverage() {
     catalog_only_technology_count: catalog.length - profiled,
     profile_coverage_percent: Number((profiled / catalog.length * 100).toFixed(1)),
     verified_profile_count: profiles.length,
+    complete_profile_count: profiles.filter((profile) => profile.knowledge_state.completeness === "complete").length,
+    partial_profile_count: profiles.filter((profile) => profile.knowledge_state.completeness === "partial").length,
     official_index_sources: [...taxonomy.official_index_sources]
   };
 }

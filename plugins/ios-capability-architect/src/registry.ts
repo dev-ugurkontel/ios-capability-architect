@@ -246,6 +246,8 @@ export async function getRegistryCoverage(): Promise<RegistryCoverage> {
     catalog_only_technology_count: catalog.length - profiled,
     profile_coverage_percent: Number(((profiled / catalog.length) * 100).toFixed(1)),
     verified_profile_count: profiles.length,
+    complete_profile_count: profiles.filter((profile) => profile.knowledge_state.completeness === "complete").length,
+    partial_profile_count: profiles.filter((profile) => profile.knowledge_state.completeness === "partial").length,
     official_index_sources: [...taxonomy.official_index_sources]
   };
 }

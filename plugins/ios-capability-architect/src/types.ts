@@ -170,6 +170,8 @@ export interface RegistryCoverage {
   catalog_only_technology_count: number;
   profile_coverage_percent: number;
   verified_profile_count: number;
+  complete_profile_count: number;
+  partial_profile_count: number;
   official_index_sources: string[];
 }
 

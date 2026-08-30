@@ -52,7 +52,8 @@ describe("capability registry", () => {
 
     expect(activityKit?.platforms).toEqual(["iOS", "iPadOS"]);
     expect(activityKit?.minimum_os_version).toEqual({ iOS: "16.1", iPadOS: "16.1" });
-    expect(healthKit?.minimum_os_version.macOS).toBe("14.0");
+    expect(healthKit?.minimum_os_version.iPadOS).toBe("17.0");
+    expect(healthKit?.minimum_os_version.macOS).toBeNull();
     expect(storeKit2?.minimum_os_version.iOS).toBe("15.0");
   });
 
