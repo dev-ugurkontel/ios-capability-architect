@@ -1,5 +1,5 @@
 {
-  "name": "@dev-ugurkontel/ios-capability-architect",
+  "name": "@fillbyte/ios-capability-architect",
   "version": "0.2.0",
   "type": "module",
   "description": "Read-only MCP tools and workflow guidance for mapping iOS product ideas to documented Apple capabilities.",
@@ -7,12 +7,12 @@
   "author": "Ugur Kontel",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dev-ugurkontel/ios-capability-architect.git",
+    "url": "git+https://github.com/fillbyte/ios-capability-architect.git",
     "directory": "plugins/ios-capability-architect"
   },
-  "homepage": "https://github.com/dev-ugurkontel/ios-capability-architect/tree/main/plugins/ios-capability-architect#readme",
+  "homepage": "https://github.com/fillbyte/ios-capability-architect/tree/main/plugins/ios-capability-architect#readme",
   "bugs": {
-    "url": "https://github.com/dev-ugurkontel/ios-capability-architect/issues"
+    "url": "https://github.com/fillbyte/ios-capability-architect/issues"
   },
   "keywords": [
     "apple",
@@ -25,7 +25,7 @@
   ],
   "sideEffects": false,
   "bin": {
-    "ios-capability-architect-mcp": "./bundle/server.mjs"
+    "ios-capability-architect-mcp": "bundle/server.mjs"
   },
   "exports": {
     ".": "./bundle/server.mjs"

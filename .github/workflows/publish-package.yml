@@ -22,6 +22,7 @@ permissions:
 
 jobs:
   publish:
+    if: ${{ github.repository_owner == 'fillbyte' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
@@ -38,7 +39,7 @@ jobs:
           node-version: 24
           cache: npm
           registry-url: https://npm.pkg.github.com
-          scope: "@dev-ugurkontel"
+          scope: "@fillbyte"
       - name: Install locked dependencies
         run: npm ci
       - name: Verify the released source
@@ -46,7 +47,13 @@ jobs:
       - name: Build release assets
         id: assets
         run: |
+          package_name=$(node -p "require('./plugins/ios-capability-architect/package.json').name")
           package_version=$(node -p "require('./plugins/ios-capability-architect/package.json').version")
+          test "$package_name" = "@fillbyte/ios-capability-architect"
+          test "$package_version" != "0.2.0" || {
+            echo "Version 0.2.0 belongs to the legacy package scope; publish a new patch release" >&2
+            exit 1
+          }
           case "$RELEASE_TAG" in
             "v$package_version"|"ios-capability-architect-v$package_version") ;;
             *) echo "Release tag $RELEASE_TAG does not match package version $package_version" >&2; exit 1 ;;
@@ -56,7 +63,7 @@ jobs:
           npm run --silent release:sbom > "release-assets/ios-capability-architect-$RELEASE_TAG.sbom.cdx.json"
           package_path=$(find release-assets -maxdepth 1 -name '*.tgz' -print -quit)
           printf 'package_path=%s\n' "$package_path" >> "$GITHUB_OUTPUT"
-          (cd release-assets && shasum -a 256 *.tgz *.json > SHA256SUMS)
+          (cd release-assets && shasum -a 256 ./*.tgz ./*.json > SHA256SUMS)
       - name: Publish GitHub npm package
         run: npm publish "./${{ steps.assets.outputs.package_path }}" --registry=https://npm.pkg.github.com
         env:
