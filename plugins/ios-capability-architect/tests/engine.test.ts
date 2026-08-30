@@ -163,7 +163,15 @@ describe("read-only architecture tools", () => {
       ["Core Bluetooth", "core-bluetooth"],
       ["Accessibility", "accessibility"],
       ["AppTrackingTransparency", "apptrackingtransparency"],
-      ["App Attest", "app-attest"]
+      ["App Attest", "app-attest"],
+      ["Core Motion", "core-motion"],
+      ["WeatherKit", "weatherkit"],
+      ["LocalAuthentication", "local-authentication"],
+      ["Core Spotlight", "core-spotlight"],
+      ["Network", "network"],
+      ["WebKit", "webkit"],
+      ["EventKit", "eventkit"],
+      ["Contacts", "contacts"]
     ] as const) {
       expect((await getAppleTechnology(technology)).data).toMatchObject({
         kind: "reviewed_profile",

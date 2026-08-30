@@ -36025,7 +36025,7 @@ var refreshRegistryInputSchema = external_exports.object({
 // data/capabilities.json
 var capabilities_default = {
   schema_version: "1.0",
-  generated_at: "2026-08-30T00:00:00.000Z",
+  generated_at: "2026-08-31T00:00:00.000Z",
   records: [
     {
       id: "healthkit",
@@ -38344,7 +38344,7 @@ var capabilities_default = {
         "Guaranteed uninterrupted background playback, recording, or network streaming"
       ],
       related_frameworks: ["AVFAudio", "AVKit", "Photos", "PhotosUI"],
-      related_capabilities: ["Background Modes"],
+      related_capabilities: ["Background Modes", "App Sandbox", "Hardened Runtime"],
       platforms: ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"],
       minimum_os_version: {
         iOS: "2.2",
@@ -38374,10 +38374,13 @@ var capabilities_default = {
         "NSPhotoLibraryUsageDescription only for PhotoKit read-write access",
         "NSPhotoLibraryAddUsageDescription only for PhotoKit add-only access"
       ],
-      xcode_capabilities: ["Background Modes only for qualifying background audiovisual behavior"],
+      xcode_capabilities: [
+        "Background Modes only for qualifying background audiovisual behavior",
+        "App Sandbox or Hardened Runtime resource access only when a macOS app captures camera or audio input"
+      ],
       entitlements: [
-        "com.apple.security.device.camera only for camera capture in a sandboxed macOS app",
-        "com.apple.security.device.audio-input only for audio-input capture in a sandboxed macOS app",
+        "com.apple.security.device.camera only for camera capture from a macOS app using App Sandbox or Hardened Runtime resource access",
+        "com.apple.security.device.audio-input only for audio-input capture from a macOS app using App Sandbox or Hardened Runtime resource access",
         "com.apple.developer.avfoundation.multitasking-camera-access only for the deprecated legacy iPad multitasking-camera case with a pre-iOS 16 deployment target and voip background mode"
       ],
       background_modes: [
@@ -38435,9 +38438,21 @@ var capabilities_default = {
           url: "https://developer.apple.com/documentation/avkit/accessing-the-camera-while-multitasking-on-ipad",
           source_type: "apple_developer_documentation",
           verified_at: "2026-08-30"
+        },
+        {
+          title: "Camera entitlement",
+          url: "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.security.device.camera",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "Audio Input entitlement",
+          url: "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.security.device.audio-input",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
         }
       ],
-      last_verified_at: "2026-08-30"
+      last_verified_at: "2026-08-31"
     },
     {
       id: "photokit",
@@ -38485,9 +38500,13 @@ var capabilities_default = {
         "NSPhotoLibraryAddUsageDescription only for add-only access on supported non-macOS platforms",
         "PHPhotoLibraryPreventAutomaticLimitedAccessAlert only when suppressing the automatic limited-access alert and providing an app-managed selection flow"
       ],
-      xcode_capabilities: [],
+      related_capabilities: ["App Sandbox", "Hardened Runtime"],
+      related_entitlements: ["com.apple.security.personal-information.photos-library"],
+      xcode_capabilities: [
+        "Photos Library resource access only when a macOS app uses App Sandbox or Hardened Runtime"
+      ],
       entitlements: [
-        "com.apple.security.personal-information.photos-library only for photo-library access in a sandboxed macOS app"
+        "com.apple.security.personal-information.photos-library only for photo-library access from a macOS app using App Sandbox or Hardened Runtime resource access"
       ],
       background_modes: [],
       privacy_manifest_requirements: [
@@ -38542,9 +38561,15 @@ var capabilities_default = {
           url: "https://developer.apple.com/documentation/photosui",
           source_type: "apple_developer_documentation",
           verified_at: "2026-08-30"
+        },
+        {
+          title: "Photos Library entitlement",
+          url: "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.security.personal-information.photos-library",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
         }
       ],
-      last_verified_at: "2026-08-30"
+      last_verified_at: "2026-08-31"
     },
     {
       id: "vision",
@@ -38849,6 +38874,1062 @@ var capabilities_default = {
         }
       ],
       last_verified_at: "2026-08-30"
+    },
+    {
+      id: "core-motion",
+      name: "Core Motion",
+      aliases: ["CoreMotion", "CMMotionManager", "CMPedometer"],
+      category: "health_fitness_sensors",
+      entity_type: "framework",
+      summary: "Apple's sensor framework for device motion, activity, pedometer, altitude, headphone motion, and other hardware-specific motion services.",
+      supported_use_cases: [
+        "Read supported raw or processed accelerometer, gyroscope, magnetometer, and device-motion data",
+        "Query or monitor motion activity and pedometer data after the applicable authorization",
+        "Use supported altitude, headphone-motion, fall-detection, and environment-specific services",
+        "Adapt motion-driven interactions to the sensors and service availability reported at runtime"
+      ],
+      unsupported_use_cases: [
+        "Assuming every Core Motion service or sensor exists on every device",
+        "Treating motion-derived health or activity data as nonsensitive telemetry",
+        "Replacing HealthKit storage, SensorKit research access, or Core Location",
+        "Claiming unrestricted continuous background execution for an arbitrary motion stream"
+      ],
+      related_frameworks: ["HealthKit", "SensorKit", "Core Location"],
+      platforms: ["iOS", "iPadOS", "Mac Catalyst", "macOS", "visionOS", "watchOS"],
+      minimum_os_version: {
+        iOS: "4.0",
+        iPadOS: "4.0",
+        "Mac Catalyst": "13.1",
+        macOS: "10.15",
+        visionOS: "1.0",
+        watchOS: "2.0"
+      },
+      sdk_availability: "The Core Motion framework collection is available at the listed platform minimums, but services and members have independent availability. CMMotionManager is unavailable on macOS, magnetometer and several activity APIs are unavailable on visionOS, and macOS support is limited to specific members such as later headphone-motion APIs. Local headers were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      stable_or_beta: "stable",
+      supported_devices: ["Devices for which the concrete Core Motion service reports availability at runtime"],
+      hardware_requirements: [
+        "The sensor, motion coprocessor, supported headphones, Apple Watch model, or environmental hardware required by the selected API"
+      ],
+      on_device_level: "fully_on_device",
+      network_requirement: "Core Motion sensor and activity APIs require no Internet or cloud service.",
+      cloud_dependency: null,
+      user_permissions: [
+        "Motion & Fitness authorization only for permission-gated motion, activity, or pedometer data",
+        "Fall Detection authorization only for the fall-detection service"
+      ],
+      info_plist_keys: [
+        "NSMotionUsageDescription only when accessing permission-gated motion or fitness data",
+        "NSFallDetectionUsageDescription only when accessing fall-detection event data"
+      ],
+      related_capabilities: ["Fall Detection Notifications"],
+      related_entitlements: ["com.apple.developer.health.fall-detection"],
+      xcode_capabilities: [
+        "Fall Detection Notifications only when CMFallDetectionManager is used after Apple approves the managed entitlement"
+      ],
+      entitlements: ["com.apple.developer.health.fall-detection only when receiving CMFallDetectionManager events"],
+      managed_entitlements: [
+        "Apple approval for the Fall Detection Notifications entitlement before distributing CMFallDetectionManager support"
+      ],
+      background_modes: [],
+      privacy_manifest_requirements: [
+        "Core Motion import alone determines no framework-wide manifest declaration; disclose actual motion-, fitness-, fall-, or sensor-derived data collection and audit included SDK behavior"
+      ],
+      required_reason_apis: [],
+      app_review_considerations: [
+        "Request sensor access only when a clear user-visible feature needs it and explain the specific use in the purpose string",
+        "Treat health- or activity-related interpretations and retention as sensitive even when individual raw samples appear innocuous"
+      ],
+      security_considerations: [
+        "Minimize retention and sharing because sustained sensor streams can reveal activity, routines, or health information",
+        "Protect stored motion-derived data and avoid logging raw sensor histories",
+        "Validate timestamps, sampling rates, and discontinuities before using motion data for safety-sensitive decisions"
+      ],
+      implementation_notes: [
+        "Check each service's availability immediately before use and handle authorization changes",
+        "For CMFallDetectionManager, obtain Apple's managed entitlement and call the completion handler within the short system-provided background runtime",
+        "Stop updates promptly and select the lowest sampling frequency that satisfies the feature",
+        "Test on representative physical hardware; Simulator behavior is not sensor-equivalent",
+        "Keep feature-specific background behavior separate from the framework's foreground sampling APIs"
+      ],
+      limitations: [
+        "Framework availability does not imply that any particular sensor, service, or member API is available",
+        "Many services differ across iPhone, iPad, Apple Watch, Mac Catalyst, macOS, and visionOS",
+        "Compatible iPhone and iPad apps running on visionOS don't gain the same motion services as native visionOS apps",
+        "Core Motion provides no framework-wide background mode for continuous arbitrary execution; the approved fall-detection entitlement supplies only short event-specific background runtime"
+      ],
+      recommended_alternatives: [
+        "HealthKit when the product needs authorized health records or workout storage",
+        "SensorKit when an approved research workflow needs its separately governed sensor data",
+        "Core Location when the requirement is geographic location, heading, or region monitoring"
+      ],
+      keywords: [
+        "core motion",
+        "coremotion",
+        "cmmotionmanager",
+        "accelerometer",
+        "gyroscope",
+        "pedometer",
+        "motion activity",
+        "fall detection"
+      ],
+      official_documentation: [
+        {
+          title: "Core Motion",
+          url: "https://developer.apple.com/documentation/coremotion",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "CMMotionManager",
+          url: "https://developer.apple.com/documentation/coremotion/cmmotionmanager",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "CMPedometer",
+          url: "https://developer.apple.com/documentation/coremotion/cmpedometer",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "Device sensors",
+          url: "https://developer.apple.com/documentation/technologyoverviews/device-sensors",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "NSMotionUsageDescription",
+          url: "https://developer.apple.com/documentation/bundleresources/information-property-list/nsmotionusagedescription",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "NSFallDetectionUsageDescription",
+          url: "https://developer.apple.com/documentation/bundleresources/information-property-list/nsfalldetectionusagedescription",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "CMFallDetectionManager",
+          url: "https://developer.apple.com/documentation/coremotion/cmfalldetectionmanager",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "Fall Detection Notifications entitlement",
+          url: "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.health.fall-detection",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        }
+      ],
+      last_verified_at: "2026-08-31"
+    },
+    {
+      id: "weatherkit",
+      name: "WeatherKit",
+      aliases: ["Weather Kit", "WeatherService"],
+      category: "location_maps_weather",
+      entity_type: "framework",
+      summary: "Apple's cloud-backed native weather framework for current conditions, forecasts, alerts, availability, attribution, and supported historical statistics.",
+      supported_use_cases: [
+        "Request supported current, hourly, daily, and minute weather datasets for a supplied location",
+        "Display supported severe-weather alerts and dataset availability",
+        "Request supported historical weather statistics with member-level availability checks",
+        "Present Apple Weather attribution and legal-source information returned by the service"
+      ],
+      unsupported_use_cases: [
+        "Obtaining the user's location without a separate Core Location integration and authorization",
+        "Guaranteed offline forecasts, alerts, or historical data",
+        "Using Apple weather data without the required attribution and alert-source presentation",
+        "Treating WeatherKit REST authentication and Service IDs as native-framework configuration"
+      ],
+      related_frameworks: ["Core Location", "Foundation"],
+      related_capabilities: ["WeatherKit"],
+      related_entitlements: ["com.apple.developer.weatherkit"],
+      platforms: ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"],
+      minimum_os_version: {
+        iOS: "16.0",
+        iPadOS: "16.0",
+        "Mac Catalyst": "16.0",
+        macOS: "13.0",
+        tvOS: "16.0",
+        visionOS: "1.0",
+        watchOS: "9.0"
+      },
+      sdk_availability: "WeatherService and the original WeatherKit datasets are stable at the listed minimums; newer statistics, attribution fields, and dataset members have independent availability. The native framework is included in Xcode 14 or later. Local Swift interfaces were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      stable_or_beta: "stable",
+      on_device_level: "cloud_required",
+      network_requirement: "Weather requests require connectivity to Apple's Weather service; cached application presentation must still respect freshness and attribution requirements.",
+      cloud_dependency: "Apple Weather service and the developer's WeatherKit quota",
+      user_permissions: [
+        "Core Location authorization only when the app obtains the person's current location rather than using a supplied coordinate"
+      ],
+      info_plist_keys: [
+        "NSLocationWhenInUseUsageDescription only when an iOS-family feature obtains the person's current location for weather",
+        "NSLocationUsageDescription only when a macOS feature obtains the person's current location for weather"
+      ],
+      xcode_capabilities: ["WeatherKit"],
+      entitlements: ["com.apple.developer.weatherkit"],
+      managed_entitlements: [],
+      background_modes: [],
+      privacy_manifest_requirements: [
+        "WeatherKit import alone determines no framework-wide manifest declaration; disclose the app's actual off-device location or weather-linked data collection and audit included SDK behavior"
+      ],
+      required_reason_apis: [],
+      app_review_considerations: [
+        "Display the Apple Weather mark and legal attribution link as required for published software",
+        "Preserve the full issuing-agency name and Apple-provided details link for weather alerts, and don't alter alert text",
+        "Use a WeatherKit quota appropriate for production traffic and handle service throttling or unavailability"
+      ],
+      security_considerations: [
+        "Treat precise requested locations and location-linked history as sensitive",
+        "Don't expose WeatherKit REST private keys or developer tokens in a client app",
+        "Validate service errors, dataset availability, and stale cached results before presenting safety-relevant weather information"
+      ],
+      implementation_notes: [
+        "Enable the WeatherKit capability so signing includes com.apple.developer.weatherkit",
+        "Request only the datasets the interface needs and check WeatherAvailability for location-specific support",
+        "Fetch and render WeatherAttribution rather than hard-coding marks or legal URLs",
+        "Configure the distinct WeatherKit REST API, Service ID, and token flow separately when a server or non-Apple platform needs weather data"
+      ],
+      limitations: [
+        "Dataset and severe-weather-alert availability varies by location",
+        "Calls are quota-limited and unused monthly calls don't roll over",
+        "WeatherKit does not provide a framework-wide offline mode or background execution grant",
+        "Framework availability does not prove availability of every dataset or statistics member"
+      ],
+      recommended_alternatives: [
+        "WeatherKit REST API for authenticated server, website, Android, or other non-native Apple-platform access",
+        "Core Location only when the product needs the person's current coordinate"
+      ],
+      keywords: [
+        "weatherkit",
+        "weather service",
+        "forecast",
+        "weather alert",
+        "precipitation",
+        "weather attribution"
+      ],
+      official_documentation: [
+        {
+          title: "WeatherKit",
+          url: "https://developer.apple.com/documentation/weatherkit",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "Get started with WeatherKit",
+          url: "https://developer.apple.com/weatherkit/",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "WeatherService",
+          url: "https://developer.apple.com/documentation/weatherkit/weatherservice",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "WeatherAttribution",
+          url: "https://developer.apple.com/documentation/weatherkit/weatherattribution",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "WeatherKit entitlement",
+          url: "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.weatherkit",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "WeatherKit REST API",
+          url: "https://developer.apple.com/documentation/weatherkitrestapi",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        }
+      ],
+      last_verified_at: "2026-08-31"
+    },
+    {
+      id: "local-authentication",
+      name: "LocalAuthentication",
+      aliases: ["Local Authentication", "LAContext"],
+      category: "security_identity",
+      entity_type: "framework",
+      summary: "Apple's local device-owner authentication framework for evaluating supported biometric, passcode, wrist-detection, and companion policies.",
+      supported_use_cases: [
+        "Gate a local app action behind a supported device-owner authentication policy",
+        "Check whether a policy can be evaluated before presenting authentication UI",
+        "Evaluate a Security framework access control for a protected operation",
+        "Adapt the interface to the supported biometry type and policy result"
+      ],
+      unsupported_use_cases: [
+        "Authenticating a remote account or replacing server-side session security",
+        "Treating a successful evaluation as a permanent identity assertion",
+        "Assuming Face ID, Touch ID, passcode, wrist detection, or companion authentication exists on every device",
+        "Storing encryption keys or secrets by itself"
+      ],
+      related_frameworks: ["Security", "AuthenticationServices"],
+      platforms: ["iOS", "iPadOS", "Mac Catalyst", "macOS", "visionOS", "watchOS"],
+      minimum_os_version: {
+        iOS: "8.0",
+        iPadOS: "8.0",
+        "Mac Catalyst": "13.1",
+        macOS: "10.10",
+        visionOS: "1.0",
+        watchOS: "3.0"
+      },
+      sdk_availability: "The profile baseline follows LAContext: iOS 8, macOS 10.10, Mac Catalyst 13.1, watchOS 3, and visionOS 1. Policies and mechanisms have independent availability; biometric-only policy is unavailable on watchOS, while wrist-detection begins later and companion policies are platform-specific. tvOS is unavailable. Local headers were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      stable_or_beta: "stable",
+      supported_devices: [
+        "Devices on which LAContext.canEvaluatePolicy reports that the selected policy is currently evaluable"
+      ],
+      hardware_requirements: [
+        "Enrolled biometric or supported companion hardware only when required by the selected policy; device-owner passcode policies require a configured passcode"
+      ],
+      on_device_level: "fully_on_device",
+      network_requirement: "LocalAuthentication policy evaluation requires no Internet or developer cloud service.",
+      cloud_dependency: null,
+      user_permissions: [
+        "Interactive device-owner authentication for the selected LAPolicy; this is not a persistent privacy authorization grant"
+      ],
+      info_plist_keys: ["NSFaceIDUsageDescription only when the app can use Face ID for biometric authentication"],
+      xcode_capabilities: [],
+      entitlements: [],
+      managed_entitlements: [],
+      background_modes: [],
+      privacy_manifest_requirements: [
+        "LocalAuthentication import alone determines no framework-wide manifest declaration; disclose the app's actual authentication-related data collection and audit included SDK behavior"
+      ],
+      required_reason_apis: [],
+      app_review_considerations: [
+        "Explain the protected user-visible action before triggering system authentication",
+        "Provide an appropriate fallback for unavailable, unenrolled, locked-out, canceled, or restricted authentication"
+      ],
+      security_considerations: [
+        "Use successful authentication only for the immediate operation and don't cache it as a durable account identity",
+        "Use Keychain Services and SecAccessControl when a secret or key must be released only after authentication",
+        "Don't weaken authorization after a biometric failure by silently accepting an unrelated local flag or insecure fallback",
+        "Treat evaluated domain state as change-detection input, not as user identity or a stable biometric identifier"
+      ],
+      implementation_notes: [
+        "Call canEvaluatePolicy for the exact policy and consume the result promptly",
+        "Keep a strong reference to LAContext while evaluation is in progress and handle callbacks on an appropriate actor or queue",
+        "Supply a localized, concise reason tied to the action",
+        "Handle LAError cases explicitly, including cancellation, lockout, missing enrollment, and missing passcode"
+      ],
+      limitations: [
+        "Authentication mechanisms and policies vary by platform, device, enrollment, restrictions, and current lockout state",
+        "A successful local policy evaluation doesn't establish a remote account session",
+        "Simulator testing doesn't replace representative physical-device authentication tests",
+        "Framework availability does not prove availability of every LAPolicy or later LocalAuthentication member"
+      ],
+      recommended_alternatives: [
+        "AuthenticationServices for passkeys, Sign in with Apple, or standards-based web authentication",
+        "Keychain Services with SecAccessControl when the feature must protect a durable secret or key"
+      ],
+      keywords: [
+        "localauthentication",
+        "local authentication",
+        "lacontext",
+        "face id",
+        "touch id",
+        "biometry",
+        "device passcode"
+      ],
+      official_documentation: [
+        {
+          title: "LocalAuthentication",
+          url: "https://developer.apple.com/documentation/localauthentication",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "LAContext",
+          url: "https://developer.apple.com/documentation/localauthentication/lacontext",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "Logging a user into your app with Face ID or Touch ID",
+          url: "https://developer.apple.com/documentation/localauthentication/logging-a-user-into-your-app-with-face-id-or-touch-id",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "NSFaceIDUsageDescription",
+          url: "https://developer.apple.com/documentation/bundleresources/information-property-list/nsfaceidusagedescription",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        }
+      ],
+      last_verified_at: "2026-08-31"
+    },
+    {
+      id: "core-spotlight",
+      name: "Core Spotlight",
+      aliases: ["CoreSpotlight", "CSSearchableIndex"],
+      category: "system_intelligence",
+      entity_type: "framework",
+      summary: "Apple's on-device search framework for indexing, maintaining, and querying app-owned content and exposing eligible items to system search experiences.",
+      supported_use_cases: [
+        "Index app-owned items with searchable metadata and deep-link identifiers",
+        "Update or delete indexed items when the underlying app data changes",
+        "Query the app's Spotlight index for in-app search",
+        "Provide an optional Spotlight indexing extension for supported system-requested reindexing"
+      ],
+      unsupported_use_cases: [
+        "Reading arbitrary private content or another app's index",
+        "Cloud synchronization of the app's index between a person's devices",
+        "Treating system ranking or result presentation as app-controlled",
+        "Using an iOS Spotlight File Import extension as a macOS Spotlight importer plugin"
+      ],
+      related_frameworks: ["Foundation", "Uniform Type Identifiers"],
+      related_extensions: ["Spotlight Index Extension"],
+      platforms: ["iOS", "iPadOS", "Mac Catalyst", "macOS", "visionOS"],
+      minimum_os_version: {
+        iOS: "9.0",
+        iPadOS: "9.0",
+        "Mac Catalyst": "13.1",
+        macOS: "10.11",
+        visionOS: "1.0"
+      },
+      sdk_availability: "The profile baseline follows CSSearchableIndex at iOS 9, Mac Catalyst 13.1, and macOS 10.11; visionOS uses its platform baseline. Semantic search, Apple Intelligence summaries, expected-state batching, import extensions, and other members begin later and have separate platform support. tvOS and watchOS have no usable profile baseline. Local headers were verified with Xcode 26.6 and SDK 26.5, including the CSBase availability macro expansion; Xcode 27 was not locally installed.",
+      stable_or_beta: "stable",
+      on_device_level: "fully_on_device",
+      network_requirement: "Ordinary Core Spotlight indexing and queries require no network; deep-linked app content may independently require connectivity.",
+      cloud_dependency: null,
+      user_permissions: [],
+      info_plist_keys: [],
+      xcode_capabilities: [],
+      entitlements: [],
+      managed_entitlements: [],
+      background_modes: [],
+      privacy_manifest_requirements: [
+        "Core Spotlight import and private on-device indexing alone determine no framework-wide manifest declaration; disclose any separate collection of indexed data and audit included SDK behavior"
+      ],
+      required_reason_apis: [],
+      app_review_considerations: [
+        "Index only content the person reasonably expects to find and provide accurate metadata and deep links",
+        "Remove results when the source data is deleted, the account is removed, or access is revoked"
+      ],
+      security_considerations: [
+        "Use a named index with an appropriate data-protection class for sensitive content",
+        "Don't index secrets, authentication material, or private content that shouldn't appear in search UI",
+        "Treat titles, keywords, thumbnails, contact details, and deep-link identifiers as potentially sensitive metadata"
+      ],
+      implementation_notes: [
+        "Check CSSearchableIndex.isIndexingAvailable before relying on indexing",
+        "Use named indexes in production; Apple documents defaultSearchableIndex for prototyping and testing",
+        "Assign stable unique and domain identifiers, maintain expiration dates, and delete stale entries",
+        "Add an indexing extension only when supported system-requested reindexing is required"
+      ],
+      limitations: [
+        "Indexes remain on device, are private to that device owner, and don't synchronize to the person's other devices",
+        "Index quotas, device support, ranking, and system presentation aren't controlled by the app",
+        "Spotlight File Import extensions don't provide macOS file-import functionality",
+        "Later semantic search and Apple Intelligence features have additional OS, device, language, and availability constraints"
+      ],
+      recommended_alternatives: [
+        "NSUserActivity for eligible user activities and handoff-oriented discoverability",
+        "App Intents for system-invocable actions rather than content indexing",
+        "A Spotlight importer plugin for supported custom-file indexing on macOS"
+      ],
+      keywords: [
+        "core spotlight",
+        "corespotlight",
+        "csssearchableindex",
+        "spotlight index",
+        "searchable item",
+        "on-device search"
+      ],
+      official_documentation: [
+        {
+          title: "Core Spotlight",
+          url: "https://developer.apple.com/documentation/corespotlight",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "Adding your app's content to Spotlight indexes",
+          url: "https://developer.apple.com/documentation/corespotlight/adding-your-app-s-content-to-spotlight-indexes",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "Searching for information in your app",
+          url: "https://developer.apple.com/documentation/corespotlight/searching-for-information-in-your-app",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        }
+      ],
+      last_verified_at: "2026-08-31"
+    },
+    {
+      id: "network",
+      name: "Network",
+      aliases: ["Network framework", "NWConnection", "NWListener"],
+      category: "networking",
+      entity_type: "framework",
+      summary: "Apple's transport networking framework for state-driven connections, listeners, paths, browsers, protocols, TLS, and supported connection groups.",
+      supported_use_cases: [
+        "Create state-driven TCP or UDP connections and listeners",
+        "Configure supported TLS and application-protocol stacks",
+        "Browse or advertise specific Bonjour service types",
+        "Monitor paths and use later member APIs such as WebSocket, QUIC, or multicast connection groups when available"
+      ],
+      unsupported_use_cases: [
+        "VPN, DNS proxy, content filter, packet tunnel, or other NetworkExtension providers",
+        "Assuming a viable NWPath proves that a future request will succeed",
+        "Background transfers that must continue after app suspension without a separate supported mechanism",
+        "UDP broadcast through Network framework connection groups"
+      ],
+      related_frameworks: ["Security", "Foundation", "NetworkExtension"],
+      related_capabilities: ["Multicast Networking", "App Sandbox"],
+      related_entitlements: [
+        "com.apple.developer.networking.multicast",
+        "com.apple.security.network.client",
+        "com.apple.security.network.server"
+      ],
+      platforms: ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"],
+      minimum_os_version: {
+        iOS: "12.0",
+        iPadOS: "12.0",
+        "Mac Catalyst": "13.0",
+        macOS: "10.14",
+        tvOS: "12.0",
+        visionOS: "1.0",
+        watchOS: "5.0"
+      },
+      sdk_availability: "The profile baseline follows NWConnection and NWListener: iOS, iPadOS, and tvOS 12, macOS 10.14, watchOS 5, with Mac Catalyst and visionOS supported by their platform baselines. WebSocket protocol metadata, connection groups, QUIC, privacy contexts, and newer protocol options begin later. Local headers were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      stable_or_beta: "stable",
+      on_device_level: "hybrid",
+      network_requirement: "Network framework operates over available local or remote network paths; the destination and protocol determine whether Internet or local-network connectivity is required.",
+      cloud_dependency: null,
+      user_permissions: [
+        "Local Network authorization only when a feature directly or indirectly accesses the local network on iOS or iPadOS 14 or later, macOS 15 or later, or visionOS 1 or later"
+      ],
+      info_plist_keys: [
+        "NSLocalNetworkUsageDescription only for direct or indirect local-network access on iOS or iPadOS 14 or later, macOS 15 or later, or visionOS 1 or later",
+        "NSBonjourServices only when registering or browsing specific Bonjour service types"
+      ],
+      xcode_capabilities: [
+        "Multicast Networking only for iOS-family multicast, broadcast, or arbitrary Bonjour operations that require it",
+        "App Sandbox only for a sandboxed macOS app that needs network client or server access"
+      ],
+      entitlements: [
+        "com.apple.developer.networking.multicast only for multicast, broadcast, or arbitrary Bonjour operations on entitlement-gated platforms",
+        "com.apple.security.network.client only for outgoing connections from a sandboxed macOS app",
+        "com.apple.security.network.server only for listening or incoming connections in a sandboxed macOS app"
+      ],
+      managed_entitlements: [
+        "Apple approval for Multicast Networking only when com.apple.developer.networking.multicast applies"
+      ],
+      background_modes: [],
+      privacy_manifest_requirements: [
+        "Network framework import alone determines no framework-wide manifest declaration; disclose actual off-device data collection and audit included SDK behavior"
+      ],
+      required_reason_apis: [],
+      app_review_considerations: [
+        "Explain local-network access in terms of the concrete user-visible device or service workflow",
+        "Obtain managed Multicast Networking approval before distributing a feature that requires the entitlement",
+        "Don't present ordinary transport work as a justification for unrestricted background execution"
+      ],
+      security_considerations: [
+        "Use TLS with correct trust evaluation and application-layer authentication for sensitive traffic",
+        "Treat received bytes, protocol metadata, service advertisements, and peer identities as untrusted input",
+        "Constrain listeners and Bonjour advertisements to the smallest required interface, service, and lifetime",
+        "Don't use path status as authorization or disable certificate validation to work around connectivity errors"
+      ],
+      implementation_notes: [
+        "Drive application behavior from NWConnection or NWListener state changes and cancel resources deterministically",
+        "Use exact Bonjour service types in NSBonjourServices and handle denied or not-yet-decided local-network access on platforms where Local Network privacy applies",
+        "Use waits-for-connectivity behavior where appropriate instead of treating the first local-network denial as final",
+        "Keep URLSession background transfer and NetworkExtension provider architecture separate from this profile"
+      ],
+      limitations: [
+        "Ordinary Network framework use grants no general background execution time",
+        "Local Network privacy applies to iOS and iPadOS 14 or later, macOS 15 or later, and visionOS 1 or later; it doesn't apply to tvOS or watchOS, while Bonjour declarations and multicast approval have their own conditions",
+        "Network framework connection groups support UDP multicast but not UDP broadcast",
+        "NetworkExtension, Universal Links, and background URLSession aren't aliases of Network framework"
+      ],
+      recommended_alternatives: [
+        "URLSession for HTTP semantics and supported background uploads or downloads",
+        "NetworkExtension only for approved VPN, DNS, filtering, or custom networking providers",
+        "A system sharing or discovery API when it avoids exposing local-network topology to the app"
+      ],
+      keywords: [
+        "network",
+        "network framework",
+        "nwconnection",
+        "nwlistener",
+        "nwpathmonitor",
+        "tcp",
+        "udp",
+        "tls",
+        "bonjour"
+      ],
+      official_documentation: [
+        {
+          title: "Network",
+          url: "https://developer.apple.com/documentation/network",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "NWConnection",
+          url: "https://developer.apple.com/documentation/network/nwconnection",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "TN3151: Choosing the right networking API",
+          url: "https://developer.apple.com/documentation/technotes/tn3151-choosing-the-right-networking-api",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "TN3179: Understanding local network privacy",
+          url: "https://developer.apple.com/documentation/technotes/tn3179-understanding-local-network-privacy",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "NSLocalNetworkUsageDescription",
+          url: "https://developer.apple.com/documentation/bundleresources/information-property-list/nslocalnetworkusagedescription",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "Multicast networking entitlement",
+          url: "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.networking.multicast",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "Configuring the macOS App Sandbox",
+          url: "https://developer.apple.com/documentation/xcode/configuring-the-macos-app-sandbox",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        }
+      ],
+      last_verified_at: "2026-08-31"
+    },
+    {
+      id: "webkit",
+      name: "WebKit",
+      aliases: ["WebKit framework", "WKWebView"],
+      category: "web_links",
+      entity_type: "framework",
+      summary: "Apple's web-content framework, profiled around WKWebView for embedding and controlling interactive web content in an app.",
+      supported_use_cases: [
+        "Display local or remote web content in a configurable WKWebView",
+        "Control navigation, downloads, process failures, website data, and supported media behavior",
+        "Bridge narrowly scoped native functionality to trusted JavaScript using isolated content worlds and message handlers",
+        "Restrict deep app-to-web interaction with App-Bound Domains"
+      ],
+      unsupported_use_cases: [
+        "Treating WKWebView as SFSafariViewController, the system default browser, or ASWebAuthenticationSession",
+        "Universal Links or Associated Domains configuration",
+        "Granting arbitrary untrusted web content access to privileged native message handlers",
+        "Assuming web content continues executing after the host app is suspended"
+      ],
+      related_frameworks: ["SafariServices", "AuthenticationServices", "Foundation"],
+      platforms: ["iOS", "iPadOS", "Mac Catalyst", "macOS", "visionOS"],
+      minimum_os_version: {
+        iOS: "8.0",
+        iPadOS: "8.0",
+        "Mac Catalyst": "13.1",
+        macOS: "10.10",
+        visionOS: "1.0"
+      },
+      sdk_availability: "The profile baseline follows WKWebView rather than deprecated WebView or UIWebView APIs: iOS and iPadOS 8, macOS 10.10, Mac Catalyst 13.1, and visionOS 1. Media-capture delegates, App-Bound Domains, content worlds, downloads, Web Extensions, and newer Swift interfaces have independent availability. tvOS and watchOS have no WKWebView profile baseline. Local headers were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      stable_or_beta: "stable",
+      on_device_level: "hybrid",
+      network_requirement: "Local bundled content can run without a network; remote pages and resources require connectivity to their origins.",
+      cloud_dependency: null,
+      user_permissions: [
+        "Camera or microphone authorization only when a web origin requests supported media capture",
+        "Location authorization only when web content requests device location",
+        "Web-origin permission decisions remain distinct from native purpose strings and operating-system authorization"
+      ],
+      info_plist_keys: [
+        "WKAppBoundDomains only when limiting privileged app-to-web interaction to declared domains",
+        "NSCameraUsageDescription only when web content can capture camera video",
+        "NSMicrophoneUsageDescription only when web content can capture microphone audio",
+        "NSLocationWhenInUseUsageDescription only when iOS-family web content can request device location",
+        "NSLocationUsageDescription only when macOS web content can request device location",
+        "NSAppTransportSecurity only when narrowly scoped transport-security exceptions are actually required"
+      ],
+      xcode_capabilities: [
+        "App Sandbox only for a sandboxed macOS app whose web content needs outgoing network access"
+      ],
+      entitlements: ["com.apple.security.network.client only for remote web loads from a sandboxed macOS app"],
+      managed_entitlements: [],
+      background_modes: [],
+      privacy_manifest_requirements: [
+        "WebKit import alone determines no framework-wide manifest declaration; disclose data the app or third parties collect through embedded web content and audit included SDK behavior"
+      ],
+      required_reason_apis: [],
+      app_review_considerations: [
+        "A thin website wrapper still needs sufficient native utility and must comply with App Review rules for its content and behavior",
+        "Request camera, microphone, or location access only in response to a clear web feature and trustworthy origin",
+        "Don't use embedded web content to bypass platform privacy, payment, account, or content-review requirements"
+      ],
+      security_considerations: [
+        "Allowlist trusted schemes, hosts, and navigation transitions before exposing privileged native behavior",
+        "Validate message origin, frame, name, type, and payload before acting on JavaScript bridge input",
+        "Use isolated content worlds, remove message handlers when no longer needed, and avoid injecting secrets into page JavaScript",
+        "Prefer HTTPS, keep ATS exceptions narrow, and handle authentication challenges without disabling trust validation",
+        "Choose persistent or nonpersistent website data storage intentionally and clear sensitive state when the workflow ends"
+      ],
+      implementation_notes: [
+        "Use WKNavigationDelegate and WKUIDelegate to make explicit navigation, window, permission, and download decisions",
+        "Declare WKAppBoundDomains and enable limitsNavigationsToAppBoundDomains when deep interaction should be confined to trusted domains",
+        "Handle web-content process termination and navigation failure as recoverable states",
+        "Use SFSafariViewController for a general in-app browser and ASWebAuthenticationSession for authentication instead of copying those flows into WKWebView"
+      ],
+      limitations: [
+        "WKWebView doesn't receive unrestricted background execution",
+        "Web platform feature support and permission behavior vary by OS version, device, origin, and media hardware",
+        "App-Bound Domains limit privileged interaction and require deliberate navigation and JavaScript design",
+        "SafariServices, Universal Links, AuthenticationServices, and alternative browser-engine entitlements are distinct technologies"
+      ],
+      recommended_alternatives: [
+        "SFSafariViewController for a user-visible in-app browser with Safari services",
+        "ASWebAuthenticationSession for OAuth or other standards-based web authentication",
+        "Universal Links for verified navigation from website URLs into native app content"
+      ],
+      keywords: [
+        "webkit",
+        "wkwebview",
+        "web view",
+        "embedded web",
+        "javascript bridge",
+        "app-bound domains",
+        "web content"
+      ],
+      official_documentation: [
+        {
+          title: "WebKit",
+          url: "https://developer.apple.com/documentation/webkit",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "WKWebView",
+          url: "https://developer.apple.com/documentation/webkit/wkwebview",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "WKNavigationDelegate",
+          url: "https://developer.apple.com/documentation/webkit/wknavigationdelegate",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "WKScriptMessageHandler",
+          url: "https://developer.apple.com/documentation/webkit/wkscriptmessagehandler",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "Requesting media-capture permission",
+          url: "https://developer.apple.com/documentation/webkit/wkuidelegate/webview(_:requestmediacapturepermissionfor:initiatedbyframe:type:decisionhandler:)",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "Discover WKWebView enhancements",
+          url: "https://developer.apple.com/videos/play/wwdc2020/10188/",
+          source_type: "wwdc",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "Preventing insecure network connections",
+          url: "https://developer.apple.com/documentation/security/preventing-insecure-network-connections",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        }
+      ],
+      last_verified_at: "2026-08-31"
+    },
+    {
+      id: "eventkit",
+      name: "EventKit",
+      aliases: ["Event Kit", "EKEventStore"],
+      category: "personal_information",
+      entity_type: "framework",
+      summary: "Apple's calendar and reminders framework for authorized access to a person's event store, with granular modern event access and distinct EventKitUI flows.",
+      supported_use_cases: [
+        "Create events with write-only calendar access on supported OS versions",
+        "Read, create, edit, and delete events after full calendar access",
+        "Read, create, edit, and delete reminders after full reminders access",
+        "Observe store changes and present supported EventKitUI editors or choosers"
+      ],
+      unsupported_use_cases: [
+        "Read-only calendar or reminders authorization",
+        "Reading events through write-only calendar access",
+        "Assuming calendar authorization also grants reminders or Contacts access",
+        "Directly modifying Calendar databases outside EKEventStore"
+      ],
+      related_frameworks: ["EventKitUI", "Contacts"],
+      related_capabilities: ["App Sandbox", "Hardened Runtime"],
+      related_entitlements: ["com.apple.security.personal-information.calendars"],
+      platforms: ["iOS", "iPadOS", "Mac Catalyst", "macOS", "visionOS", "watchOS"],
+      minimum_os_version: {
+        iOS: "4.0",
+        iPadOS: "4.0",
+        "Mac Catalyst": "13.1",
+        macOS: "10.8",
+        visionOS: "1.0",
+        watchOS: "2.0"
+      },
+      sdk_availability: "The profile baseline follows EKEventStore at the listed minimums. Granular requestFullAccessToEvents, requestWriteOnlyAccessToEvents, and requestFullAccessToReminders APIs begin at iOS and iPadOS 17, Mac Catalyst 17, macOS 14, visionOS 1, and watchOS 10; legacy requestAccess is deprecated on those modern baselines. Event, reminder, save, and UI members have separate availability. Local headers were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      stable_or_beta: "stable",
+      on_device_level: "primarily_on_device",
+      network_requirement: "EventKit accesses the local event store; system-configured calendar or reminders accounts may synchronize independently over the network.",
+      cloud_dependency: null,
+      user_permissions: [
+        "Write-only Calendar access only when creating events without reading calendar data",
+        "Full Calendar access only when reading or modifying calendar data",
+        "Full Reminders access only when reading or modifying reminders"
+      ],
+      info_plist_keys: [
+        "NSCalendarsWriteOnlyAccessUsageDescription only for write-only event access on iOS or iPadOS 17 or later, Mac Catalyst 17 or later, macOS 14 or later, visionOS 1 or later, or watchOS 10 or later",
+        "NSCalendarsFullAccessUsageDescription only for full event access on iOS or iPadOS 17 or later, Mac Catalyst 17 or later, macOS 14 or later, visionOS 1 or later, or watchOS 10 or later",
+        "NSRemindersFullAccessUsageDescription only for full reminders access on iOS or iPadOS 17 or later, Mac Catalyst 17 or later, macOS 14 or later, visionOS 1 or later, or watchOS 10 or later",
+        "NSCalendarsUsageDescription only for calendar access on iOS or iPadOS 6 through 16, Mac Catalyst 13 through 16, macOS 10.14 through 13, or watchOS 6 through 9 deployments",
+        "NSRemindersUsageDescription only for reminders access on iOS or iPadOS 6 through 16, Mac Catalyst 13 through 16, macOS 10.14 through 13, or watchOS 6 through 9 deployments",
+        "NSContactsUsageDescription only when EventKitUI needs Contacts data for attendee display names or avatars"
+      ],
+      xcode_capabilities: ["Calendar resource access only when a macOS app uses App Sandbox or Hardened Runtime"],
+      entitlements: [
+        "com.apple.security.personal-information.calendars only for calendar access from a macOS app using App Sandbox or Hardened Runtime resource access"
+      ],
+      managed_entitlements: [],
+      background_modes: [],
+      privacy_manifest_requirements: [
+        "EventKit import alone determines no framework-wide manifest declaration; disclose actual calendar, reminders, attendee, or event-derived data collection and audit included SDK behavior"
+      ],
+      required_reason_apis: [],
+      app_review_considerations: [
+        "Request write-only event access instead of full access when the app only creates events",
+        "Request Calendar and Reminders access separately and explain the exact user benefit",
+        "Prefer system EventKitUI when it completes the workflow without broad app access to calendar data"
+      ],
+      security_considerations: [
+        "Treat event titles, locations, attendees, notes, alarms, and reminders as sensitive personal data",
+        "Fetch only the date range and fields needed, avoid unnecessary caching, and remove exported data when the account or feature is removed",
+        "Handle revoked, restricted, write-only, and full authorization states without leaking previously cached content"
+      ],
+      implementation_notes: [
+        "Keep a long-lived EKEventStore while using objects obtained from that store",
+        "Use the granular iOS 17-era request APIs where available and preserve the required legacy purpose strings only for supported older deployments",
+        "Observe EKEventStoreChanged and refetch instead of assuming cached objects remain current",
+        "Use EventKitUI editors and choosers without app-level calendar authorization when the supported system-owned flow satisfies the feature"
+      ],
+      limitations: [
+        "EventKit offers write-only or full event access, but no read-only authorization",
+        "Write-only access exposes a virtual calendar and returns no existing events",
+        "Saving some calendar or contacts-related objects is unavailable on watchOS, and multiple event members are unavailable on visionOS",
+        "System account synchronization timing and availability aren't controlled by EventKit"
+      ],
+      recommended_alternatives: [
+        "EventKitUI for user-mediated event creation or selection without broad store access",
+        "Application-local scheduling data when the feature doesn't need the system Calendar or Reminders database"
+      ],
+      keywords: [
+        "eventkit",
+        "event kit",
+        "ekeventstore",
+        "calendar",
+        "reminders",
+        "calendar access",
+        "write-only events"
+      ],
+      official_documentation: [
+        {
+          title: "EventKit",
+          url: "https://developer.apple.com/documentation/eventkit",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "EKEventStore",
+          url: "https://developer.apple.com/documentation/eventkit/ekeventstore",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "Accessing the event store",
+          url: "https://developer.apple.com/documentation/eventkit/accessing-the-event-store",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "Accessing Calendar using EventKit and EventKitUI",
+          url: "https://developer.apple.com/documentation/eventkit/accessing-calendar-using-eventkit-and-eventkitui",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "Calendars entitlement",
+          url: "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.security.personal-information.calendars",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "TN3152: Migrating to the latest Calendar access levels",
+          url: "https://developer.apple.com/documentation/technotes/tn3152-migrating-to-the-latest-calendar-access-levels",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        }
+      ],
+      last_verified_at: "2026-08-31"
+    },
+    {
+      id: "contacts",
+      name: "Contacts",
+      aliases: ["Contacts framework", "CNContactStore"],
+      category: "personal_information",
+      entity_type: "framework",
+      summary: "Apple's contact-data framework for authorized, key-scoped fetches and supported saves, plus formatting and localization that don't inherently require contact-store access.",
+      supported_use_cases: [
+        "Fetch authorized contacts with an explicit set of required keys",
+        "Create or update contacts where saving is supported and authorized",
+        "Format and localize contact names, postal addresses, labels, and vCards",
+        "Handle full or iOS 18 limited contact-store access and observe store changes"
+      ],
+      unsupported_use_cases: [
+        "Accessing ungranted contacts after a person chooses limited access",
+        "Fetching or modifying the contact note field without its separately approved entitlement",
+        "Assuming generic or compound predicates are supported",
+        "Treating ContactsUI user-mediated pickers as unrestricted CNContactStore authorization"
+      ],
+      related_frameworks: ["ContactsUI"],
+      related_capabilities: ["App Sandbox", "Hardened Runtime"],
+      related_entitlements: [
+        "com.apple.security.personal-information.addressbook",
+        "com.apple.developer.contacts.notes"
+      ],
+      platforms: ["iOS", "iPadOS", "Mac Catalyst", "macOS", "visionOS", "watchOS"],
+      minimum_os_version: {
+        iOS: "9.0",
+        iPadOS: "9.0",
+        "Mac Catalyst": "13.1",
+        macOS: "10.11",
+        visionOS: "1.0",
+        watchOS: "2.0"
+      },
+      sdk_availability: "The profile baseline follows CNContactStore at the listed minimums. Limited authorization and ContactAccessButton or contactAccessPicker workflows begin at iOS 18; change history begins later, save operations are unavailable on watchOS, and ContactsUI has its own platform and member availability. Local headers were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      stable_or_beta: "stable",
+      on_device_level: "primarily_on_device",
+      network_requirement: "Contacts accesses the local contact store; system-configured contact accounts may synchronize independently over the network.",
+      cloud_dependency: null,
+      user_permissions: [
+        "Full or limited Contacts authorization only when the app accesses the person's contact store",
+        "ContactsUI and iOS 18 access-picker workflows can let the person select contacts without granting the app unrestricted store access"
+      ],
+      info_plist_keys: ["NSContactsUsageDescription only when accessing protected contact-store data"],
+      xcode_capabilities: [
+        "Contacts or Address Book resource access only when a macOS app uses App Sandbox or Hardened Runtime"
+      ],
+      entitlements: [
+        "com.apple.security.personal-information.addressbook only for Contacts database access from a macOS app using App Sandbox or Hardened Runtime resource access",
+        "com.apple.developer.contacts.notes only when reading or writing the contact note field on iOS or iPadOS 13 or later, macOS 13 or later, or visionOS 1 or later; it is unavailable on watchOS"
+      ],
+      managed_entitlements: [
+        "Apple approval for com.apple.developer.contacts.notes before distributing an app that reads or writes contact notes on a supported platform"
+      ],
+      background_modes: [],
+      privacy_manifest_requirements: [
+        "Contacts import alone determines no framework-wide manifest declaration; disclose actual contact, relationship, identifier, or address-book-derived data collection and audit included SDK behavior"
+      ],
+      required_reason_apis: [],
+      app_review_considerations: [
+        "Request Contacts access only at the feature that needs it and work correctly with limited or denied access",
+        "Fetch only the contact keys needed by the visible feature",
+        "Obtain Apple's approval before distributing an app that uses the contact-notes entitlement"
+      ],
+      security_considerations: [
+        "Treat names, addresses, phone numbers, relationships, birthdays, notes, images, and stable identifiers as sensitive personal data",
+        "Don't upload, correlate, or invite contacts without clear user intent and an accurate privacy disclosure",
+        "Handle revoked or narrowed access by purging contact data the app no longer needs or may access",
+        "Avoid retaining full contact objects when a minimal derived value is sufficient"
+      ],
+      implementation_notes: [
+        "Request access asynchronously and move synchronous contact-store fetches off the main thread",
+        "Specify only required keysToFetch and refetch after CNContactStoreDidChangeNotification",
+        "Handle notDetermined, restricted, denied, authorized, and iOS 18 limited states explicitly",
+        "Use ContactAccessButton or contactAccessPicker to let people expand a limited set, and keep ContactsUI picker behavior distinct from store authorization"
+      ],
+      limitations: [
+        "Limited authorization exposes only the contacts the person selected plus contacts the app creates",
+        "The contact-notes entitlement begins at iOS and iPadOS 13 and macOS 13, is available from visionOS 1, and is unavailable on watchOS",
+        "Contact identifiers and unified records can change and shouldn't be treated as permanent external identity",
+        "Save requests are unavailable on watchOS and ContactsUI isn't uniformly available across all Contacts platforms",
+        "The note field requires a separate managed entitlement on current iOS and macOS versions"
+      ],
+      recommended_alternatives: [
+        "ContactsUI pickers or iOS 18 contact-access controls for user-mediated selection without broad store access",
+        "Manual entry or vCard import when persistent address-book authorization isn't necessary"
+      ],
+      keywords: [
+        "contacts",
+        "contacts framework",
+        "cncontactstore",
+        "address book",
+        "limited contacts",
+        "contact access",
+        "contact notes"
+      ],
+      official_documentation: [
+        {
+          title: "Contacts",
+          url: "https://developer.apple.com/documentation/contacts",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "CNContactStore",
+          url: "https://developer.apple.com/documentation/contacts/cncontactstore",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "Accessing the contact store",
+          url: "https://developer.apple.com/documentation/contacts/accessing-the-contact-store",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "CNAuthorizationStatus limited",
+          url: "https://developer.apple.com/documentation/contacts/cnauthorizationstatus/limited",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "NSContactsUsageDescription",
+          url: "https://developer.apple.com/documentation/bundleresources/information-property-list/nscontactsusagedescription",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "Contacts notes entitlement",
+          url: "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.contacts.notes",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        },
+        {
+          title: "Address book entitlement",
+          url: "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.security.personal-information.addressbook",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-31"
+        }
+      ],
+      last_verified_at: "2026-08-31"
     },
     {
       id: "uiwebview",

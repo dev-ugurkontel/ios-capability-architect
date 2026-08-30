@@ -74,8 +74,8 @@ See [architecture.md](plugins/ios-capability-architect/docs/architecture.md), [t
 
 - Node.js 24 is the current LTS baseline used by this repository.
 - SwiftUI is the default UI recommendation; UIKit is introduced only for an API or compatibility need.
-- Stable Apple SDK behavior is the default. iOS 27 and Xcode 27 capabilities remain beta on the verification date and are isolated from stable records.
-- The committed discovery catalog currently names 193 technologies across 32 categories, while 38 evidence-backed profiles map 40 catalog identities into recommendation workflows. The measured catalog-to-profile coverage is 20.7%; this is intentionally reported instead of claiming a permanently complete Apple catalog.
+- Stable Apple SDK behavior verified with the locally installed Xcode 26.6 and SDK 26.5 is the default. iOS 27 and Xcode 27 material is not locally verified and remains isolated from stable records.
+- The committed discovery catalog currently names 193 technologies across 32 categories, while 46 evidence-backed profiles map 48 catalog identities into recommendation workflows. The measured catalog-to-profile coverage is 24.9%; this is intentionally reported instead of claiming a permanently complete Apple catalog.
 - Catalog-only technologies must produce an explicit evidence gap and official-source research, never an invented recommendation.
 - Tool outputs are architectural advice, not proof that a specific App ID has an entitlement or that App Review will approve a design.
 - Runtime `#available`, hardware, region, language, authorization, and service-availability checks remain mandatory in the iOS app.
@@ -130,7 +130,7 @@ Release workflows also create GitHub build-provenance attestations for every att
 gh attestation verify <downloaded-asset> -R fillbyte/ios-capability-architect
 ```
 
-New releases are published as `@fillbyte/ios-capability-architect` on GitHub Packages. GitHub's npm registry requires an authenticated npm client, including for this public package. Configure the `@fillbyte` scope for `https://npm.pkg.github.com`, provide a GitHub token with `read:packages` through your environment or user-level npm configuration, and never commit that token or a credential-bearing `.npmrc` file. Releases published before the Fillbyte transfer remain under the legacy `@dev-ugurkontel` scope; all current installations should use the Fillbyte package.
+New releases are published as `@fillbyte/ios-capability-architect` on GitHub Packages. GitHub's npm registry requires an authenticated npm client, including for this public package. Configure the `@fillbyte` scope for `https://npm.pkg.github.com`, provide a GitHub token with `read:packages` through your environment or user-level npm configuration, and never commit that token or a credential-bearing `.npmrc` file. Historical releases were published under legacy `@dev-ugurkontel` scopes; those package namespaces were deleted after their Fillbyte replacements were verified. All current installations must use the Fillbyte package.
 
 Release Please owns version and changelog updates after the `0.2.0` baseline. Conventional `feat`, `fix`, and breaking-change commits merged after the latest tag determine the next release pull request. Merging that release pull request publishes the GitHub release; the release event then verifies and publishes the package and attaches its provenance artifacts.
 
@@ -158,7 +158,7 @@ All tools have `readOnlyHint: true`, `destructiveHint: false`, `idempotentHint: 
 
 The normalized `CapabilityRecord` contains all fields requested by the product brief, including entity type, framework/capability/entitlement relations, OS and SDK availability, beta/deprecation status, devices and hardware, region/language restrictions, on-device level, network/cloud needs, permissions, Info.plist keys, capabilities, entitlements, managed entitlements, background modes, privacy manifests, required-reason APIs, review and security considerations, alternatives, official sources, release notes, and verification date.
 
-The 38 reviewed records cover the seven acceptance scenarios, their supporting technologies, the foundational Swift, Swift Concurrency, SwiftUI, UIKit, and Foundation layers, the URLSession, Core Data, CloudKit, Keychain Services, AuthenticationServices, and CryptoKit data/security profiles, and the APNs, AVFoundation, PhotoKit, Vision, MapKit, Core Bluetooth, Accessibility, AppTrackingTransparency, and App Attest platform profiles. Extend the recommendation registry by adding evidence-backed records to `plugins/ios-capability-architect/data/capabilities.json`; omitted stability normalizes to `unknown`, not `stable`. Run the full validation suite before merging.
+The 46 reviewed records cover the seven acceptance scenarios, their supporting technologies, the foundational Swift, Swift Concurrency, SwiftUI, UIKit, and Foundation layers, the URLSession, Core Data, CloudKit, Keychain Services, AuthenticationServices, and CryptoKit data/security profiles, the APNs, AVFoundation, PhotoKit, Vision, MapKit, Core Bluetooth, Accessibility, AppTrackingTransparency, and App Attest platform profiles, and the Core Motion, WeatherKit, LocalAuthentication, Core Spotlight, Network, WebKit, EventKit, and Contacts core-system profiles. Extend the recommendation registry by adding evidence-backed records to `plugins/ios-capability-architect/data/capabilities.json`; omitted stability normalizes to `unknown`, not `stable`. Run the full validation suite before merging.
 
 `plugins/ios-capability-architect/data/taxonomy.json` models the broader Apple ecosystem, including the current official iOS provisioning-capability list and emerging technology families. Its 193 deduplicated entries are discovery aids, not verified recommendation records. `get_apple_technology` performs an exact identity lookup, while `resolve_ios_capabilities` exposes unprofiled names only as separate, non-recommendable `catalog_research_leads`; neither path fabricates availability or configuration facts. Promote a technology to `capabilities.json` only with technology-specific official evidence. `get_registry_coverage` keeps that distinction machine-visible.
 
@@ -226,7 +226,7 @@ Publishing into OpenAI's reviewed plugin directory remains a separate process. T
 
 1. Build and validate the skills-only archive with `npm run verify`.
 2. Confirm public developer, support, privacy-policy, terms, listing metadata, and release checksums.
-3. Verify the Fillbyte business identity and the submitter's required OpenAI organization role.
+3. Verify the [Fillbyte](https://github.com/fillbyte) business identity and the submitter's required OpenAI organization role.
 4. Upload the exact released skills archive, enter the maintained starter prompts and tests, and confirm availability and policy attestations.
 5. Submit through the OpenAI plugin submission portal, complete review, then explicitly publish the approved version.
 
