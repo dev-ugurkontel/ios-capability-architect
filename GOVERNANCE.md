@@ -35,7 +35,7 @@ Security response and conduct enforcement may be handled privately until disclos
 - Generated bundle changes must be traceable to reviewed source changes.
 - Maintainers may close stale or out-of-scope proposals with a clear explanation.
 
-Repository branch protection is the enforcement source of truth. The default branch currently requires pull requests, current status checks, linear history, resolved review conversations, and protection from force-push and deletion. Contributor commits may be signed but are not required to be; GitHub's squash merge produces the verified commit that reaches the default branch. `CODEOWNERS` routes sensitive changes to the responsible maintainer; whether owner approval is mandatory is controlled by the live branch-protection settings.
+Repository branch protection is the enforcement source of truth. The default branch currently requires pull requests, signed commits, current status checks, linear history, resolved review conversations, and protection from force-push and deletion. GitHub's squash merge also produces the verified commit that reaches the default branch. `CODEOWNERS` routes sensitive changes to the responsible maintainer; whether owner approval is mandatory is controlled by the live branch-protection settings.
 
 ## Releases
 

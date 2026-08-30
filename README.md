@@ -130,7 +130,7 @@ Release workflows also create GitHub build-provenance attestations for every att
 gh attestation verify <downloaded-asset> -R fillbyte/ios-capability-architect
 ```
 
-New releases are published as `@fillbyte/ios-capability-architect` on GitHub Packages. GitHub's npm registry requires an authenticated npm client, including for this public package. Configure the `@fillbyte` scope for `https://npm.pkg.github.com`, provide a GitHub token with `read:packages` through your environment or user-level npm configuration, and never commit that token or a credential-bearing `.npmrc` file. Releases published before the Fillbyte transfer remain under the legacy `@dev-ugurkontel` scope; see [package-scope-migration.md](docs/package-scope-migration.md).
+New releases are published as `@fillbyte/ios-capability-architect` on GitHub Packages. GitHub's npm registry requires an authenticated npm client, including for this public package. Configure the `@fillbyte` scope for `https://npm.pkg.github.com`, provide a GitHub token with `read:packages` through your environment or user-level npm configuration, and never commit that token or a credential-bearing `.npmrc` file. Releases published before the Fillbyte transfer remain under the legacy `@dev-ugurkontel` scope; all current installations should use the Fillbyte package.
 
 Release Please owns version and changelog updates after the `0.2.0` baseline. Conventional `feat`, `fix`, and breaking-change commits merged after the latest tag determine the next release pull request. Merging that release pull request publishes the GitHub release; the release event then verifies and publishes the package and attaches its provenance artifacts.
 

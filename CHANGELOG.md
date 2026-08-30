@@ -43,7 +43,7 @@ All notable changes to this project are documented in this file. The project fol
 
 - **packaging:** migrate distribution to Fillbyte ([#12](https://github.com/fillbyte/ios-capability-architect/issues/12)) ([c23a72f](https://github.com/fillbyte/ios-capability-architect/commit/c23a72f9d9993bf7527396c5162df15c9c259082))
 
-## [0.2.0](https://github.com/fillbyte/ios-capability-architect/compare/ios-capability-architect-v0.1.0...ios-capability-architect-v0.2.0) (2026-08-30)
+## [0.2.0](https://github.com/fillbyte/ios-capability-architect/compare/v0.1.0...v0.2.0) (2026-08-30)
 
 ### Features
 
