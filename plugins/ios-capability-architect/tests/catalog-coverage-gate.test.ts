@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildCoverageReport,
   canonicalTechnologyId,
+  decodeAppleHtmlText,
   extractAppleTechnologyIndex,
   type Registry,
   type Taxonomy,
@@ -49,5 +50,9 @@ describe("deterministic Apple catalog coverage gate", () => {
 
   it("fails closed when Apple's reviewed HTML extraction contract changes", () => {
     expect(() => extractAppleTechnologyIndex("<html><body>changed</body></html>")).toThrow("no longer matches");
+  });
+
+  it("extracts text with a single allowlisted entity-decoding pass", () => {
+    expect(decodeAppleHtmlText("Core &amp;amp; <span>ML</span>")).toBe("Core &amp; ML");
   });
 });

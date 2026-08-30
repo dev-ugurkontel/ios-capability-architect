@@ -257,13 +257,29 @@ export function buildCoverageReport(
   };
 }
 
-function decodeHtml(value: string): string {
-  return value
-    .replace(/<[^>]+>/g, "")
-    .replace(/&amp;/g, "&")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&#x27;|&#39;/g, "'")
-    .replace(/&quot;/g, '"')
+export function decodeAppleHtmlText(value: string): string {
+  const text: string[] = [];
+  let insideTag = false;
+  for (const character of value) {
+    if (character === "<") {
+      insideTag = true;
+    } else if (character === ">") {
+      insideTag = false;
+    } else if (!insideTag) {
+      text.push(character);
+    }
+  }
+
+  const entities: Record<string, string> = {
+    "&amp;": "&",
+    "&nbsp;": " ",
+    "&#x27;": "'",
+    "&#39;": "'",
+    "&quot;": '"'
+  };
+  return text
+    .join("")
+    .replace(/&(?:amp|nbsp|#x27|#39|quot);/g, (entity) => entities[entity] ?? entity)
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -279,7 +295,7 @@ export function extractAppleTechnologyIndex(html: string): Array<{ canonical_id:
   const matches = block.matchAll(/<li><a href="([^"]+)">([\s\S]*?)<\/a><\/li>/g);
   const byId = new Map<string, { canonical_id: string; name: string; url: string }>();
   for (const match of matches) {
-    const name = decodeHtml(match[2] ?? "");
+    const name = decodeAppleHtmlText(match[2] ?? "");
     const href = match[1];
     if (!name || !href) continue;
     const canonicalId = canonicalTechnologyId(name);
