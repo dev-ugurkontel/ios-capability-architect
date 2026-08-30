@@ -117,6 +117,7 @@
       "platforms": ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
       "on_device_level": "fully_on_device",
       "network_requirement": "No network is required after the model is present on device.",
+      "cloud_dependency": null,
       "hardware_requirements": ["Performance varies by model and available CPU, GPU, and Neural Engine"],
       "security_considerations": [
         "Keep sensitive inputs on device when network upload is unnecessary",

@@ -1,5 +1,12 @@
 import { z } from "zod";
-import { entityTypes, onDeviceLevels, stabilityLevels } from "@/types.js";
+import {
+  entityTypes,
+  knowledgeStates,
+  knowledgeTrackedFields,
+  onDeviceLevels,
+  relationshipTypes,
+  stabilityLevels
+} from "@/types.js";
 
 const documentationReferenceSchema = z.object({
   title: z.string().min(1),
@@ -27,6 +34,16 @@ const documentationReferenceSchema = z.object({
   verified_at: z.iso.date()
 });
 
+const capabilityRelationshipSchema = z.object({
+  type: z.enum(relationshipTypes),
+  target: z.string().min(1)
+});
+
+const knowledgeStateSchema = z.object({
+  completeness: z.enum(["complete", "partial"]),
+  fields: z.record(z.enum(knowledgeTrackedFields), z.enum(knowledgeStates))
+});
+
 export const capabilityRecordSchema = z
   .object({
     id: z.string().regex(/^[a-z0-9]+(?:[._-][a-z0-9]+)*$/),
@@ -41,6 +58,7 @@ export const capabilityRecordSchema = z
     related_capabilities: z.array(z.string()),
     related_entitlements: z.array(z.string()),
     related_extensions: z.array(z.string()),
+    relationships: z.array(capabilityRelationshipSchema),
     platforms: z.array(z.string()).min(1),
     minimum_os_version: z.record(z.string(), z.string().nullable()),
     sdk_availability: z.string().min(1),
@@ -69,7 +87,8 @@ export const capabilityRecordSchema = z
     official_documentation: z.array(documentationReferenceSchema).min(1),
     release_notes: z.array(documentationReferenceSchema),
     last_verified_at: z.iso.date(),
-    keywords: z.array(z.string()).min(1)
+    keywords: z.array(z.string()).min(1),
+    knowledge_state: knowledgeStateSchema
   })
   .superRefine((record, context) => {
     const dates = [...record.official_documentation, ...record.release_notes].map((reference) => reference.verified_at);
@@ -85,6 +104,16 @@ export const capabilityRecordSchema = z
         code: "custom",
         path: ["deprecated_status"],
         message: "Deprecated records must explain their status"
+      });
+    }
+    if (
+      record.knowledge_state.completeness === "complete" &&
+      Object.values(record.knowledge_state.fields).some((state) => state === "unknown")
+    ) {
+      context.addIssue({
+        code: "custom",
+        path: ["knowledge_state", "completeness"],
+        message: "Complete records cannot contain unknown tracked fields"
       });
     }
   });

@@ -35695,6 +35695,47 @@ var onDeviceLevels = [
   "unknown"
 ];
 var stabilityLevels = ["stable", "beta", "deprecated", "unknown"];
+var knowledgeStates = ["unknown", "verified_none", "verified_value"];
+var knowledgeTrackedFields = [
+  "aliases",
+  "supported_use_cases",
+  "unsupported_use_cases",
+  "related_frameworks",
+  "related_capabilities",
+  "related_entitlements",
+  "related_extensions",
+  "platforms",
+  "minimum_os_version",
+  "sdk_availability",
+  "stable_or_beta",
+  "supported_devices",
+  "hardware_requirements",
+  "region_restrictions",
+  "language_restrictions",
+  "on_device_level",
+  "network_requirement",
+  "cloud_dependency",
+  "user_permissions",
+  "info_plist_keys",
+  "xcode_capabilities",
+  "entitlements",
+  "managed_entitlements",
+  "background_modes",
+  "privacy_manifest_requirements",
+  "required_reason_apis",
+  "app_review_considerations",
+  "security_considerations",
+  "implementation_notes",
+  "limitations",
+  "recommended_alternatives",
+  "release_notes"
+];
+var relationshipTypes = [
+  "related_framework",
+  "related_capability",
+  "related_entitlement",
+  "related_extension"
+];
 
 // src/schema.ts
 var documentationReferenceSchema = external_exports.object({
@@ -35719,6 +35760,14 @@ var documentationReferenceSchema = external_exports.object({
   ]),
   verified_at: external_exports.iso.date()
 });
+var capabilityRelationshipSchema = external_exports.object({
+  type: external_exports.enum(relationshipTypes),
+  target: external_exports.string().min(1)
+});
+var knowledgeStateSchema = external_exports.object({
+  completeness: external_exports.enum(["complete", "partial"]),
+  fields: external_exports.record(external_exports.enum(knowledgeTrackedFields), external_exports.enum(knowledgeStates))
+});
 var capabilityRecordSchema = external_exports.object({
   id: external_exports.string().regex(/^[a-z0-9]+(?:[._-][a-z0-9]+)*$/),
   name: external_exports.string().min(1),
@@ -35732,6 +35781,7 @@ var capabilityRecordSchema = external_exports.object({
   related_capabilities: external_exports.array(external_exports.string()),
   related_entitlements: external_exports.array(external_exports.string()),
   related_extensions: external_exports.array(external_exports.string()),
+  relationships: external_exports.array(capabilityRelationshipSchema),
   platforms: external_exports.array(external_exports.string()).min(1),
   minimum_os_version: external_exports.record(external_exports.string(), external_exports.string().nullable()),
   sdk_availability: external_exports.string().min(1),
@@ -35760,7 +35810,8 @@ var capabilityRecordSchema = external_exports.object({
   official_documentation: external_exports.array(documentationReferenceSchema).min(1),
   release_notes: external_exports.array(documentationReferenceSchema),
   last_verified_at: external_exports.iso.date(),
-  keywords: external_exports.array(external_exports.string()).min(1)
+  keywords: external_exports.array(external_exports.string()).min(1),
+  knowledge_state: knowledgeStateSchema
 }).superRefine((record2, context) => {
   const dates = [...record2.official_documentation, ...record2.release_notes].map((reference) => reference.verified_at);
   if (!dates.includes(record2.last_verified_at)) {
@@ -35775,6 +35826,13 @@ var capabilityRecordSchema = external_exports.object({
       code: "custom",
       path: ["deprecated_status"],
       message: "Deprecated records must explain their status"
+    });
+  }
+  if (record2.knowledge_state.completeness === "complete" && Object.values(record2.knowledge_state.fields).some((state) => state === "unknown")) {
+    context.addIssue({
+      code: "custom",
+      path: ["knowledge_state", "completeness"],
+      message: "Complete records cannot contain unknown tracked fields"
     });
   }
 });
@@ -36002,6 +36060,7 @@ var capabilities_default = {
       platforms: ["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS"],
       on_device_level: "fully_on_device",
       network_requirement: "No network is required after the model is present on device.",
+      cloud_dependency: null,
       hardware_requirements: ["Performance varies by model and available CPU, GPU, and Neural Engine"],
       security_considerations: [
         "Keep sensitive inputs on device when network upload is unnecessary",
@@ -36872,7 +36931,6 @@ var emptyArrays = {
   related_capabilities: [],
   related_entitlements: [],
   related_extensions: [],
-  platforms: ["iOS"],
   supported_devices: [],
   hardware_requirements: [],
   region_restrictions: [],
@@ -36892,6 +36950,38 @@ var emptyArrays = {
   recommended_alternatives: [],
   release_notes: []
 };
+function hasOwn(record2, field) {
+  return Object.prototype.hasOwnProperty.call(record2, field);
+}
+function classifyKnowledge(value) {
+  if (value === null || value === "") return "verified_none";
+  if (Array.isArray(value) && value.length === 0) return "verified_none";
+  if (typeof value === "object" && value !== null && Object.keys(value).length === 0) return "verified_none";
+  return "verified_value";
+}
+function buildKnowledgeState(raw) {
+  const fields = Object.fromEntries(
+    knowledgeTrackedFields.map((field) => [field, hasOwn(raw, field) ? classifyKnowledge(raw[field]) : "unknown"])
+  );
+  return {
+    completeness: Object.values(fields).includes("unknown") ? "partial" : "complete",
+    fields
+  };
+}
+function buildRelationships(raw) {
+  const sources = [
+    ["related_framework", raw.related_frameworks],
+    ["related_capability", raw.related_capabilities],
+    ["related_entitlement", raw.related_entitlements],
+    ["related_extension", raw.related_extensions]
+  ];
+  const relationships = sources.flatMap(([type, targets]) => (targets ?? []).map((target) => ({ type, target })));
+  return [
+    ...new Map(
+      relationships.map((relationship) => [`${relationship.type}:${relationship.target}`, relationship])
+    ).values()
+  ];
+}
 function normalizeRecord(raw) {
   const sourceDates = [...raw.official_documentation, ...raw.release_notes ?? []].map((source) => source.verified_at);
   const lastVerifiedAt = raw.last_verified_at ?? sourceDates.sort().at(-1);
@@ -36900,6 +36990,7 @@ function normalizeRecord(raw) {
   }
   return {
     ...emptyArrays,
+    relationships: buildRelationships(raw),
     minimum_os_version: {},
     sdk_availability: "Verify availability against the current stable SDK before implementation.",
     stable_or_beta: "unknown",
@@ -36908,7 +36999,8 @@ function normalizeRecord(raw) {
     network_requirement: "Depends on the selected API and feature configuration.",
     cloud_dependency: null,
     ...raw,
-    last_verified_at: lastVerifiedAt
+    last_verified_at: lastVerifiedAt,
+    knowledge_state: buildKnowledgeState(raw)
   };
 }
 var cachedRecords;
@@ -37184,7 +37276,7 @@ async function resolveCapabilities(input2) {
   );
   return envelope(
     { matches },
-    matches.length === 0 ? ["No verified registry match was found; refine the requirements instead of inventing a technology."] : []
+    matches.length === 0 ? ["No verified registry match was found; refine the requirements instead of inventing a technology."] : matches.some((match) => match.record.stable_or_beta === "unknown") ? ["Some matches have an unknown lifecycle. Verify their current SDK status before implementation."] : []
   );
 }
 async function getCapabilityProfile(idOrName) {
@@ -37207,7 +37299,9 @@ async function compareImplementationOptions(capabilityIds, criteria) {
     managed_entitlements: record2.managed_entitlements,
     review_risks: record2.app_review_considerations,
     limitations: record2.limitations,
-    alternatives: record2.recommended_alternatives
+    alternatives: record2.recommended_alternatives,
+    relationships: record2.relationships,
+    knowledge_state: record2.knowledge_state
   }));
   return envelope({ criteria, options });
 }
@@ -37222,24 +37316,35 @@ async function checkAvailability(input2) {
   const results = records.map((record2) => {
     const minimum = record2.minimum_os_version[input2.platform];
     const minimumMajor = parseMajor(minimum ?? void 0);
-    const reasons = [];
-    if (!record2.platforms.includes(input2.platform)) reasons.push(`${input2.platform} is not listed as supported.`);
-    if (!input2.os_version) reasons.push("No target OS version was provided.");
+    const incompatibleReasons = [];
+    const conditionalReasons = [];
+    if (!record2.platforms.includes(input2.platform))
+      incompatibleReasons.push(`${input2.platform} is not listed as supported.`);
+    if (!input2.os_version) conditionalReasons.push("No target OS version was provided.");
     if (minimum === void 0 || minimum === null)
-      reasons.push(`The minimum ${input2.platform} version is not verified in this record.`);
+      conditionalReasons.push(`The minimum ${input2.platform} version is not verified in this record.`);
     if (record2.stable_or_beta === "beta" && !input2.allow_beta)
-      reasons.push("This record is beta and beta use was not allowed.");
+      incompatibleReasons.push("This record is beta and beta use was not allowed.");
+    if (record2.stable_or_beta === "beta" && input2.allow_beta)
+      conditionalReasons.push("This record is beta and requires prerelease validation.");
+    if (record2.stable_or_beta === "deprecated")
+      incompatibleReasons.push("This record is deprecated and is excluded from new implementation recommendations.");
+    if (record2.stable_or_beta === "unknown")
+      conditionalReasons.push("The current lifecycle status is not verified in this record.");
     if (requestedMajor !== void 0 && minimumMajor !== void 0 && requestedMajor < minimumMajor)
-      reasons.push(`Requires ${input2.platform} ${minimum} or later.`);
+      incompatibleReasons.push(`Requires ${input2.platform} ${minimum} or later.`);
     if (record2.hardware_requirements.length > 0 && !input2.device)
-      reasons.push("Runtime hardware eligibility must be checked.");
+      conditionalReasons.push("Runtime hardware eligibility must be checked.");
     if (record2.region_restrictions.length > 0 && !input2.region)
-      reasons.push("Runtime region availability must be checked.");
+      conditionalReasons.push("Runtime region availability must be checked.");
     if (record2.language_restrictions.length > 0 && !input2.language)
-      reasons.push("Runtime language availability must be checked.");
+      conditionalReasons.push("Runtime language availability must be checked.");
+    const determination = incompatibleReasons.length > 0 ? "incompatible" : conditionalReasons.length > 0 ? "conditional" : "verified_compatible";
+    const reasons = [...incompatibleReasons, ...conditionalReasons];
     return {
       capability_id: record2.id,
-      status: reasons.length === 0 ? "compatible_on_declared_constraints" : "conditional_or_incompatible",
+      status: determination === "verified_compatible" ? "compatible_on_declared_constraints" : "conditional_or_incompatible",
+      determination,
       minimum_os_version: minimum ?? "not specified",
       stable_or_beta: record2.stable_or_beta,
       hardware_requirements: record2.hardware_requirements,
@@ -37254,30 +37359,53 @@ async function checkAvailability(input2) {
 }
 async function auditPermissionsAndEntitlements(capabilityIds) {
   const records = await resolveIds(capabilityIds);
-  return envelope({
-    user_permissions: unique(records.flatMap((record2) => record2.user_permissions)),
-    info_plist_keys: unique(records.flatMap((record2) => record2.info_plist_keys)),
-    xcode_capabilities: unique(records.flatMap((record2) => record2.xcode_capabilities)),
-    entitlements: unique(records.flatMap((record2) => record2.entitlements)),
-    managed_entitlements: unique(records.flatMap((record2) => record2.managed_entitlements)),
-    background_modes: unique(records.flatMap((record2) => record2.background_modes)),
-    app_extensions: unique(records.flatMap((record2) => record2.related_extensions))
-  });
+  const knowledgeGaps = listKnowledgeGaps(records, [
+    "user_permissions",
+    "info_plist_keys",
+    "xcode_capabilities",
+    "entitlements",
+    "managed_entitlements",
+    "background_modes",
+    "related_extensions"
+  ]);
+  return envelope(
+    {
+      user_permissions: unique(records.flatMap((record2) => record2.user_permissions)),
+      info_plist_keys: unique(records.flatMap((record2) => record2.info_plist_keys)),
+      xcode_capabilities: unique(records.flatMap((record2) => record2.xcode_capabilities)),
+      entitlements: unique(records.flatMap((record2) => record2.entitlements)),
+      managed_entitlements: unique(records.flatMap((record2) => record2.managed_entitlements)),
+      background_modes: unique(records.flatMap((record2) => record2.background_modes)),
+      app_extensions: unique(records.flatMap((record2) => record2.related_extensions)),
+      knowledge_gaps: knowledgeGaps
+    },
+    knowledgeGaps.length > 0 ? ["Empty configuration results are not proof of no requirement when the corresponding field is unknown."] : []
+  );
 }
 async function auditPrivacyAndReview(capabilityIds) {
   const records = await resolveIds(capabilityIds);
-  return envelope({
-    privacy_manifest_requirements: unique(records.flatMap((record2) => record2.privacy_manifest_requirements)),
-    required_reason_apis: unique(records.flatMap((record2) => record2.required_reason_apis)),
-    app_review_considerations: unique(records.flatMap((record2) => record2.app_review_considerations)),
-    security_considerations: unique(records.flatMap((record2) => record2.security_considerations)),
-    data_minimization_actions: [
-      "Request only data types required by a user-visible feature.",
-      "Keep data on device unless a documented product requirement needs transfer.",
-      "Define retention, deletion, export, and account-removal behavior before launch.",
-      "Keep App Store privacy disclosures, privacy manifests, purpose strings, and runtime behavior aligned."
-    ]
-  });
+  const knowledgeGaps = listKnowledgeGaps(records, [
+    "privacy_manifest_requirements",
+    "required_reason_apis",
+    "app_review_considerations",
+    "security_considerations"
+  ]);
+  return envelope(
+    {
+      privacy_manifest_requirements: unique(records.flatMap((record2) => record2.privacy_manifest_requirements)),
+      required_reason_apis: unique(records.flatMap((record2) => record2.required_reason_apis)),
+      app_review_considerations: unique(records.flatMap((record2) => record2.app_review_considerations)),
+      security_considerations: unique(records.flatMap((record2) => record2.security_considerations)),
+      knowledge_gaps: knowledgeGaps,
+      data_minimization_actions: [
+        "Request only data types required by a user-visible feature.",
+        "Keep data on device unless a documented product requirement needs transfer.",
+        "Define retention, deletion, export, and account-removal behavior before launch.",
+        "Keep App Store privacy disclosures, privacy manifests, purpose strings, and runtime behavior aligned."
+      ]
+    },
+    knowledgeGaps.length > 0 ? ["Empty privacy or review results are not proof of no requirement when the corresponding field is unknown."] : []
+  );
 }
 async function generateArchitecture(idea, capabilityIds, projectScale) {
   const records = await resolveIds(capabilityIds);
@@ -37438,6 +37566,11 @@ async function resolveIds(ids) {
 }
 function unique(values) {
   return [...new Set(values)].filter(Boolean).sort();
+}
+function listKnowledgeGaps(records, fields) {
+  return records.flatMap(
+    (record2) => fields.filter((field) => record2.knowledge_state.fields[field] === "unknown").map((field) => `${record2.id}.${field}`)
+  );
 }
 
 // src/server.ts
