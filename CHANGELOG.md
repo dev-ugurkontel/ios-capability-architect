@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented in this file. The project follows [Semantic Versioning](https://semver.org/) and uses Conventional Commit messages to drive release automation.
 
+## [0.5.0](https://github.com/fillbyte/ios-capability-architect/compare/v0.4.2...v0.5.0) (2026-08-30)
+
+
+### Features
+
+* **catalog:** add safe fallback for unprofiled Apple technologies ([#31](https://github.com/fillbyte/ios-capability-architect/issues/31)) ([7dcd128](https://github.com/fillbyte/ios-capability-architect/commit/7dcd128c7ee27bb893c0f7ada1bf4f017a11e53d))
+
 ## [0.4.2](https://github.com/fillbyte/ios-capability-architect/compare/v0.4.1...v0.4.2) (2026-08-30)
 
 
