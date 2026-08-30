@@ -1259,6 +1259,641 @@ var capabilities_default = {
       last_verified_at: "2026-08-30"
     },
     {
+      id: "urlsession",
+      name: "URLSession",
+      aliases: ["NSURLSession", "URL Loading System"],
+      category: "networking",
+      entity_type: "api",
+      summary: "Foundation APIs for configurable HTTP and other URL-based data, upload, download, authentication, caching, and system-scheduled background transfers.",
+      supported_use_cases: [
+        "Send data requests and receive response data",
+        "Upload and download content with delegate or async APIs",
+        "Use system-managed background upload and download sessions",
+        "Configure caching, cookies, credentials, connectivity, and request policy"
+      ],
+      unsupported_use_cases: [
+        "Guaranteed start or completion times for background transfers",
+        "Unlimited background execution",
+        "Bypassing App Transport Security or local-network privacy requirements",
+        "Replacing a server, synchronization protocol, or durable application data model"
+      ],
+      related_frameworks: ["Foundation", "Network"],
+      related_entitlements: ["com.apple.developer.networking.multicast"],
+      platforms: ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"],
+      minimum_os_version: {
+        iOS: "7.0",
+        iPadOS: "7.0",
+        "Mac Catalyst": "13.1",
+        macOS: "10.9",
+        tvOS: "9.0",
+        visionOS: "1.0",
+        watchOS: "2.0"
+      },
+      sdk_availability: "Stable URLSession APIs are present in the current Apple SDKs for the listed platforms; individual members have their own availability. Local interfaces were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      stable_or_beta: "stable",
+      on_device_level: "hybrid",
+      network_requirement: "Remote requests require a suitable network path and reachable endpoint; cached responses can support explicitly designed offline behavior.",
+      cloud_dependency: null,
+      user_permissions: [
+        "Local Network privacy authorization when the app communicates with services on the local network"
+      ],
+      info_plist_keys: [
+        "NSAppTransportSecurity only when changing default ATS behavior; weakening exceptions require narrow justification",
+        "NSLocalNetworkUsageDescription for local-network access",
+        "NSBonjourServices when browsing or advertising Bonjour service types"
+      ],
+      managed_entitlements: [
+        "com.apple.developer.networking.multicast only when the app sends or receives IP multicast traffic"
+      ],
+      background_modes: [],
+      app_review_considerations: [
+        "Use secure network connections and keep ATS exceptions as narrow as possible",
+        "Explain local-network access in a purpose string that matches the user-visible feature"
+      ],
+      security_considerations: [
+        "Prefer HTTPS and the system's default server-trust evaluation",
+        "Validate authentication challenges and avoid persisting credentials, cookies, or caches when they are unnecessary",
+        "Treat downloaded data as untrusted input"
+      ],
+      implementation_notes: [
+        "Use a background URLSession configuration for supported transfers that must continue while the app is suspended",
+        "Background URLSession transfers do not require a UIBackgroundModes entry",
+        "Invalidate delegate-based sessions when their lifecycle is complete"
+      ],
+      limitations: [
+        "The system schedules background transfers according to resource and connectivity conditions",
+        "Force-quitting an iOS app cancels its background transfers until the user relaunches it",
+        "Feature-specific ATS, local-network, Bonjour, and multicast requirements remain separate from URLSession itself"
+      ],
+      keywords: ["urlsession", "networking", "http", "download", "upload", "background transfer"],
+      official_documentation: [
+        {
+          title: "URLSession",
+          url: "https://developer.apple.com/documentation/foundation/urlsession",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Downloading files in the background",
+          url: "https://developer.apple.com/documentation/foundation/downloading-files-in-the-background",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "NSAppTransportSecurity",
+          url: "https://developer.apple.com/documentation/bundleresources/information-property-list/nsapptransportsecurity",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Preventing insecure network connections",
+          url: "https://developer.apple.com/documentation/security/preventing-insecure-network-connections",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "TN3179: Understanding local network privacy",
+          url: "https://developer.apple.com/documentation/technotes/tn3179-understanding-local-network-privacy",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
+      ],
+      last_verified_at: "2026-08-30"
+    },
+    {
+      id: "core-data",
+      name: "Core Data",
+      aliases: ["CoreData", "NSPersistentContainer", "NSManagedObjectContext"],
+      category: "persistence_sync",
+      entity_type: "framework",
+      summary: "Apple's object-graph management and persistence framework, with optional CloudKit mirroring through NSPersistentCloudKitContainer.",
+      supported_use_cases: [
+        "Manage an application object graph and persist structured local data",
+        "Fetch, observe, validate, migrate, and coordinate model-backed data",
+        "Use multiple persistent stores and background managed-object contexts",
+        "Mirror an eligible persistent store with CloudKit when explicitly configured"
+      ],
+      unsupported_use_cases: [
+        "Serving as a remote multi-client database protocol",
+        "Eliminating schema migration and concurrency planning",
+        "Assuming CloudKit mirroring is enabled for a local store by default",
+        "Assuming CloudKit conflict, account, quota, or network behavior is fully controlled by the app"
+      ],
+      related_frameworks: ["CloudKit", "SwiftData"],
+      related_capabilities: ["iCloud", "Push Notifications"],
+      related_entitlements: [
+        "com.apple.developer.icloud-services",
+        "com.apple.developer.icloud-container-identifiers",
+        "com.apple.developer.icloud-container-environment"
+      ],
+      platforms: ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"],
+      minimum_os_version: {
+        iOS: "3.0",
+        iPadOS: "3.0",
+        "Mac Catalyst": "13.0",
+        macOS: "10.4",
+        tvOS: "9.0",
+        visionOS: "1.0",
+        watchOS: "2.0"
+      },
+      sdk_availability: "Stable Core Data APIs are present in the current Apple SDKs for the listed platforms; CloudKit integration and individual members have separate availability. Local interfaces were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      stable_or_beta: "stable",
+      on_device_level: "primarily_on_device",
+      network_requirement: "Local persistent stores require no network; CloudKit mirroring requires network access for synchronization.",
+      cloud_dependency: "Optional CloudKit integration through NSPersistentCloudKitContainer",
+      user_permissions: [],
+      info_plist_keys: [],
+      xcode_capabilities: [
+        "iCloud with CloudKit only for CloudKit-backed stores",
+        "Push Notifications only for CloudKit remote-change delivery"
+      ],
+      entitlements: [
+        "com.apple.developer.icloud-services only for CloudKit integration",
+        "com.apple.developer.icloud-container-identifiers only for CloudKit integration",
+        "com.apple.developer.icloud-container-environment only for CloudKit integration",
+        "aps-environment as provisioning-managed Push Notifications metadata only for CloudKit integration"
+      ],
+      background_modes: [
+        "UIBackgroundModes: remote-notification only for background CloudKit remote-change delivery"
+      ],
+      implementation_notes: [
+        "Keep NSManagedObject instances on the queue of their managed-object context",
+        "Plan and test model migrations against real persisted data",
+        "Configure NSPersistentCloudKitContainer, eligible model constraints, container identifiers, and schema deployment before relying on CloudKit mirroring"
+      ],
+      limitations: [
+        "CloudKit-backed stores inherit CloudKit account, network, quota, schema, and throttling constraints",
+        "Not every Core Data model is automatically eligible for CloudKit mirroring",
+        "Framework availability does not prove availability of every member API"
+      ],
+      keywords: ["core data", "coredata", "persistence", "database", "managed object", "cloudkit sync"],
+      official_documentation: [
+        {
+          title: "Core Data",
+          url: "https://developer.apple.com/documentation/coredata",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Setting up Core Data with CloudKit",
+          url: "https://developer.apple.com/documentation/coredata/setting-up-core-data-with-cloudkit",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Mirroring a Core Data store with CloudKit",
+          url: "https://developer.apple.com/documentation/coredata/mirroring-a-core-data-store-with-cloudkit",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Creating a Core Data model for CloudKit",
+          url: "https://developer.apple.com/documentation/coredata/creating-a-core-data-model-for-cloudkit",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "NSPersistentCloudKitContainer",
+          url: "https://developer.apple.com/documentation/coredata/nspersistentcloudkitcontainer",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
+      ],
+      last_verified_at: "2026-08-30"
+    },
+    {
+      id: "cloudkit",
+      name: "CloudKit",
+      aliases: ["CKContainer", "CKDatabase", "CloudKit framework"],
+      category: "persistence_sync",
+      entity_type: "apple_service",
+      summary: "Apple's iCloud-backed service and framework for storing, querying, synchronizing, sharing, and subscribing to record data and assets.",
+      supported_use_cases: [
+        "Store application records and assets in public, private, or shared CloudKit databases",
+        "Synchronize user data across supported devices",
+        "Share eligible records between iCloud users",
+        "Receive database or record-zone change notifications"
+      ],
+      unsupported_use_cases: [
+        "Guaranteed unlimited request throughput",
+        "A fully offline source of truth without synchronization policy",
+        "Skipping development-to-production schema deployment",
+        "Assuming private database access works without an eligible iCloud account"
+      ],
+      related_frameworks: ["Core Data", "SwiftData"],
+      related_capabilities: ["iCloud", "Push Notifications"],
+      related_entitlements: [
+        "com.apple.developer.icloud-services",
+        "com.apple.developer.icloud-container-identifiers",
+        "com.apple.developer.icloud-container-environment"
+      ],
+      platforms: ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"],
+      minimum_os_version: {
+        iOS: "8.0",
+        iPadOS: "8.0",
+        "Mac Catalyst": "13.0",
+        macOS: "10.10",
+        tvOS: "9.0",
+        visionOS: "1.0",
+        watchOS: "3.0"
+      },
+      sdk_availability: "Stable CloudKit APIs are present in the current Apple SDKs for the listed platforms; individual members have their own availability. Local interfaces were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      stable_or_beta: "stable",
+      on_device_level: "cloud_required",
+      network_requirement: "CloudKit operations require access to Apple's iCloud and CloudKit services; applications must design for offline and retry states.",
+      cloud_dependency: "Apple iCloud and CloudKit services",
+      xcode_capabilities: ["iCloud with CloudKit", "Push Notifications for remote change delivery"],
+      entitlements: [
+        "com.apple.developer.icloud-services",
+        "com.apple.developer.icloud-container-identifiers",
+        "com.apple.developer.icloud-container-environment as provisioning-managed environment metadata",
+        "aps-environment as provisioning-managed Push Notifications metadata"
+      ],
+      background_modes: [
+        "UIBackgroundModes: fetch only for silent CloudKit subscription delivery that requires background fetch",
+        "UIBackgroundModes: remote-notification only for background CloudKit change delivery"
+      ],
+      app_review_considerations: [
+        "Disclose collection and cloud storage of user data according to the app's actual CloudKit schema and behavior"
+      ],
+      security_considerations: [
+        "Use private databases for user-private records and authorize sharing deliberately",
+        "Do not embed server-to-server credentials or privileged CloudKit secrets in a client app",
+        "Validate data received from public or shared databases before use"
+      ],
+      implementation_notes: [
+        "Use the intended CKContainer and database scope explicitly",
+        "Handle account changes, partial failures, retries, and change tokens",
+        "Deploy the container schema to production before distributing a production build"
+      ],
+      limitations: [
+        "Requests and storage are subject to CloudKit quotas and throttling",
+        "Network, iCloud account, and service availability affect operations",
+        "Development and production environments have separate schema lifecycle considerations"
+      ],
+      keywords: ["cloudkit", "icloud", "ckcontainer", "sync", "records", "assets", "sharing"],
+      official_documentation: [
+        {
+          title: "CloudKit",
+          url: "https://developer.apple.com/documentation/cloudkit",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Enabling CloudKit in your app",
+          url: "https://developer.apple.com/documentation/cloudkit/enabling-cloudkit-in-your-app",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "CKContainer",
+          url: "https://developer.apple.com/documentation/cloudkit/ckcontainer",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Deploying an iCloud container's schema",
+          url: "https://developer.apple.com/documentation/cloudkit/deploying-an-icloud-container-s-schema",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "TN3162: Understanding CloudKit throttles",
+          url: "https://developer.apple.com/documentation/technotes/tn3162-understanding-cloudkit-throttles",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "iCloud services entitlement",
+          url: "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.icloud-services",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
+      ],
+      last_verified_at: "2026-08-30"
+    },
+    {
+      id: "keychain-services",
+      name: "Keychain Services",
+      aliases: ["Keychain", "SecItem", "Security Keychain"],
+      category: "security_identity",
+      entity_type: "api",
+      summary: "Security framework APIs for storing and retrieving small secrets under system-enforced keychain accessibility and access-control policies.",
+      supported_use_cases: [
+        "Store passwords, cryptographic keys, certificates, and other small secrets",
+        "Restrict item accessibility by device lock state",
+        "Require user-presence or biometric access control for selected items",
+        "Share items among explicitly configured apps from the same developer team"
+      ],
+      unsupported_use_cases: [
+        "General-purpose storage for large application data",
+        "Automatic sharing across app targets without an access group",
+        "Assuming every item survives device restore, migration, or passcode changes",
+        "Replacing server-side credential revocation or account security"
+      ],
+      related_frameworks: ["Security", "LocalAuthentication", "CryptoKit"],
+      related_capabilities: ["Keychain Sharing"],
+      related_entitlements: ["keychain-access-groups"],
+      platforms: ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"],
+      minimum_os_version: {
+        iOS: "2.0",
+        iPadOS: "2.0",
+        "Mac Catalyst": "13.1",
+        macOS: "10.6",
+        tvOS: "9.0",
+        visionOS: "1.0",
+        watchOS: "2.0"
+      },
+      sdk_availability: "Stable Keychain Services APIs are present in the current Apple SDKs for the listed platforms; item classes, access controls, and sharing behavior vary by platform and API. Local interfaces were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      stable_or_beta: "stable",
+      on_device_level: "primarily_on_device",
+      network_requirement: "Local keychain access requires no network; explicitly synchronizable items depend on iCloud Keychain service availability.",
+      cloud_dependency: "Optional iCloud Keychain synchronization for items explicitly marked synchronizable",
+      user_permissions: [],
+      info_plist_keys: ["NSFaceIDUsageDescription only when Face ID protects access to a keychain item"],
+      xcode_capabilities: ["Keychain Sharing only when items are shared across configured app targets"],
+      entitlements: ["keychain-access-groups only for explicitly configured access-group sharing"],
+      security_considerations: [
+        "Choose the narrowest keychain accessibility class that supports the feature",
+        "Use access-control flags deliberately when an item requires user presence or biometrics",
+        "Restrict access groups to the targets that need the shared secret",
+        "Never log secret values or include them in diagnostics"
+      ],
+      implementation_notes: [
+        "Check OSStatus results for add, query, update, and delete operations",
+        "Run potentially blocking SecItem operations away from the main thread",
+        "Use the app's default keychain access group unless cross-target sharing is required",
+        "Store CryptoKit keys in the keychain when they must persist beyond process memory"
+      ],
+      limitations: [
+        "Keychain Services is optimized for small secret items rather than large data blobs",
+        "Synchronizable keychain items cannot use ThisDeviceOnly accessibility classes",
+        "Item accessibility, synchronizability, and access-control behavior depend on the selected attributes",
+        "macOS keychain behavior and access control differ from the iOS-family data-protection keychain"
+      ],
+      keywords: ["keychain", "security", "secret", "password", "credential", "secitem", "access group"],
+      official_documentation: [
+        {
+          title: "Keychain Services",
+          url: "https://developer.apple.com/documentation/security/keychain-services",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Restricting keychain item accessibility",
+          url: "https://developer.apple.com/documentation/security/restricting-keychain-item-accessibility",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Configuring keychain sharing",
+          url: "https://developer.apple.com/documentation/xcode/configuring-keychain-sharing",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Sharing access to keychain items among a collection of apps",
+          url: "https://developer.apple.com/documentation/security/sharing-access-to-keychain-items-among-a-collection-of-apps",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "TN3137: On Mac keychains",
+          url: "https://developer.apple.com/documentation/technotes/tn3137-on-mac-keychains",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
+      ],
+      last_verified_at: "2026-08-30"
+    },
+    {
+      id: "authenticationservices",
+      name: "AuthenticationServices",
+      aliases: ["Authentication Services", "ASWebAuthenticationSession"],
+      category: "security_identity",
+      entity_type: "framework",
+      summary: "Apple framework APIs for user-mediated web authentication, Sign in with Apple, passkeys, credential-provider integration, and related identity experiences.",
+      supported_use_cases: [
+        "Authenticate with a web identity provider through ASWebAuthenticationSession",
+        "Implement Sign in with Apple on its supported OS versions",
+        "Register and authenticate accounts with passkeys on their supported OS versions",
+        "Integrate supported credential-provider and authorization flows"
+      ],
+      unsupported_use_cases: [
+        "Storing application passwords or private keys directly in the framework",
+        "Replacing server-side token, session, account, or credential verification",
+        "Assuming every AuthenticationServices feature shares the framework's minimum OS version",
+        "Silent authentication that bypasses required user mediation or consent"
+      ],
+      related_frameworks: ["Security", "LocalAuthentication", "WebKit"],
+      related_capabilities: ["Sign in with Apple", "Associated Domains"],
+      related_entitlements: ["com.apple.developer.applesignin", "com.apple.developer.associated-domains"],
+      related_extensions: ["AutoFill Credential Provider Extension"],
+      platforms: ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"],
+      minimum_os_version: {
+        iOS: "12.0",
+        iPadOS: "12.0",
+        "Mac Catalyst": "13.0",
+        macOS: "10.15",
+        tvOS: "13.0",
+        visionOS: "1.0",
+        watchOS: "6.0"
+      },
+      sdk_availability: "The framework is stable on the listed platforms, but ASWebAuthenticationSession, Sign in with Apple, passkeys, and credential-provider APIs have distinct platform and member availability. Local interfaces were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      stable_or_beta: "stable",
+      on_device_level: "hybrid",
+      network_requirement: "Web authentication, Sign in with Apple, and passkey relying-party flows generally require reachable identity or web services; credential mediation and cryptographic operations are system managed.",
+      cloud_dependency: "Depends on the selected identity provider, relying party, and Apple or iCloud services used by the feature",
+      user_permissions: [],
+      info_plist_keys: [],
+      xcode_capabilities: [
+        "Sign in with Apple only for Sign in with Apple",
+        "Associated Domains only for passkeys and other associated-domain features",
+        "AutoFill Credential Provider only for a credential-provider app and extension"
+      ],
+      entitlements: [
+        "com.apple.developer.applesignin only for Sign in with Apple",
+        "com.apple.developer.associated-domains with webcredentials entries for passkeys",
+        "com.apple.developer.authentication-services.autofill-credential-provider only for an AutoFill credential-provider app and extension"
+      ],
+      app_review_considerations: [
+        "Follow the current App Review Guidelines, including guideline 4.8 when offering qualifying third-party or social login services",
+        "Present identity choices and account behavior accurately to the user"
+      ],
+      security_considerations: [
+        "Validate authorization results, identity tokens, nonces, callback URLs, and server sessions",
+        "Associate passkey credentials with the intended relying-party domain and account",
+        "Do not treat a client-side authorization result as sufficient server-side account proof"
+      ],
+      implementation_notes: [
+        "Configure the required capability and entitlement only for the selected authentication feature",
+        "For passkeys, publish a valid apple-app-site-association file and matching webcredentials associated-domain entry",
+        "Sign in with Apple APIs start at iOS 13.0 and have feature-specific availability separate from the framework minimum",
+        "Check feature-specific API availability instead of relying only on the framework minimum"
+      ],
+      limitations: [
+        "AuthenticationServices features have different platform and OS availability",
+        "Web and relying-party configuration outside the app is required for several flows",
+        "Identity-provider, network, account, and iCloud Keychain state can affect authentication"
+      ],
+      keywords: ["authenticationservices", "authentication", "sign in with apple", "passkey", "webauthn", "oauth"],
+      official_documentation: [
+        {
+          title: "AuthenticationServices",
+          url: "https://developer.apple.com/documentation/authenticationservices",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "ASWebAuthenticationSession",
+          url: "https://developer.apple.com/documentation/authenticationservices/aswebauthenticationsession",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Implementing user authentication with Sign in with Apple",
+          url: "https://developer.apple.com/documentation/authenticationservices/implementing-user-authentication-with-sign-in-with-apple",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Supporting passkeys",
+          url: "https://developer.apple.com/documentation/authenticationservices/supporting-passkeys",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Sign in with Apple entitlement",
+          url: "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.applesignin",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Associated Domains Entitlement",
+          url: "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.associated-domains",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "AutoFill credential provider entitlement",
+          url: "https://developer.apple.com/documentation/bundleresources/entitlements/com.apple.developer.authentication-services.autofill-credential-provider",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "App Review Guidelines",
+          url: "https://developer.apple.com/app-store/review/guidelines/",
+          source_type: "app_store_review_guidelines",
+          verified_at: "2026-08-30"
+        }
+      ],
+      last_verified_at: "2026-08-30"
+    },
+    {
+      id: "cryptokit",
+      name: "CryptoKit",
+      aliases: ["Apple CryptoKit"],
+      category: "security_identity",
+      entity_type: "framework",
+      summary: "Apple's Swift cryptography framework for hashing, message authentication, encryption, signatures, key agreement, and supported Secure Enclave operations.",
+      supported_use_cases: [
+        "Hash data and authenticate messages",
+        "Encrypt and authenticate data with supported symmetric algorithms",
+        "Generate keys, perform key agreement, and create or verify digital signatures",
+        "Use supported Secure Enclave keys when SecureEnclave.isAvailable is true"
+      ],
+      unsupported_use_cases: [
+        "Inventing custom cryptographic algorithms or protocols",
+        "Assuming Secure Enclave hardware is available on every device",
+        "Persisting private keys automatically",
+        "Replacing certificate trust, TLS policy, keychain storage, or server-side key management"
+      ],
+      related_frameworks: ["Security", "LocalAuthentication"],
+      platforms: ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"],
+      minimum_os_version: {
+        iOS: "13.0",
+        iPadOS: "13.0",
+        "Mac Catalyst": "13.0",
+        macOS: "10.15",
+        tvOS: "13.0",
+        visionOS: "1.0",
+        watchOS: "6.0"
+      },
+      sdk_availability: "Stable CryptoKit APIs are present in the current Apple SDKs for the listed platforms; algorithms and Secure Enclave members have their own availability. Local interfaces were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      stable_or_beta: "stable",
+      on_device_level: "fully_on_device",
+      network_requirement: "CryptoKit cryptographic operations require no network; protocols or services built with their results may require connectivity.",
+      cloud_dependency: null,
+      user_permissions: [],
+      info_plist_keys: [
+        "ITSAppUsesNonExemptEncryption according to the app's actual export-compliance classification",
+        "NSFaceIDUsageDescription only when a separately configured keychain access-control policy uses Face ID"
+      ],
+      xcode_capabilities: [],
+      entitlements: [],
+      managed_entitlements: [],
+      background_modes: [],
+      app_review_considerations: [
+        "Complete App Store Connect encryption export-compliance declarations according to the app's actual cryptography and distribution"
+      ],
+      security_considerations: [
+        "Use Apple-provided algorithms and established protocols instead of designing custom cryptography",
+        "Protect persistent private keys in the keychain and restrict their accessibility",
+        "Check SecureEnclave.isAvailable before creating or using Secure Enclave keys",
+        "Avoid logging keys, nonces, shared secrets, or plaintext sensitive data"
+      ],
+      implementation_notes: [
+        "Select algorithms and key sizes supported by the concrete CryptoKit API",
+        "Persist a CryptoKit key's representation only with an appropriate keychain protection policy",
+        "Keep biometric access control in the Security and LocalAuthentication layer rather than treating it as a CryptoKit requirement"
+      ],
+      limitations: [
+        "Secure Enclave support depends on device hardware and the selected key type",
+        "CryptoKit does not provide durable key storage by itself",
+        "Framework availability does not prove availability of every algorithm or member API"
+      ],
+      keywords: ["cryptokit", "cryptography", "encryption", "hash", "signature", "key agreement", "secure enclave"],
+      official_documentation: [
+        {
+          title: "CryptoKit",
+          url: "https://developer.apple.com/documentation/cryptokit",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "SHA256",
+          url: "https://developer.apple.com/documentation/cryptokit/sha256",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "SecureEnclave",
+          url: "https://developer.apple.com/documentation/cryptokit/secureenclave",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Storing CryptoKit keys in the keychain",
+          url: "https://developer.apple.com/documentation/cryptokit/storing-cryptokit-keys-in-the-keychain",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Protecting keys with the Secure Enclave",
+          url: "https://developer.apple.com/documentation/security/protecting-keys-with-the-secure-enclave",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Complying with encryption export regulations",
+          url: "https://developer.apple.com/documentation/security/complying-with-encryption-export-regulations",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
+      ],
+      last_verified_at: "2026-08-30"
+    },
+    {
       id: "uiwebview",
       name: "UIWebView",
       aliases: ["legacy web view"],
@@ -21057,12 +21692,29 @@ function evidenceFor(files, needles) {
     return normalizedNeedles.every((needle) => normalizedContent.includes(needle));
   }).map(({ path }) => path);
 }
-function configurationNeedles(value) {
-  const withoutQualification = value.replace(/\s+when\s+justified.*$/i, "").replace(/\s+for\s+APNs.*$/i, "").trim();
-  const parts = withoutQualification.split(":", 2).map((part) => part.trim());
-  const key = parts[0] ?? withoutQualification;
-  const detail = parts[1];
-  return detail ? [key, detail] : [key];
+var machineConfigurationKeyPattern = /^(?:com\.apple\.(?:developer|security)\.[A-Za-z0-9.-]+|aps-environment|keychain-access-groups|BGTaskSchedulerPermittedIdentifiers|UIBackgroundModes|NS[A-Za-z0-9]+|ITS[A-Za-z0-9]+)(?=$|[\s:])/;
+var conditionalConfigurationPattern = /\s+(?:only\s+(?:for|when)|when\s+(?:browsing|justified)|for\s+(?:local-network\s+access|remote\s+(?:change\s+delivery|notifications))|as\s+provisioning-managed|according\s+to|with\s+[A-Za-z0-9-]+\s+entries\s+for)\b/i;
+function parseConfigurationRequirement(value) {
+  const conditional = conditionalConfigurationPattern.test(value);
+  const machineKey = machineConfigurationKeyPattern.exec(value)?.[0];
+  if (machineKey) {
+    const needles = [machineKey];
+    if (machineKey === "UIBackgroundModes") {
+      const backgroundMode = /^UIBackgroundModes:\s*([A-Za-z0-9.-]+)/.exec(value)?.[1];
+      if (backgroundMode) needles.push(backgroundMode);
+    }
+    if (machineKey === "com.apple.developer.associated-domains") {
+      const domainService = /\s+with\s+([A-Za-z0-9-]+)\s+entries\b/i.exec(value)?.[1];
+      if (domainService) needles.push(domainService);
+    }
+    return { needles, conditional };
+  }
+  return {
+    needles: [
+      value.replace(/\s+only\s+(?:for|when)\s+.*$/i, "").replace(/\s+for\s+remote\s+(?:change\s+delivery|notifications)\s*$/i, "").trim()
+    ],
+    conditional
+  };
 }
 function parseVersion(value) {
   const match = /^(\d+)(?:\.(\d+))?/.exec(value.trim());
@@ -21096,9 +21748,10 @@ function finding(input2) {
 function addConfigurationFindings(findings, files, record2, category, values, knowledgeField) {
   if (record2.knowledge_state.fields[knowledgeField] === "unknown") return;
   for (const value of values) {
-    const evidence = evidenceFor(files, configurationNeedles(value));
+    const requirement = parseConfigurationRequirement(value);
+    const evidence = evidenceFor(files, requirement.needles);
     const requiresManualReview = category === "managed_entitlement";
-    const manualWhenMissing = category === "xcode_capability";
+    const manualWhenMissing = category === "xcode_capability" || requirement.conditional;
     findings.push(
       finding({
         capability_id: record2.id,
@@ -21107,7 +21760,7 @@ function addConfigurationFindings(findings, files, record2, category, values, kn
         status: requiresManualReview ? "manual_review" : evidence.length > 0 ? "detected" : manualWhenMissing ? "manual_review" : "not_detected",
         severity: requiresManualReview ? "warning" : evidence.length > 0 ? "info" : manualWhenMissing ? "warning" : "error",
         evidence,
-        recommendation: requiresManualReview ? "Confirm Apple approval and provisioning for the app and every applicable extension; source files cannot prove managed-entitlement access." : evidence.length > 0 ? "Confirm the value is attached to every intended target and configuration." : manualWhenMissing ? "Confirm this Signing & Capabilities setting in the generated target; native project files may represent it through entitlements instead of the display name." : `Add or generate the required ${category.replaceAll("_", " ")} value, then verify the built target.`
+        recommendation: requiresManualReview ? "Confirm Apple approval and provisioning for the app and every applicable extension; source files cannot prove managed-entitlement access." : evidence.length > 0 ? "Confirm the value is attached to every intended target and configuration." : manualWhenMissing ? requirement.conditional ? `Confirm whether this conditional ${category.replaceAll("_", " ")} applies; when it does, add or generate it and verify the built target.` : "Confirm this Signing & Capabilities setting in the generated target; native project files may represent it through entitlements instead of the display name." : `Add or generate the required ${category.replaceAll("_", " ")} value, then verify the built target.`
       })
     );
   }
