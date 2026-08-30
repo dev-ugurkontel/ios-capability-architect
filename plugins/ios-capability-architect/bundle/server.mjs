@@ -2984,7 +2984,7 @@ var require_compile = __commonJS({
       const schOrFunc = root.refs[ref];
       if (schOrFunc)
         return schOrFunc;
-      let _sch = resolve.call(this, root, ref);
+      let _sch = resolve2.call(this, root, ref);
       if (_sch === void 0) {
         const schema = (_a3 = root.localRefs) === null || _a3 === void 0 ? void 0 : _a3[ref];
         const { schemaId } = this.opts;
@@ -3011,7 +3011,7 @@ var require_compile = __commonJS({
     function sameSchemaEnv(s1, s2) {
       return s1.schema === s2.schema && s1.root === s2.root && s1.baseId === s2.baseId;
     }
-    function resolve(root, ref) {
+    function resolve2(root, ref) {
       let sch;
       while (typeof (sch = this.refs[ref]) == "string")
         ref = sch;
@@ -3836,7 +3836,7 @@ var require_fast_uri = __commonJS({
       }
       return uri;
     }
-    function resolve(baseURI, relativeURI, options) {
+    function resolve2(baseURI, relativeURI, options) {
       const schemelessOptions = options ? Object.assign({ scheme: "null" }, options) : { scheme: "null" };
       const {
         parsed: baseParsed,
@@ -3869,49 +3869,49 @@ var require_fast_uri = __commonJS({
       schemelessOptions.skipEscape = true;
       return serialize(resolved, schemelessOptions);
     }
-    function resolveComponent(base, relative, options, skipNormalization) {
+    function resolveComponent(base, relative2, options, skipNormalization) {
       const target = {};
       if (!skipNormalization) {
         base = parse3(serialize(base, options), options);
-        relative = parse3(serialize(relative, options), options);
+        relative2 = parse3(serialize(relative2, options), options);
       }
       options = options || {};
-      if (!options.tolerant && relative.scheme) {
-        target.scheme = relative.scheme;
-        target.userinfo = relative.userinfo;
-        target.host = relative.host;
-        target.port = relative.port;
-        target.path = removeDotSegments(relative.path || "");
-        target.query = relative.query;
+      if (!options.tolerant && relative2.scheme) {
+        target.scheme = relative2.scheme;
+        target.userinfo = relative2.userinfo;
+        target.host = relative2.host;
+        target.port = relative2.port;
+        target.path = removeDotSegments(relative2.path || "");
+        target.query = relative2.query;
       } else {
-        if (relative.userinfo !== void 0 || relative.host !== void 0 || relative.port !== void 0) {
-          target.userinfo = relative.userinfo;
-          target.host = relative.host;
-          target.port = relative.port;
-          target.path = removeDotSegments(relative.path || "");
-          target.query = relative.query;
+        if (relative2.userinfo !== void 0 || relative2.host !== void 0 || relative2.port !== void 0) {
+          target.userinfo = relative2.userinfo;
+          target.host = relative2.host;
+          target.port = relative2.port;
+          target.path = removeDotSegments(relative2.path || "");
+          target.query = relative2.query;
         } else {
-          if (!relative.path) {
+          if (!relative2.path) {
             target.path = base.path;
-            if (relative.query !== void 0) {
-              target.query = relative.query;
+            if (relative2.query !== void 0) {
+              target.query = relative2.query;
             } else {
               target.query = base.query;
             }
           } else {
-            if (relative.path[0] === "/") {
-              target.path = removeDotSegments(relative.path);
+            if (relative2.path[0] === "/") {
+              target.path = removeDotSegments(relative2.path);
             } else {
               if ((base.userinfo !== void 0 || base.host !== void 0 || base.port !== void 0) && !base.path) {
-                target.path = "/" + relative.path;
+                target.path = "/" + relative2.path;
               } else if (!base.path) {
-                target.path = relative.path;
+                target.path = relative2.path;
               } else {
-                target.path = base.path.slice(0, base.path.lastIndexOf("/") + 1) + relative.path;
+                target.path = base.path.slice(0, base.path.lastIndexOf("/") + 1) + relative2.path;
               }
               target.path = removeDotSegments(target.path);
             }
-            target.query = relative.query;
+            target.query = relative2.query;
           }
           target.userinfo = base.userinfo;
           target.host = base.host;
@@ -3919,7 +3919,7 @@ var require_fast_uri = __commonJS({
         }
         target.scheme = base.scheme;
       }
-      target.fragment = relative.fragment;
+      target.fragment = relative2.fragment;
       return target;
     }
     function equal(uriA, uriB, options) {
@@ -4198,7 +4198,7 @@ var require_fast_uri = __commonJS({
     var fastUri = {
       SCHEMES,
       normalize,
-      resolve,
+      resolve: resolve2,
       resolveComponent,
       equal,
       serialize,
@@ -33536,7 +33536,7 @@ var Protocol = class {
           return;
         }
         const pollInterval = task2.pollInterval ?? this._options?.defaultTaskPollInterval ?? 1e3;
-        await new Promise((resolve) => setTimeout(resolve, pollInterval));
+        await new Promise((resolve2) => setTimeout(resolve2, pollInterval));
         options?.signal?.throwIfAborted();
       }
     } catch (error61) {
@@ -33553,7 +33553,7 @@ var Protocol = class {
    */
   request(request, resultSchema, options) {
     const { relatedRequestId, resumptionToken, onresumptiontoken, task, relatedTask } = options ?? {};
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve2, reject) => {
       const earlyReject = (error61) => {
         reject(error61);
       };
@@ -33631,7 +33631,7 @@ var Protocol = class {
           if (!parseResult.success) {
             reject(parseResult.error);
           } else {
-            resolve(parseResult.data);
+            resolve2(parseResult.data);
           }
         } catch (error61) {
           reject(error61);
@@ -33892,12 +33892,12 @@ var Protocol = class {
       }
     } catch {
     }
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve2, reject) => {
       if (signal.aborted) {
         reject(new McpError(ErrorCode.InvalidRequest, "Request cancelled"));
         return;
       }
-      const timeoutId = setTimeout(resolve, interval);
+      const timeoutId = setTimeout(resolve2, interval);
       signal.addEventListener("abort", () => {
         clearTimeout(timeoutId);
         reject(new McpError(ErrorCode.InvalidRequest, "Request cancelled"));
@@ -34988,7 +34988,7 @@ var McpServer = class {
     let task = createTaskResult.task;
     const pollInterval = task.pollInterval ?? 5e3;
     while (task.status !== "completed" && task.status !== "failed" && task.status !== "cancelled") {
-      await new Promise((resolve) => setTimeout(resolve, pollInterval));
+      await new Promise((resolve2) => setTimeout(resolve2, pollInterval));
       const updatedTask = await extra.taskStore.getTask(taskId);
       if (!updatedTask) {
         throw new McpError(ErrorCode.InternalError, `Task ${taskId} not found during polling`);
@@ -35652,12 +35652,12 @@ var StdioServerTransport = class {
     this.onclose?.();
   }
   send(message) {
-    return new Promise((resolve) => {
+    return new Promise((resolve2) => {
       const json2 = serializeMessage(message);
       if (this._stdout.write(json2)) {
-        resolve();
+        resolve2();
       } else {
-        this._stdout.once("drain", resolve);
+        this._stdout.once("drain", resolve2);
       }
     });
   }
@@ -35914,6 +35914,11 @@ var checkAvailabilityInputSchema = external_exports.object({
 });
 var auditInputSchema = external_exports.object({
   capability_ids: external_exports.array(external_exports.string()).min(1).max(30)
+});
+var projectConfigurationAuditInputSchema = external_exports.object({
+  project_root: external_exports.string().trim().min(1).max(4096),
+  capability_ids: external_exports.array(external_exports.string()).min(1).max(30),
+  platform: external_exports.enum(["iOS", "iPadOS", "watchOS", "tvOS", "visionOS", "macOS"]).default("iOS")
 });
 var architectureInputSchema = external_exports.object({
   idea: external_exports.string().min(10),
@@ -37107,6 +37112,298 @@ async function searchTechnologyCatalog(query, limit = 20) {
   }).filter(({ score }) => score > 0).sort((left, right) => right.score - left.score || left.entry.name.localeCompare(right.entry.name, "en-US")).slice(0, limit).map(({ entry }) => entry);
 }
 
+// src/project-audit.ts
+import { lstat, readdir, readFile, realpath } from "node:fs/promises";
+import { basename, extname, join, relative, resolve, sep } from "node:path";
+var MAX_FILES = 500;
+var MAX_DIRECTORIES = 1e3;
+var MAX_ENTRIES = 1e4;
+var MAX_FILE_BYTES = 1e6;
+var MAX_TOTAL_BYTES = 5e6;
+var ignoredDirectories = /* @__PURE__ */ new Set([
+  ".build",
+  ".derived-data",
+  ".git",
+  ".swiftpm",
+  "Carthage",
+  "DerivedData",
+  "Pods",
+  "node_modules"
+]);
+var exactConfigurationNames = /* @__PURE__ */ new Set([
+  "Package.swift",
+  "PrivacyInfo.xcprivacy",
+  "project.pbxproj",
+  "project.yaml",
+  "project.yml"
+]);
+function isConfigurationFile(name) {
+  return exactConfigurationNames.has(name) || [".entitlements", ".plist", ".xcconfig"].includes(extname(name));
+}
+function normalizePath(path) {
+  return path.split(sep).join("/");
+}
+async function collectConfigurationFiles(projectRoot) {
+  const absoluteRoot = resolve(projectRoot);
+  const root = await realpath(absoluteRoot);
+  const rootStat = await lstat(root);
+  if (!rootStat.isDirectory()) throw new Error("project_root must be a directory");
+  const files = [];
+  const skipped = [];
+  let totalBytes = 0;
+  let directoryCount = 0;
+  let entryCount = 0;
+  async function walk(directory) {
+    if (files.length >= MAX_FILES || totalBytes >= MAX_TOTAL_BYTES || directoryCount >= MAX_DIRECTORIES || entryCount >= MAX_ENTRIES)
+      return;
+    directoryCount += 1;
+    let entries;
+    try {
+      entries = await readdir(directory, { withFileTypes: true });
+    } catch {
+      skipped.push(`${normalizePath(relative(root, directory)) || "."} (unreadable directory)`);
+      return;
+    }
+    entries.sort((left, right) => left.name.localeCompare(right.name));
+    for (const entry of entries) {
+      entryCount += 1;
+      if (files.length >= MAX_FILES || totalBytes >= MAX_TOTAL_BYTES || directoryCount >= MAX_DIRECTORIES || entryCount >= MAX_ENTRIES)
+        break;
+      if (entry.isSymbolicLink()) {
+        skipped.push(`${normalizePath(relative(root, join(directory, entry.name)))} (symlink)`);
+        continue;
+      }
+      if (entry.isDirectory()) {
+        if (!ignoredDirectories.has(entry.name)) await walk(join(directory, entry.name));
+        continue;
+      }
+      if (!entry.isFile() || !isConfigurationFile(entry.name)) continue;
+      const absolutePath = join(directory, entry.name);
+      const canonicalPath = await realpath(absolutePath);
+      if (canonicalPath !== root && !canonicalPath.startsWith(`${root}${sep}`)) {
+        skipped.push(`${normalizePath(relative(root, absolutePath))} (outside root)`);
+        continue;
+      }
+      const stat = await lstat(canonicalPath);
+      if (stat.size > MAX_FILE_BYTES || totalBytes + stat.size > MAX_TOTAL_BYTES) {
+        skipped.push(`${normalizePath(relative(root, canonicalPath))} (size limit)`);
+        continue;
+      }
+      files.push({
+        path: normalizePath(relative(root, canonicalPath)),
+        content: await readFile(canonicalPath, "utf8")
+      });
+      totalBytes += stat.size;
+    }
+  }
+  await walk(root);
+  if (files.length >= MAX_FILES) skipped.push(`file limit reached (${MAX_FILES})`);
+  if (directoryCount >= MAX_DIRECTORIES) skipped.push(`directory limit reached (${MAX_DIRECTORIES})`);
+  if (entryCount >= MAX_ENTRIES) skipped.push(`entry limit reached (${MAX_ENTRIES})`);
+  if (totalBytes >= MAX_TOTAL_BYTES) skipped.push(`total byte limit reached (${MAX_TOTAL_BYTES})`);
+  return { root, files, skipped };
+}
+function evidenceFor(files, needles) {
+  const normalizedNeedles = needles.map((value) => value.toLocaleLowerCase("en-US"));
+  return files.filter(({ content }) => {
+    const normalizedContent = content.toLocaleLowerCase("en-US");
+    return normalizedNeedles.every((needle) => normalizedContent.includes(needle));
+  }).map(({ path }) => path);
+}
+function configurationNeedles(value) {
+  const withoutQualification = value.replace(/\s+when\s+justified.*$/i, "").replace(/\s+for\s+APNs.*$/i, "").trim();
+  const parts = withoutQualification.split(":", 2).map((part) => part.trim());
+  const key = parts[0] ?? withoutQualification;
+  const detail = parts[1];
+  return detail ? [key, detail] : [key];
+}
+function parseVersion(value) {
+  const match = /^(\d+)(?:\.(\d+))?/.exec(value.trim());
+  return match ? [Number(match[1]), Number(match[2] ?? 0)] : void 0;
+}
+function compareVersions(left, right) {
+  return left[0] === right[0] ? left[1] - right[1] : left[0] - right[0];
+}
+function deploymentTargets(files) {
+  const results = [];
+  const patterns = [
+    /IPHONEOS_DEPLOYMENT_TARGET\s*=\s*["']?(\d+(?:\.\d+)?)/g,
+    /deploymentTarget\s*:\s*\{[^}]*iOS\s*:\s*["']?(\d+(?:\.\d+)?)/gs,
+    /^\s*iOS\s*:\s*["']?(\d+(?:\.\d+)?)["']?\s*$/gm
+  ];
+  for (const file2 of files) {
+    if (!/[.]pbxproj$|project[.]ya?ml$|[.]xcconfig$/.test(file2.path)) continue;
+    for (const pattern of patterns) {
+      for (const match of file2.content.matchAll(pattern)) {
+        if (match[1]) results.push({ version: match[1], path: file2.path });
+      }
+    }
+  }
+  return results.filter(
+    (target, index, all) => all.findIndex((candidate) => candidate.version === target.version && candidate.path === target.path) === index
+  );
+}
+function finding(input2) {
+  return { ...input2, evidence: input2.evidence ?? [] };
+}
+function addConfigurationFindings(findings, files, record2, category, values, knowledgeField) {
+  if (record2.knowledge_state.fields[knowledgeField] === "unknown") return;
+  for (const value of values) {
+    const evidence = evidenceFor(files, configurationNeedles(value));
+    const requiresManualReview = category === "managed_entitlement";
+    const manualWhenMissing = category === "xcode_capability";
+    findings.push(
+      finding({
+        capability_id: record2.id,
+        category,
+        requirement: value,
+        status: requiresManualReview ? "manual_review" : evidence.length > 0 ? "detected" : manualWhenMissing ? "manual_review" : "not_detected",
+        severity: requiresManualReview ? "warning" : evidence.length > 0 ? "info" : manualWhenMissing ? "warning" : "error",
+        evidence,
+        recommendation: requiresManualReview ? "Confirm Apple approval and provisioning for the app and every applicable extension; source files cannot prove managed-entitlement access." : evidence.length > 0 ? "Confirm the value is attached to every intended target and configuration." : manualWhenMissing ? "Confirm this Signing & Capabilities setting in the generated target; native project files may represent it through entitlements instead of the display name." : `Add or generate the required ${category.replaceAll("_", " ")} value, then verify the built target.`
+      })
+    );
+  }
+}
+async function auditProjectConfiguration(input2) {
+  const scanned = await collectConfigurationFiles(input2.project_root);
+  const records = await Promise.all(input2.capability_ids.map((id) => findRecord(id)));
+  const unknown2 = input2.capability_ids.filter((_, index) => !records[index]);
+  if (unknown2.length > 0) throw new Error(`Unknown capabilities: ${unknown2.join(", ")}`);
+  const findings = [];
+  for (const record2 of records.filter((value) => Boolean(value))) {
+    const auditedFields = [
+      "entitlements",
+      "xcode_capabilities",
+      "managed_entitlements",
+      "info_plist_keys",
+      "background_modes",
+      "privacy_manifest_requirements",
+      "minimum_os_version"
+    ];
+    const unknownFields = auditedFields.filter((field) => record2.knowledge_state.fields[field] === "unknown");
+    if (unknownFields.length > 0) {
+      findings.push(
+        finding({
+          capability_id: record2.id,
+          category: "registry_evidence",
+          requirement: `Unverified fields: ${unknownFields.join(", ")}`,
+          status: "unknown",
+          severity: "warning",
+          recommendation: "Research these registry fields before interpreting absent source configuration as safe."
+        })
+      );
+    }
+    addConfigurationFindings(findings, scanned.files, record2, "entitlement", record2.entitlements, "entitlements");
+    addConfigurationFindings(
+      findings,
+      scanned.files,
+      record2,
+      "xcode_capability",
+      record2.xcode_capabilities,
+      "xcode_capabilities"
+    );
+    addConfigurationFindings(
+      findings,
+      scanned.files,
+      record2,
+      "managed_entitlement",
+      record2.managed_entitlements,
+      "managed_entitlements"
+    );
+    addConfigurationFindings(
+      findings,
+      scanned.files,
+      record2,
+      "info_plist_key",
+      record2.info_plist_keys,
+      "info_plist_keys"
+    );
+    addConfigurationFindings(
+      findings,
+      scanned.files,
+      record2,
+      "background_mode",
+      record2.background_modes,
+      "background_modes"
+    );
+    if (record2.knowledge_state.fields.privacy_manifest_requirements !== "unknown" && record2.privacy_manifest_requirements.length > 0) {
+      const privacyFiles = scanned.files.filter(({ path }) => basename(path) === "PrivacyInfo.xcprivacy").map(({ path }) => path);
+      const explicitlyRequiresManifest = record2.privacy_manifest_requirements.some(
+        (requirement) => requirement.includes("PrivacyInfo.xcprivacy")
+      );
+      findings.push(
+        finding({
+          capability_id: record2.id,
+          category: "privacy_manifest",
+          requirement: record2.privacy_manifest_requirements.join("; "),
+          status: privacyFiles.length > 0 ? "detected" : explicitlyRequiresManifest ? "not_detected" : "manual_review",
+          severity: privacyFiles.length > 0 ? "info" : "warning",
+          evidence: privacyFiles,
+          recommendation: privacyFiles.length > 0 ? "Audit the manifest declarations against the app and every bundled SDK; file presence alone is not correctness." : explicitlyRequiresManifest ? "Add a reviewed PrivacyInfo.xcprivacy declaration when the app or included SDK uses covered APIs." : "Review App Store privacy disclosures and bundled SDK manifests; this source scan cannot prove disclosure correctness."
+        })
+      );
+    }
+  }
+  const targets = deploymentTargets(scanned.files);
+  for (const record2 of records.filter((value) => Boolean(value))) {
+    if (record2.knowledge_state.fields.minimum_os_version === "unknown") continue;
+    const minimum = record2.minimum_os_version[input2.platform];
+    if (!minimum) continue;
+    const minimumVersion = parseVersion(minimum);
+    if (!minimumVersion) continue;
+    if (targets.length === 0) {
+      findings.push(
+        finding({
+          capability_id: record2.id,
+          category: "deployment_target",
+          requirement: `${input2.platform} ${minimum} or later`,
+          status: "unknown",
+          severity: "warning",
+          recommendation: "Declare and verify the deployment target in the source-of-truth project configuration."
+        })
+      );
+      continue;
+    }
+    const incompatible = targets.filter(({ version: version2 }) => {
+      const parsed = parseVersion(version2);
+      return parsed ? compareVersions(parsed, minimumVersion) < 0 : false;
+    });
+    findings.push(
+      finding({
+        capability_id: record2.id,
+        category: "deployment_target",
+        requirement: `${input2.platform} ${minimum} or later`,
+        status: incompatible.length > 0 ? "incompatible" : "detected",
+        severity: incompatible.length > 0 ? "error" : "info",
+        evidence: (incompatible.length > 0 ? incompatible : targets).map(({ path, version: version2 }) => `${path}: ${version2}`),
+        recommendation: incompatible.length > 0 ? `Raise the affected deployment target to ${minimum} or add an availability-gated fallback.` : "Retain runtime availability checks for eligible OS and hardware combinations."
+      })
+    );
+  }
+  const counts = findings.reduce(
+    (summary, item) => {
+      summary[item.status] += 1;
+      return summary;
+    },
+    { detected: 0, not_detected: 0, incompatible: 0, manual_review: 0, unknown: 0 }
+  );
+  return {
+    project_root: scanned.root,
+    scanned_files: scanned.files.map(({ path }) => path),
+    skipped_entries: scanned.skipped,
+    selected_capabilities: input2.capability_ids,
+    platform: input2.platform,
+    findings,
+    summary: counts,
+    limitations: [
+      "This is a source audit, not proof of the generated Xcode target, App ID, provisioning profile, or Apple approval.",
+      "Build-setting indirection, generated files, custom scripts, and per-configuration overrides require generated-project inspection.",
+      "The tool never returns file contents and does not follow symbolic links."
+    ]
+  };
+}
+
 // src/engine.ts
 var DOCUMENTATION_CUTOFF = "2026-08-30";
 var requirementRules = [
@@ -37382,6 +37679,18 @@ async function auditPermissionsAndEntitlements(capabilityIds) {
     knowledgeGaps.length > 0 ? ["Empty configuration results are not proof of no requirement when the corresponding field is unknown."] : []
   );
 }
+async function auditProjectConfiguration2(input2) {
+  const audit = await auditProjectConfiguration(input2);
+  const warnings = [
+    "Source detection is advisory; verify the generated Xcode project, built products, signing, and provisioning before release."
+  ];
+  if (audit.skipped_entries.length > 0) warnings.push("Some entries were skipped by symlink, size, or scan limits.");
+  if (audit.summary.unknown > 0)
+    warnings.push(
+      "Unknown registry fields require official-source research before concluding that no configuration is needed."
+    );
+  return envelope(audit, warnings);
+}
 async function auditPrivacyAndReview(capabilityIds) {
   const records = await resolveIds(capabilityIds);
   const knowledgeGaps = listKnowledgeGaps(records, [
@@ -37576,7 +37885,7 @@ function listKnowledgeGaps(records, fields) {
 // src/server.ts
 var server = new McpServer({
   name: "ios-capability-architect",
-  version: "0.1.0"
+  version: "0.2.2"
 });
 var readOnlyAnnotations = {
   readOnlyHint: true,
@@ -37662,6 +37971,17 @@ server.registerTool(
     annotations: readOnlyAnnotations
   },
   async ({ capability_ids }) => result(await auditPermissionsAndEntitlements(capability_ids))
+);
+server.registerTool(
+  "audit_ios_project_configuration",
+  {
+    title: "Audit an iOS project's capability configuration",
+    description: "Read a local Apple-platform project configuration and compare its deployment target, plist keys, entitlements, background modes, and privacy manifest presence with selected verified capability profiles. The bounded scan follows no symlinks, returns no file contents, and makes no changes.",
+    inputSchema: projectConfigurationAuditInputSchema,
+    outputSchema,
+    annotations: readOnlyAnnotations
+  },
+  async (input2) => result(await auditProjectConfiguration2(input2))
 );
 server.registerTool(
   "audit_privacy_and_app_review",

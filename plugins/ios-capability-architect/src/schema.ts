@@ -210,6 +210,12 @@ export const auditInputSchema = z.object({
   capability_ids: z.array(z.string()).min(1).max(30)
 });
 
+export const projectConfigurationAuditInputSchema = z.object({
+  project_root: z.string().trim().min(1).max(4096),
+  capability_ids: z.array(z.string()).min(1).max(30),
+  platform: z.enum(["iOS", "iPadOS", "watchOS", "tvOS", "visionOS", "macOS"]).default("iOS")
+});
+
 export const architectureInputSchema = z.object({
   idea: z.string().min(10),
   capability_ids: z.array(z.string()).min(1).max(30),

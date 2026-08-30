@@ -6,6 +6,7 @@ import {
   searchRecords,
   searchTechnologyCatalog
 } from "@/registry.js";
+import { auditProjectConfiguration as auditProjectConfigurationFiles } from "@/project-audit.js";
 import type {
   CapabilityMatch,
   CapabilityRecord,
@@ -366,6 +367,23 @@ export async function auditPermissionsAndEntitlements(
       ? ["Empty configuration results are not proof of no requirement when the corresponding field is unknown."]
       : []
   );
+}
+
+export async function auditProjectConfiguration(input: {
+  project_root: string;
+  capability_ids: string[];
+  platform: string;
+}): Promise<ToolEnvelope<Awaited<ReturnType<typeof auditProjectConfigurationFiles>>>> {
+  const audit = await auditProjectConfigurationFiles(input);
+  const warnings = [
+    "Source detection is advisory; verify the generated Xcode project, built products, signing, and provisioning before release."
+  ];
+  if (audit.skipped_entries.length > 0) warnings.push("Some entries were skipped by symlink, size, or scan limits.");
+  if (audit.summary.unknown > 0)
+    warnings.push(
+      "Unknown registry fields require official-source research before concluding that no configuration is needed."
+    );
+  return envelope(audit, warnings);
 }
 
 export async function auditPrivacyAndReview(capabilityIds: string[]): Promise<ToolEnvelope<Record<string, string[]>>> {

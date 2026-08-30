@@ -11,6 +11,7 @@ import {
   getProfileInputSchema,
   implementationPlanInputSchema,
   officialDocsSearchInputSchema,
+  projectConfigurationAuditInputSchema,
   refreshRegistryInputSchema,
   registryCoverageInputSchema,
   resolveCapabilitiesInputSchema,
@@ -18,6 +19,7 @@ import {
 } from "@/schema.js";
 import {
   analyzeAppIdea,
+  auditProjectConfiguration,
   auditPermissionsAndEntitlements,
   auditPrivacyAndReview,
   checkAvailability,
@@ -33,9 +35,11 @@ import {
 } from "@/engine.js";
 import type { ToolEnvelope } from "@/types.js";
 
+declare const __PLUGIN_VERSION__: string;
+
 const server = new McpServer({
   name: "ios-capability-architect",
-  version: "0.1.0"
+  version: __PLUGIN_VERSION__
 });
 
 const readOnlyAnnotations = {
@@ -136,6 +140,19 @@ server.registerTool(
     annotations: readOnlyAnnotations
   },
   async ({ capability_ids }) => result(await auditPermissionsAndEntitlements(capability_ids))
+);
+
+server.registerTool(
+  "audit_ios_project_configuration",
+  {
+    title: "Audit an iOS project's capability configuration",
+    description:
+      "Read a local Apple-platform project configuration and compare its deployment target, plist keys, entitlements, background modes, and privacy manifest presence with selected verified capability profiles. The bounded scan follows no symlinks, returns no file contents, and makes no changes.",
+    inputSchema: projectConfigurationAuditInputSchema,
+    outputSchema,
+    annotations: readOnlyAnnotations
+  },
+  async (input) => result(await auditProjectConfiguration(input))
 );
 
 server.registerTool(
