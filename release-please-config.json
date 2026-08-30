@@ -4,6 +4,7 @@
     ".": {
       "release-type": "node",
       "package-name": "ios-capability-architect",
+      "include-component-in-tag": false,
       "extra-files": [
         "plugins/ios-capability-architect/package.json",
         {
