@@ -8,7 +8,6 @@ jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
-      actions: write
       contents: write
       pull-requests: write
     outputs:
@@ -20,15 +19,6 @@ jobs:
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
-      - name: Dispatch required checks for the release pull request
-        if: ${{ steps.release.outputs.prs_created == 'true' }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-          RELEASE_PR: ${{ steps.release.outputs.pr }}
-        run: |
-          release_branch="$(jq -er '.headBranchName' <<<"$RELEASE_PR")"
-          gh workflow run ci.yml --repo "$GITHUB_REPOSITORY" --ref "$release_branch"
-          gh workflow run codeql.yml --repo "$GITHUB_REPOSITORY" --ref "$release_branch"
 
   publish:
     needs: release
