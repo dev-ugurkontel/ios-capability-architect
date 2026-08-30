@@ -75,7 +75,7 @@ fix(engine): exclude beta records by default
 docs(contributing): clarify entitlement evidence rules
 ```
 
-The release pipeline derives versions and changelog entries from these commits. Use `feat!:` or a `BREAKING CHANGE:` footer only for an intentional contract break with migration guidance. Sign commits when practical; the protected default branch requires signed history, linear merges, current required checks, and resolved review conversations.
+The release pipeline derives versions and changelog entries from these commits. Use `feat!:` or a `BREAKING CHANGE:` footer only for an intentional contract break with migration guidance. Sign commits when practical. The protected default branch requires pull requests, linear squash merges, current required checks, and resolved review conversations; GitHub records the resulting merge commit as verified.
 
 A pull request should:
 
