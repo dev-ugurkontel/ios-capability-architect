@@ -59,7 +59,11 @@ for (const dependency of dependencies) {
     throw new Error(`Missing license text for bundled dependency ${dependency.name}@${dependency.version}`);
   }
 
-  const licenseText = (await readFile(join(dependency.path, licenseFile), "utf8")).trim();
+  const licenseText = (await readFile(join(dependency.path, licenseFile), "utf8"))
+    .split(/\r?\n/)
+    .map((line) => line.trimEnd())
+    .join("\n")
+    .trim();
   noticeSections.push(
     "=".repeat(80),
     `${dependency.name}@${dependency.version}`,
@@ -71,4 +75,4 @@ for (const dependency of dependencies) {
   );
 }
 
-await writeFile(new URL("THIRD_PARTY_NOTICES.txt", bundleRoot), `${noticeSections.join("\n")}\n`, "utf8");
+await writeFile(new URL("THIRD_PARTY_NOTICES.txt", bundleRoot), `${noticeSections.join("\n").trimEnd()}\n`, "utf8");
