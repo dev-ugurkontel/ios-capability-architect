@@ -853,6 +853,412 @@ var capabilities_default = {
       last_verified_at: "2026-08-30"
     },
     {
+      id: "swift",
+      name: "Swift",
+      aliases: ["Swift language", "Apple Swift"],
+      category: "language_core",
+      entity_type: "development_tool",
+      summary: "Apple's type-safe compiled programming language and toolchain for Apple-platform, package, command-line, and server software.",
+      supported_use_cases: [
+        "Develop Apple-platform apps and frameworks",
+        "Model application logic with value and reference types",
+        "Interoperate with Objective-C, C, and C++ APIs",
+        "Build Swift packages, command-line tools, and server software"
+      ],
+      unsupported_use_cases: [
+        "Providing UI, persistence, networking, permissions, or entitlements without a framework",
+        "Making unsafe or foreign API use automatically memory safe",
+        "Making newer SDK APIs available on older operating systems"
+      ],
+      platforms: ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"],
+      minimum_os_version: {
+        iOS: "8.0",
+        iPadOS: "8.0",
+        "Mac Catalyst": "13.0",
+        macOS: "10.10",
+        tvOS: "9.0",
+        visionOS: "1.0",
+        watchOS: "2.0"
+      },
+      sdk_availability: "Stable Swift language documentation covers the listed Apple platform baselines. Local verification used Xcode 26.6, SDK 26.5, and Apple Swift 6.3.3; Xcode 27 was not locally installed.",
+      stable_or_beta: "stable",
+      on_device_level: "fully_on_device",
+      network_requirement: "The language and runtime require no network; APIs implemented in Swift may require connectivity.",
+      cloud_dependency: null,
+      user_permissions: [],
+      info_plist_keys: [],
+      xcode_capabilities: [],
+      entitlements: [],
+      managed_entitlements: [],
+      background_modes: [],
+      privacy_manifest_requirements: [
+        "Audit the concrete APIs and SDKs used by the program; importing Swift alone does not determine privacy-manifest declarations"
+      ],
+      app_review_considerations: [
+        "App Review evaluates the app's behavior and APIs rather than the Swift language choice"
+      ],
+      security_considerations: [
+        "Audit unsafe operations and Objective-C, C, or C++ interoperability boundaries",
+        "Do not treat language memory-safety features as proof that application logic or external APIs are secure"
+      ],
+      implementation_notes: [
+        "Select the Swift language mode independently from the deployment target",
+        "Use availability checks for SDK APIs whose minimum operating-system version exceeds the app target"
+      ],
+      limitations: ["Compiler and language version do not override framework or operating-system availability"],
+      keywords: ["swift", "language", "compiler", "toolchain", "package"],
+      official_documentation: [
+        {
+          title: "Swift",
+          url: "https://developer.apple.com/documentation/swift",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Swift overview",
+          url: "https://developer.apple.com/swift/",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
+      ],
+      last_verified_at: "2026-08-30"
+    },
+    {
+      id: "swift-concurrency",
+      name: "Swift Concurrency",
+      aliases: ["async await", "structured concurrency", "actors", "Task", "TaskGroup"],
+      category: "language_core",
+      entity_type: "api",
+      summary: "Swift language and runtime features for asynchronous work, structured tasks, actors, cancellation, and compile-time concurrency checking.",
+      supported_use_cases: [
+        "Express asynchronous control flow with async and await",
+        "Organize child work with tasks and task groups",
+        "Isolate mutable state with actors and global actors",
+        "Check concurrency boundaries with Sendable and Swift 6 strict concurrency"
+      ],
+      unsupported_use_cases: [
+        "Guaranteeing deterministic task scheduling or parallel execution",
+        "Providing preemptive cancellation",
+        "Guaranteeing operating-system background execution after app suspension or termination",
+        "Moving work off the main actor merely by creating a task"
+      ],
+      platforms: ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"],
+      minimum_os_version: {
+        iOS: "13.0",
+        iPadOS: "13.0",
+        "Mac Catalyst": "13.0",
+        macOS: "10.15",
+        tvOS: "13.0",
+        visionOS: "1.0",
+        watchOS: "6.0"
+      },
+      sdk_availability: "The stable concurrency runtime is back-deployed to the listed baselines. Local verification used Apple Swift 6.3.3; Xcode 27 was not locally installed.",
+      stable_or_beta: "stable",
+      on_device_level: "fully_on_device",
+      network_requirement: "Concurrency primitives require no network; the work they coordinate may use network APIs.",
+      cloud_dependency: null,
+      user_permissions: [],
+      info_plist_keys: [],
+      xcode_capabilities: [],
+      entitlements: [],
+      managed_entitlements: [],
+      background_modes: [],
+      privacy_manifest_requirements: [
+        "Audit the APIs executed by concurrent work; concurrency primitives alone do not determine privacy-manifest declarations"
+      ],
+      security_considerations: [
+        "Use strict concurrency checking to find unsafe shared mutable state",
+        "Treat actor isolation as one boundary and still validate external-system and business-logic races"
+      ],
+      implementation_notes: [
+        "Keep UI work on the main actor and move expensive non-UI work to an appropriate isolation context",
+        "Check cancellation cooperatively and release resources on cancellation",
+        "Retain unstructured task handles when cancellation or result observation is required"
+      ],
+      limitations: [
+        "Cancellation is cooperative",
+        "Concurrency does not imply parallel execution or a new thread",
+        "Task scheduling remains controlled by the runtime"
+      ],
+      keywords: ["swift concurrency", "async", "await", "actor", "task", "sendable", "parallel"],
+      official_documentation: [
+        {
+          title: "Swift Concurrency",
+          url: "https://developer.apple.com/documentation/swift/concurrency",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Adopting strict concurrency in Swift 6 apps",
+          url: "https://developer.apple.com/documentation/swift/adoptingswift6",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Xcode 13.2 Release Notes",
+          url: "https://developer.apple.com/documentation/xcode-release-notes/xcode-13_2-release-notes",
+          source_type: "release_notes",
+          verified_at: "2026-08-30"
+        }
+      ],
+      last_verified_at: "2026-08-30"
+    },
+    {
+      id: "swiftui",
+      name: "SwiftUI",
+      aliases: ["Swift UI", "SwiftUI App"],
+      category: "ui",
+      entity_type: "framework",
+      summary: "Apple's declarative framework for app structure, scenes, views, controls, layout, navigation, animation, and platform-adaptive user interfaces.",
+      supported_use_cases: [
+        "Build declarative views, controls, layouts, scenes, and app structure",
+        "Update UI from observable model dependencies",
+        "Share adaptive UI code across Apple platforms",
+        "Integrate with UIKit, AppKit, and WatchKit",
+        "Support localization, accessibility, animation, navigation, and document UI"
+      ],
+      unsupported_use_cases: [
+        "Guaranteeing identical UI behavior on every Apple platform",
+        "Using platform-specific APIs without availability checks",
+        "Replacing persistence, networking, or backend layers",
+        "Running expensive computation in a view body or on the main actor"
+      ],
+      related_frameworks: ["UIKit", "AppKit", "WatchKit"],
+      platforms: ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"],
+      minimum_os_version: {
+        iOS: "13.0",
+        iPadOS: "13.0",
+        "Mac Catalyst": "13.0",
+        macOS: "10.15",
+        tvOS: "13.0",
+        visionOS: "1.0",
+        watchOS: "6.0"
+      },
+      sdk_availability: "Stable framework modules are present in the current Apple SDKs for the listed platforms. Local interfaces were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      stable_or_beta: "stable",
+      on_device_level: "fully_on_device",
+      network_requirement: "UI rendering requires no network; model and service layers may require connectivity.",
+      cloud_dependency: null,
+      user_permissions: [],
+      info_plist_keys: [],
+      xcode_capabilities: [],
+      entitlements: [],
+      managed_entitlements: [],
+      background_modes: [],
+      privacy_manifest_requirements: [
+        "Audit the data-accessing APIs and SDKs used by views; importing SwiftUI alone does not determine privacy-manifest declarations"
+      ],
+      app_review_considerations: [
+        "SwiftUI controls that access protected data remain subject to the underlying API's consent and purpose-string rules"
+      ],
+      security_considerations: [
+        "Keep sensitive service and persistence logic outside view code",
+        "Preserve accessibility and lifecycle behavior when bridging custom UIKit or AppKit views"
+      ],
+      implementation_notes: [
+        "Keep view body computation fast and model state ownership explicit",
+        "Test Dynamic Type, VoiceOver, localization, size classes, and platform variants",
+        "Use real device and runtime tests in addition to Xcode previews"
+      ],
+      limitations: [
+        "Standard controls provide an accessibility baseline but custom and bridged views require explicit review",
+        "API availability varies within the framework"
+      ],
+      keywords: ["swiftui", "declarative ui", "view", "scene", "navigation", "layout"],
+      official_documentation: [
+        {
+          title: "SwiftUI",
+          url: "https://developer.apple.com/documentation/swiftui",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "SwiftUI apps",
+          url: "https://developer.apple.com/documentation/technologyoverviews/swiftui",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Understanding and improving SwiftUI performance",
+          url: "https://developer.apple.com/documentation/xcode/understanding-and-improving-swiftui-performance",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
+      ],
+      last_verified_at: "2026-08-30"
+    },
+    {
+      id: "uikit",
+      name: "UIKit",
+      aliases: ["UI Kit", "UIKit App"],
+      category: "ui",
+      entity_type: "framework",
+      summary: "Apple's event-driven user-interface framework for iOS, iPadOS, tvOS, visionOS, and Mac Catalyst applications.",
+      supported_use_cases: [
+        "Build windows, views, view controllers, controls, and event-driven interfaces",
+        "Handle touch and supported input events",
+        "Create document, text, search, collection, table, scroll, drawing, and animation experiences",
+        "Integrate UIKit and SwiftUI views",
+        "Implement accessible and localized interfaces"
+      ],
+      unsupported_use_cases: [
+        "Building native AppKit macOS interfaces",
+        "Serving as the primary watchOS UI framework",
+        "Mutating UIKit UI objects from background threads",
+        "Replacing networking, persistence, or backend services"
+      ],
+      related_frameworks: ["SwiftUI", "AppKit"],
+      platforms: ["iOS", "iPadOS", "Mac Catalyst", "tvOS", "visionOS"],
+      minimum_os_version: {
+        iOS: "2.0",
+        iPadOS: "2.0",
+        "Mac Catalyst": "13.0",
+        tvOS: "9.0",
+        visionOS: "1.0"
+      },
+      sdk_availability: "Stable framework modules are present for the listed platforms; UIKit is unavailable for native macOS UI. Local interfaces were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      stable_or_beta: "stable",
+      on_device_level: "fully_on_device",
+      network_requirement: "UIKit UI requires no network; integrated data and service APIs may require connectivity.",
+      cloud_dependency: null,
+      user_permissions: [],
+      info_plist_keys: [],
+      xcode_capabilities: [],
+      entitlements: [],
+      managed_entitlements: [],
+      background_modes: [],
+      privacy_manifest_requirements: [
+        "Audit the protected-resource APIs and SDKs used by the UI; importing UIKit alone does not determine privacy-manifest declarations"
+      ],
+      app_review_considerations: [
+        "Protected-resource access initiated by UIKit flows still requires informed consent and the underlying API's purpose strings"
+      ],
+      security_considerations: [
+        "Use the strongest practical data-protection class for files containing sensitive data",
+        "Activate microphone, camera, and other protected resources only when the user-facing feature requires them"
+      ],
+      implementation_notes: [
+        "Use the main thread or main actor for UI work",
+        "Prefer standard system views before introducing custom views",
+        "Provide explicit accessibility metadata and behavior for custom controls"
+      ],
+      limitations: [
+        "UIKit does not automatically make custom controls accessible or cross-platform",
+        "Hardware- and input-specific APIs have separate availability constraints"
+      ],
+      keywords: ["uikit", "ui", "view controller", "uiview", "table", "collection", "layout"],
+      official_documentation: [
+        {
+          title: "UIKit",
+          url: "https://developer.apple.com/documentation/uikit",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "About app development with UIKit",
+          url: "https://developer.apple.com/documentation/uikit/about-app-development-with-uikit",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Accessibility for UIKit",
+          url: "https://developer.apple.com/documentation/uikit/accessibility-for-uikit",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
+      ],
+      last_verified_at: "2026-08-30"
+    },
+    {
+      id: "foundation",
+      name: "Foundation",
+      aliases: ["Foundation framework", "NSFoundation"],
+      category: "language_core",
+      entity_type: "framework",
+      summary: "Apple's foundational framework for data, text, dates, localization, files, URLs, resources, processes, and network-transfer primitives.",
+      supported_use_cases: [
+        "Model and transform data, text, dates, calendars, measurements, and collections",
+        "Access files, URLs, resources, and application-container directories",
+        "Perform network transfers, authentication, caching, and supported background transfers with URLSession",
+        "Internationalize and format user-visible values"
+      ],
+      unsupported_use_cases: [
+        "Constructing application user interfaces",
+        "Accessing arbitrary files outside the app sandbox",
+        "Assuming every Foundation API is available on every platform",
+        "Guaranteeing unlimited or precisely timed background transfers",
+        "Providing the separate Foundation Models framework"
+      ],
+      related_frameworks: ["Security"],
+      platforms: ["iOS", "iPadOS", "Mac Catalyst", "macOS", "tvOS", "visionOS", "watchOS"],
+      minimum_os_version: {
+        iOS: "2.0",
+        iPadOS: "2.0",
+        "Mac Catalyst": "13.0",
+        macOS: "10.0",
+        tvOS: "9.0",
+        visionOS: "1.0",
+        watchOS: "2.0"
+      },
+      sdk_availability: "Stable framework modules are present in the current Apple SDKs for the listed platforms; individual APIs have their own availability. Local interfaces were verified with Xcode 26.6 and SDK 26.5; Xcode 27 was not locally installed.",
+      stable_or_beta: "stable",
+      on_device_level: "hybrid",
+      network_requirement: "Most data, text, date, and file APIs are local; URL loading and remote-service APIs require connectivity.",
+      cloud_dependency: null,
+      user_permissions: [],
+      info_plist_keys: [],
+      xcode_capabilities: [],
+      entitlements: [],
+      managed_entitlements: [],
+      background_modes: [],
+      privacy_manifest_requirements: [
+        "Audit the specific Foundation APIs and SDKs used; some APIs may require approved reasons or privacy-manifest declarations"
+      ],
+      required_reason_apis: [
+        "Determine applicable required-reason declarations from the concrete Foundation APIs used; the framework import alone is insufficient"
+      ],
+      app_review_considerations: [
+        "Network security exceptions and protected-resource access are reviewed according to the concrete APIs and behavior"
+      ],
+      security_considerations: [
+        "Prefer HTTPS and default server-trust evaluation for URL loading",
+        "Balance security-scoped resource access calls and release file resources promptly",
+        "Choose application-support, documents, caches, or temporary storage according to the data lifecycle"
+      ],
+      implementation_notes: [
+        "Treat individual API availability separately from framework availability",
+        "Invalidate URLSession instances when their delegate lifecycle is complete",
+        "Use ephemeral URL sessions when persistent cookies, caches, and credentials are inappropriate"
+      ],
+      limitations: [
+        "App sandbox and data-protection rules constrain file access",
+        "Background URLSession work remains system scheduled",
+        "Framework-level availability does not prove availability of every member API"
+      ],
+      keywords: ["foundation", "data", "date", "text", "file", "url", "localization", "network"],
+      official_documentation: [
+        {
+          title: "Foundation",
+          url: "https://developer.apple.com/documentation/foundation",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Using the file system effectively",
+          url: "https://developer.apple.com/documentation/foundation/using-the-file-system-effectively",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        },
+        {
+          title: "Preventing insecure network connections",
+          url: "https://developer.apple.com/documentation/security/preventing-insecure-network-connections",
+          source_type: "apple_developer_documentation",
+          verified_at: "2026-08-30"
+        }
+      ],
+      last_verified_at: "2026-08-30"
+    },
+    {
       id: "uiwebview",
       name: "UIWebView",
       aliases: ["legacy web view"],

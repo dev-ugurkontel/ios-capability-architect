@@ -75,7 +75,7 @@ See [architecture.md](plugins/ios-capability-architect/docs/architecture.md), [t
 - Node.js 24 is the current LTS baseline used by this repository.
 - SwiftUI is the default UI recommendation; UIKit is introduced only for an API or compatibility need.
 - Stable Apple SDK behavior is the default. iOS 27 and Xcode 27 capabilities remain beta on the verification date and are isolated from stable records.
-- The committed discovery catalog currently names 193 technologies across 32 categories, while 18 evidence-backed profiles power recommendations. The measured catalog-to-profile coverage is 10.4%; this is intentionally reported instead of claiming a permanently complete Apple catalog.
+- The committed discovery catalog currently names 193 technologies across 32 categories, while 23 evidence-backed profiles map 25 catalog identities into recommendation workflows. The measured catalog-to-profile coverage is 13%; this is intentionally reported instead of claiming a permanently complete Apple catalog.
 - Catalog-only technologies must produce an explicit evidence gap and official-source research, never an invented recommendation.
 - Tool outputs are architectural advice, not proof that a specific App ID has an entitlement or that App Review will approve a design.
 - Runtime `#available`, hardware, region, language, authorization, and service-availability checks remain mandatory in the iOS app.
@@ -158,7 +158,7 @@ All tools have `readOnlyHint: true`, `destructiveHint: false`, `idempotentHint: 
 
 The normalized `CapabilityRecord` contains all fields requested by the product brief, including entity type, framework/capability/entitlement relations, OS and SDK availability, beta/deprecation status, devices and hardware, region/language restrictions, on-device level, network/cloud needs, permissions, Info.plist keys, capabilities, entitlements, managed entitlements, background modes, privacy manifests, required-reason APIs, review and security considerations, alternatives, official sources, release notes, and verification date.
 
-The 18 reviewed records cover the seven acceptance scenarios and their supporting technologies. Extend the recommendation registry by adding evidence-backed records to `plugins/ios-capability-architect/data/capabilities.json`; omitted stability normalizes to `unknown`, not `stable`. Run the full validation suite before merging.
+The 23 reviewed records cover the seven acceptance scenarios, their supporting technologies, and the foundational Swift, Swift Concurrency, SwiftUI, UIKit, and Foundation layers. Extend the recommendation registry by adding evidence-backed records to `plugins/ios-capability-architect/data/capabilities.json`; omitted stability normalizes to `unknown`, not `stable`. Run the full validation suite before merging.
 
 `plugins/ios-capability-architect/data/taxonomy.json` models the broader Apple ecosystem, including the current official iOS provisioning-capability list and emerging technology families. Its 193 deduplicated entries are discovery aids, not verified recommendation records. `get_apple_technology` performs an exact identity lookup, while `resolve_ios_capabilities` exposes unprofiled names only as separate, non-recommendable `catalog_research_leads`; neither path fabricates availability or configuration facts. Promote a technology to `capabilities.json` only with technology-specific official evidence. `get_registry_coverage` keeps that distinction machine-visible.
 
