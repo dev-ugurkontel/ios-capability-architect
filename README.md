@@ -1,13 +1,18 @@
-# iOS Capability Architect
+# Fillbyte Skills
 
-[![CI](https://github.com/fillbyte/ios-capability-architect/actions/workflows/ci.yml/badge.svg)](https://github.com/fillbyte/ios-capability-architect/actions/workflows/ci.yml)
-[![CodeQL](https://github.com/fillbyte/ios-capability-architect/actions/workflows/codeql.yml/badge.svg)](https://github.com/fillbyte/ios-capability-architect/actions/workflows/codeql.yml)
-[![Release](https://img.shields.io/github/v/release/fillbyte/ios-capability-architect)](https://github.com/fillbyte/ios-capability-architect/releases)
+[![CI](https://github.com/fillbyte/skills/actions/workflows/ci.yml/badge.svg)](https://github.com/fillbyte/skills/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/fillbyte/skills/actions/workflows/codeql.yml/badge.svg)](https://github.com/fillbyte/skills/actions/workflows/codeql.yml)
+[![Release](https://img.shields.io/github/v/release/fillbyte/skills)](https://github.com/fillbyte/skills/releases)
+[![skills.sh](https://skills.sh/b/fillbyte/skills)](https://skills.sh/fillbyte/skills)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-`iOS Capability Architect` is a production-oriented Codex and ChatGPT plugin that turns an Apple-platform app idea into a verified capability map, architecture, configuration audit, implementation sequence, and test plan. It can also compare selected capabilities with an existing local project's source configuration, exposing missing plist keys, entitlements, background modes, privacy-manifest review, and deployment-target conflicts before release.
+Open-source agent skills and local tools from Fillbyte for building production-quality software with evidence-backed guidance.
 
-The repository is a Codex marketplace containing one skills-plus-MCP plugin. Its MCP server is local, read-only, and deterministic: it analyzes ideas and queries a versioned registry without sending user content to a backend.
+## iOS Capability Architect
+
+`iOS Capability Architect` is an Apple-platform agent skill and Codex plugin for iOS, iPadOS, watchOS, and visionOS architecture. It turns an app idea into a verified capability map, SwiftUI-first architecture, Xcode configuration audit, implementation sequence, and test plan. It can also compare selected capabilities with an existing project's source configuration, exposing missing plist keys, entitlements, background modes, privacy-manifest review, and deployment-target conflicts before release.
+
+The repository currently contains one skills-plus-MCP plugin. Its MCP server is local, read-only, and deterministic: it analyzes ideas and queries a versioned registry without sending user content to a backend.
 
 ## Platform verification summary
 
@@ -103,16 +108,26 @@ npm run validate:plugin
 
 The `verify:docs` command performs allowlisted conditional GETs against `developer.apple.com`, writes an ignored `data/link-verification-report.json`, and fails when a source is unreachable or invalid. A successful link check proves reachability, not semantic correctness; source changes still require human review.
 
-## Install in Codex
+## Install as an agent skill
+
+Install the skill with the open `skills` CLI for Codex, Claude Code, Cursor, GitHub Copilot, and other compatible agents:
+
+```bash
+npx skills add https://github.com/fillbyte/skills --skill ios-capability-architect
+```
+
+The canonical directory page is [skills.sh/fillbyte/skills/ios-capability-architect](https://skills.sh/fillbyte/skills/ios-capability-architect).
+
+## Install the Codex plugin
 
 The committed single-file runtime at `bundle/server.mjs` has no runtime `node_modules` dependency. Install the versioned public marketplace directly from GitHub:
 
 ```bash
-codex plugin marketplace add fillbyte/ios-capability-architect --ref v0.9.0 # x-release-please-version
+codex plugin marketplace add fillbyte/skills --ref v0.9.0 # x-release-please-version
 codex plugin add ios-capability-architect@ios-capability-architect
 ```
 
-The command pins a reproducible non-prerelease release. To install a newer version, replace it with the exact tag shown on the [Releases page](https://github.com/fillbyte/ios-capability-architect/releases). Then start a new Codex task so the skill and MCP tool inventory are loaded from the installed package.
+The command pins a reproducible non-prerelease release. To install a newer version, replace it with the exact tag shown on the [Releases page](https://github.com/fillbyte/skills/releases). Then start a new Codex task so the skill and MCP tool inventory are loaded from the installed package.
 
 Contributors working from a checkout can pass the repository path instead of the GitHub source. Do not hand-edit Codex `config.toml`.
 
@@ -127,7 +142,7 @@ shasum -a 256 -c SHA256SUMS
 Release workflows also create GitHub build-provenance attestations for every attached asset. Online consumers with GitHub CLI can independently bind a downloaded file to this repository and release workflow:
 
 ```bash
-gh attestation verify <downloaded-asset> -R fillbyte/ios-capability-architect
+gh attestation verify <downloaded-asset> -R fillbyte/skills
 ```
 
 New releases are published as `@fillbyte/ios-capability-architect` on GitHub Packages. GitHub's npm registry requires an authenticated npm client, including for this public package. Configure the `@fillbyte` scope for `https://npm.pkg.github.com`, provide a GitHub token with `read:packages` through your environment or user-level npm configuration, and never commit that token or a credential-bearing `.npmrc` file. Historical releases were published under legacy `@dev-ugurkontel` scopes; those package namespaces were deleted after their Fillbyte replacements were verified. All current installations must use the Fillbyte package.

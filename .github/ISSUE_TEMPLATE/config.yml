@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: Security vulnerability
-    url: https://github.com/fillbyte/ios-capability-architect/security/advisories/new
+    url: https://github.com/fillbyte/skills/security/advisories/new
     about: Report vulnerabilities privately. Do not disclose exploit details in a public issue.
   - name: Support guidance
-    url: https://github.com/fillbyte/ios-capability-architect/blob/main/SUPPORT.md
+    url: https://github.com/fillbyte/skills/blob/main/SUPPORT.md
     about: Read the support scope and required diagnostic information before opening an issue.

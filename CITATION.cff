@@ -5,8 +5,8 @@ type: software
 authors:
   - family-names: Kontel
     given-names: Ugur
-repository-code: https://github.com/fillbyte/ios-capability-architect
-url: https://github.com/fillbyte/ios-capability-architect
+repository-code: https://github.com/fillbyte/skills
+url: https://github.com/fillbyte/skills
 license: MIT
 abstract: Evidence-backed Apple-platform capability architecture, configuration auditing, and implementation planning for Codex and ChatGPT.
 keywords:

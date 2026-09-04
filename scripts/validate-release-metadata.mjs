@@ -2,7 +2,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import process from "node:process";
 import { URL } from "node:url";
 
-const repositoryUrl = "https://github.com/fillbyte/ios-capability-architect";
+const repositoryUrl = "https://github.com/fillbyte/skills";
 const semverPattern = /^\d+\.\d+\.\d+(?:\+[0-9A-Za-z.-]+)?$/;
 const write = process.argv.includes("--write");
 
@@ -36,14 +36,16 @@ if (!write) {
   );
 }
 
-const [rootPackage, pluginPackage, packageLock, releaseManifest, releasePleaseConfig, rootReadme] = await Promise.all([
-  readJson("package.json"),
-  readJson("plugins/ios-capability-architect/package.json"),
-  readJson("package-lock.json"),
-  readJson(".release-please-manifest.json"),
-  readJson("release-please-config.json"),
-  readFile("README.md", "utf8")
-]);
+const [rootPackage, pluginPackage, packageLock, releaseManifest, releasePleaseConfig, skillsConfig, rootReadme] =
+  await Promise.all([
+    readJson("package.json"),
+    readJson("plugins/ios-capability-architect/package.json"),
+    readJson("package-lock.json"),
+    readJson(".release-please-manifest.json"),
+    readJson("release-please-config.json"),
+    readJson("skills.sh.json"),
+    readFile("README.md", "utf8")
+  ]);
 
 const version = rootPackage.version;
 assert(semverPattern.test(version), `package.json version is not valid SemVer: ${version}`);
@@ -60,8 +62,49 @@ for (const [surface, surfaceVersion] of versionSurfaces) {
   assert(surfaceVersion === version, `${surface} version ${surfaceVersion ?? "<missing>"} does not match ${version}`);
 }
 
+const repositorySurfaces = new Map([
+  ["package.json repository", rootPackage.repository?.url],
+  ["package.json bugs", rootPackage.bugs?.url],
+  ["package.json homepage", rootPackage.homepage],
+  ["plugin package repository", pluginPackage.repository?.url],
+  ["plugin package bugs", pluginPackage.bugs?.url],
+  ["plugin package homepage", pluginPackage.homepage]
+]);
+const expectedRepositorySurfaces = new Map([
+  ["package.json repository", `git+${repositoryUrl}.git`],
+  ["package.json bugs", `${repositoryUrl}/issues`],
+  ["package.json homepage", `${repositoryUrl}#readme`],
+  ["plugin package repository", `git+${repositoryUrl}.git`],
+  ["plugin package bugs", `${repositoryUrl}/issues`],
+  ["plugin package homepage", `${repositoryUrl}/tree/main/plugins/ios-capability-architect#readme`]
+]);
+
+for (const [surface, surfaceUrl] of repositorySurfaces) {
+  assert(
+    surfaceUrl === expectedRepositorySurfaces.get(surface),
+    `${surface} does not use the canonical repository URL`
+  );
+}
+
+assert(
+  skillsConfig.$schema === "https://skills.sh/schemas/skills.sh.schema.json",
+  "skills.sh.json must use the canonical schema"
+);
+assert(
+  skillsConfig.groupings?.some((group) => group.skills?.includes("ios-capability-architect")),
+  "skills.sh.json must feature ios-capability-architect"
+);
+assert(
+  rootReadme.includes("npx skills add https://github.com/fillbyte/skills --skill ios-capability-architect"),
+  "README.md must contain the canonical skills CLI installation command"
+);
+assert(
+  rootReadme.includes("https://skills.sh/fillbyte/skills/ios-capability-architect"),
+  "README.md must link to the canonical skills.sh page"
+);
+
 const installReference = rootReadme.match(
-  /codex plugin marketplace add fillbyte\/ios-capability-architect --ref v(\d+\.\d+\.\d+) # x-release-please-version/
+  /codex plugin marketplace add fillbyte\/skills --ref v(\d+\.\d+\.\d+) # x-release-please-version/
 );
 assert(installReference, "README.md must contain the release-managed marketplace installation reference");
 assert(installReference[1] === version, `README.md install reference ${installReference[1]} does not match ${version}`);
@@ -124,6 +167,7 @@ process.stdout.write(
       valid: true,
       version,
       checked_version_surfaces: versionSurfaces.size + 1,
+      checked_repository_surfaces: repositorySurfaces.size + 4,
       release_headings: releases.length,
       wrote_manifest: write && manifestSource !== canonicalManifest
     },

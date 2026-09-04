@@ -7,21 +7,26 @@
   "author": "Fillbyte",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fillbyte/ios-capability-architect.git",
+    "url": "git+https://github.com/fillbyte/skills.git",
     "directory": "plugins/ios-capability-architect"
   },
-  "homepage": "https://github.com/fillbyte/ios-capability-architect/tree/main/plugins/ios-capability-architect#readme",
+  "homepage": "https://github.com/fillbyte/skills/tree/main/plugins/ios-capability-architect#readme",
   "bugs": {
-    "url": "https://github.com/fillbyte/ios-capability-architect/issues"
+    "url": "https://github.com/fillbyte/skills/issues"
   },
   "keywords": [
+    "agent-skills",
     "apple",
+    "apple-platform",
+    "capabilities",
     "codex",
+    "entitlements",
     "ios",
     "mcp",
     "plugin",
     "swift",
-    "swiftui"
+    "swiftui",
+    "xcode"
   ],
   "sideEffects": false,
   "bin": {
