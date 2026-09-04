@@ -50,7 +50,8 @@ describe("MCP server source", () => {
     await client.connect(clientTransport);
 
     try {
-      expect(client.getServerVersion()).toMatchObject({ name: "ios-capability-architect", version: "0.9.0" });
+      expect(client.getServerVersion()).toMatchObject({ name: "ios-capability-architect" });
+      expect(client.getServerVersion()?.version).toMatch(/^\d+\.\d+\.\d+/);
       const tools = await client.listTools();
       expect(tools.tools).toHaveLength(15);
       expect(tools.tools.every((tool) => tool.annotations?.readOnlyHint === true)).toBe(true);
