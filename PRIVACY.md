@@ -1,12 +1,18 @@
-# Privacy Notice for iOS Capability Architect
+# Privacy Notice for Fillbyte Skills
 
-Last updated: August 30, 2026
+Last updated: September 4, 2026
 
-iOS Capability Architect is an open-source, local-first plugin maintained by Fillbyte. This notice describes the plugin's own data behavior; the Codex or ChatGPT host and any websites you choose to open have separate policies.
+Fillbyte Skills is an open-source collection maintained by Fillbyte. This notice describes the repository's distributed skills and plugins; Codex, ChatGPT, other agent hosts, and websites you choose to open have separate policies. Each component must document any behavior that is stricter or broader than this collection-level notice.
 
-## Data collected by the plugin
+## Collection baseline
 
-The plugin does not operate a hosted service and does not collect accounts, analytics, telemetry, identifiers, credentials, application ideas, project files, or tool results on Fillbyte infrastructure.
+The repository itself does not operate a shared hosted service, account system, analytics pipeline, or telemetry collector. Every distributed component must state what it reads, transmits, stores, mutates, and retains; whether it requires authentication or network access; and which behavior belongs to the host application rather than Fillbyte.
+
+Adding a component does not inherit permission to process data from another component. Any broader data boundary requires component-level documentation, tests, security review, and release notes before distribution.
+
+## Current component: iOS Capability Architect
+
+iOS Capability Architect does not operate a hosted service and does not collect accounts, analytics, telemetry, identifiers, credentials, application ideas, project files, or tool results on Fillbyte infrastructure.
 
 The bundled MCP server and skills-only CLI run locally. They use a packaged, versioned Apple capability registry and do not make network requests. They do not require authentication.
 
@@ -22,8 +28,8 @@ The packaged tools do not browse the web. If you ask the host to verify current 
 
 ## Retention and deletion
 
-Because Fillbyte receives no plugin data, Fillbyte has no plugin account or hosted plugin record to export or delete. Local files, task history, caches, and model context are controlled by the host application and your device.
+Because Fillbyte receives no data from the current plugin, Fillbyte has no plugin account or hosted plugin record to export or delete. Local files, task history, caches, and model context are controlled by the host application and your device. Future components must document their own retention and deletion behavior before release.
 
 ## Changes and contact
 
-Material changes to the plugin's data boundaries will be documented in this file, the security documentation, and release notes. Questions may be sent to support@fillbyte.com. Security reports should follow [SECURITY.md](SECURITY.md).
+Material changes to a component's data boundaries will be documented in this file, its security documentation, and release notes. Questions may be sent to support@fillbyte.com. Security reports should follow [SECURITY.md](SECURITY.md).

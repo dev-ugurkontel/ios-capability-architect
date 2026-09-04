@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  deriveKnowledgeState,
   findRecord,
   findTechnologyCatalogEntry,
   loadRegistry,
@@ -8,6 +9,7 @@ import {
   searchRecords,
   searchTechnologyCatalog
 } from "@/registry.js";
+import { knowledgeTrackedFields, type CapabilityRecord } from "@/types.js";
 
 describe("capability registry", () => {
   it("loads unique fully-normalized records", async () => {
@@ -29,6 +31,11 @@ describe("capability registry", () => {
     expect((await findRecord("healthkit"))?.id).toBe("healthkit");
     expect((await findRecord("Core ML"))?.id).toBe("core-ml");
     expect((await findRecord("Dynamic Island"))?.id).toBe("activitykit");
+  });
+
+  it("does not resolve an ambiguous partial phrase to an arbitrary profile", async () => {
+    expect(await findRecord("apple")).toBeUndefined();
+    expect((await findRecord("healthkit background"))?.id).toBe("healthkit-background-delivery");
   });
 
   it("loads the reviewed foundational language and UI profiles", async () => {
@@ -354,7 +361,20 @@ describe("capability registry", () => {
     resetRegistryCache();
     expect(await findRecord("   ")).toBeUndefined();
     expect(await searchRecords("zzzxqv-nohit")).toEqual([]);
+    const tiedResults = await searchRecords("framework", 100);
+    expect(tiedResults.length).toBeGreaterThan(1);
     expect(await searchTechnologyCatalog(" ")).toEqual([]);
+    expect(await findTechnologyCatalogEntry(" ")).toBeUndefined();
+  });
+
+  it("derives complete and partial knowledge states from field presence", async () => {
+    const [record] = await loadRegistry();
+    const completeInput = Object.fromEntries(
+      knowledgeTrackedFields.map((field) => [field, record![field]])
+    ) as Partial<CapabilityRecord>;
+
+    expect(deriveKnowledgeState(completeInput).completeness).toBe("complete");
+    expect(deriveKnowledgeState({ id: "partial" }).completeness).toBe("partial");
   });
 
   it("distinguishes unknown fields, verified values, and verified absence", async () => {

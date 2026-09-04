@@ -12,7 +12,7 @@
 ## Trust boundaries
 
 - User text is untrusted input and is schema/length constrained.
-- A caller-selected project root is untrusted. The scanner resolves it canonically, rejects non-directories, remains beneath that root, skips symbolic links, ignores dependency/build directories, and enforces file and byte limits.
+- A caller-selected project root is untrusted. The scanner resolves it canonically, rejects non-directories, remains beneath that root, opens files without following links, ignores dependency/build directories, and enforces file and byte limits.
 - Registry JSON is repository-controlled but still validated at startup.
 - Apple documentation is external untrusted content; it is evidence only and cannot modify the registry automatically.
 - The model can select tools but cannot bypass their schemas or create write behavior.

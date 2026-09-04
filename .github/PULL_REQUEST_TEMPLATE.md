@@ -13,10 +13,10 @@ Describe the problem, the chosen solution, and the user-visible outcome.
 
 ## Evidence and risk
 
-- Official Apple/OpenAI sources:
+- Authoritative sources and evidence:
 - Compatibility or migration impact:
-- Privacy, security, entitlement, and App Review impact:
-- Beta, deprecation, device, hardware, region, language, or account constraints:
+- Privacy, security, permissions, and external-review impact:
+- Prerelease, deprecation, platform, hardware, region, language, account, or runtime constraints:
 
 Use `Not applicable` with a short explanation when a field does not apply. Do not leave material assumptions implicit.
 
@@ -24,12 +24,12 @@ Use `Not applicable` with a short explanation when a field does not apply. Do no
 
 - [ ] I ran `npm run build`.
 - [ ] I ran `npm run check`.
-- [ ] I ran `npm run validate:registry`.
+- [ ] I ran every applicable component validator through `npm run verify`.
 - [ ] I ran `npm test`.
 - [ ] I ran `npm run verify:docs`, or documented why the network-dependent check was not run.
 - [ ] I added or updated regression tests for observable behavior changes.
-- [ ] I rebuilt the committed MCP bundle after source changes.
-- [ ] I rebuilt and smoke-tested the public skills-only archive when engine, skill, CLI, or submission files changed.
+- [ ] I rebuilt committed generated artifacts after source changes.
+- [ ] I rebuilt and smoke-tested every affected public distribution.
 - [ ] I reviewed the diff for secrets, personal data, unrelated changes, and generated artifacts.
 
 ## Notes for reviewers

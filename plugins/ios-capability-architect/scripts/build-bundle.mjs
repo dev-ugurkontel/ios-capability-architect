@@ -51,8 +51,7 @@ const dependencyQuery = execFileSync(
 const dependencies = JSON.parse(dependencyQuery)
   .filter(
     (dependency) =>
-      dependency.name !== "ios-capability-architect-workspace" &&
-      dependency.name !== "@fillbyte/ios-capability-architect"
+      dependency.name !== "fillbyte-skills-workspace" && dependency.name !== "@fillbyte/ios-capability-architect"
   )
   .filter(
     (dependency, index, all) =>

@@ -22,6 +22,7 @@ import type {
   ToolEnvelope
 } from "@/types.js";
 import { catalogOnlyUnverifiedProfileFields } from "@/types.js";
+import { comparePlatformVersions, parsePlatformVersion } from "@/version.js";
 
 const DOCUMENTATION_CUTOFF = "2026-08-30";
 
@@ -240,7 +241,6 @@ function normalizedPhrase(value: string): string {
 function containsWholePhrase(haystack: string, needle: string): boolean {
   const haystackTokens = phraseTokens(haystack);
   const needleTokens = phraseTokens(needle);
-  if (needleTokens.length === 0) return false;
   return haystackTokens.some((_, index) =>
     needleTokens.every((token, offset) => haystackTokens[index + offset] === token)
   );
@@ -367,9 +367,7 @@ export async function getAppleTechnology(idOrName: string): Promise<ToolEnvelope
   if (!catalogEntry) throw new Error(`Unknown Apple technology: ${idOrName}`);
 
   if (catalogEntry.coverage_status === "profiled") {
-    const profileId = catalogEntry.profile_ids[0];
-    const profile = (await loadRegistry()).find((record) => record.id === profileId);
-    if (!profile) throw new Error(`Catalog profile invariant failed for Apple technology: ${idOrName}`);
+    const profile = (await getCapabilityProfile(catalogEntry.profile_ids[0]!)).data;
     return envelope({ kind: "reviewed_profile", catalog_entry: catalogEntry, profile });
   }
 
@@ -413,12 +411,6 @@ export async function compareImplementationOptions(
   return envelope({ criteria, options });
 }
 
-function parseMajor(version: string | undefined): number | undefined {
-  if (!version) return undefined;
-  const match = /\d+/.exec(version);
-  return match ? Number(match[0]) : undefined;
-}
-
 export async function checkAvailability(input: {
   capability_ids: string[];
   platform: string;
@@ -429,10 +421,10 @@ export async function checkAvailability(input: {
   allow_beta: boolean;
 }): Promise<ToolEnvelope<{ results: Array<Record<string, unknown>> }>> {
   const records = await resolveIds(input.capability_ids);
-  const requestedMajor = parseMajor(input.os_version);
+  const requestedVersion = parsePlatformVersion(input.os_version);
   const results = records.map((record) => {
     const minimum = record.minimum_os_version[input.platform];
-    const minimumMajor = parseMajor(minimum ?? undefined);
+    const minimumVersion = parsePlatformVersion(minimum ?? undefined);
     const incompatibleReasons: string[] = [];
     const conditionalReasons: string[] = [];
     if (!record.platforms.includes(input.platform))
@@ -450,14 +442,30 @@ export async function checkAvailability(input: {
       incompatibleReasons.push("This record is deprecated and is excluded from new implementation recommendations.");
     if (record.stable_or_beta === "unknown")
       conditionalReasons.push("The current lifecycle status is not verified in this record.");
-    if (requestedMajor !== undefined && minimumMajor !== undefined && requestedMajor < minimumMajor)
+    if (
+      requestedVersion !== undefined &&
+      minimumVersion !== undefined &&
+      comparePlatformVersions(requestedVersion, minimumVersion) < 0
+    )
       incompatibleReasons.push(`Requires ${input.platform} ${minimum} or later.`);
-    if (record.hardware_requirements.length > 0 && !input.device)
-      conditionalReasons.push("Runtime hardware eligibility must be checked.");
-    if (record.region_restrictions.length > 0 && !input.region)
-      conditionalReasons.push("Runtime region availability must be checked.");
-    if (record.language_restrictions.length > 0 && !input.language)
-      conditionalReasons.push("Runtime language availability must be checked.");
+    if (record.supported_devices.length > 0 || record.hardware_requirements.length > 0)
+      conditionalReasons.push(
+        input.device
+          ? `The declared device (${input.device}) requires runtime comparison with the listed device and hardware constraints.`
+          : "No device was provided; runtime device and hardware eligibility must be checked."
+      );
+    if (record.region_restrictions.length > 0)
+      conditionalReasons.push(
+        input.region
+          ? `The declared region (${input.region}) requires current comparison with the listed regional constraints.`
+          : "No region was provided; current regional availability must be checked."
+      );
+    if (record.language_restrictions.length > 0)
+      conditionalReasons.push(
+        input.language
+          ? `The declared language (${input.language}) requires current comparison with the listed language constraints.`
+          : "No language was provided; current language availability must be checked."
+      );
     const determination =
       incompatibleReasons.length > 0
         ? "incompatible"
@@ -467,6 +475,14 @@ export async function checkAvailability(input: {
     const reasons = [...incompatibleReasons, ...conditionalReasons];
     return {
       capability_id: record.id,
+      declared_constraints: {
+        platform: input.platform,
+        os_version: input.os_version ?? null,
+        device: input.device ?? null,
+        region: input.region ?? null,
+        language: input.language ?? null,
+        allow_beta: input.allow_beta
+      },
       status:
         determination === "verified_compatible" ? "compatible_on_declared_constraints" : "conditional_or_incompatible",
       determination,
@@ -569,7 +585,7 @@ export async function generateArchitecture(
     {
       layer: "Presentation",
       recommendation:
-        "SwiftUI feature views and explicit permission-state UI; use UIKit adapters only for APIs without suitable SwiftUI surfaces."
+        "SwiftUI feature views and explicit permission-state UI; use UIKit or AppKit adapters only for APIs without suitable SwiftUI surfaces."
     },
     { layer: "Domain", recommendation: "Small use-case types and value models that do not import Apple frameworks." },
     {
@@ -630,7 +646,7 @@ export async function generateArchitecture(
     data_flow:
       "SwiftUI -> use case -> service protocol -> Apple framework adapter -> local store; events return through AsyncSequence or typed callbacks.",
     mermaid:
-      "flowchart LR\n  UI[SwiftUI] --> UC[Use Cases]\n  UC --> SP[Service Protocols]\n  SP --> AF[Apple Framework Adapters]\n  AF --> OS[(iOS services)]\n  SP --> DB[(Local persistence)]\n  SP -. only if required .-> API[Backend]"
+      "flowchart LR\n  UI[SwiftUI] --> UC[Use Cases]\n  UC --> SP[Service Protocols]\n  SP --> AF[Apple Framework Adapters]\n  AF --> OS[(Apple platform services)]\n  SP --> DB[(Local persistence)]\n  SP -. only if required .-> API[Backend]"
   });
 }
 
@@ -695,7 +711,10 @@ export async function searchOfficialAppleDocs(
 ): Promise<ToolEnvelope<{ results: Array<Record<string, string>> }>> {
   const records =
     capabilityIds.length > 0 ? await resolveIds(capabilityIds) : await searchRecords(query, maximumResults);
-  const queryTokens = query.toLocaleLowerCase("en-US").split(/\W+/).filter(Boolean);
+  const queryTokens = query
+    .toLocaleLowerCase("en-US")
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter(Boolean);
   const references = deduplicateDocumentation(records)
     .map((reference) => ({
       reference,
@@ -703,6 +722,7 @@ export async function searchOfficialAppleDocs(
         `${reference.title} ${reference.url}`.toLocaleLowerCase("en-US").includes(token)
       ).length
     }))
+    .filter(({ score }) => score > 0)
     .sort((left, right) => right.score - left.score)
     .slice(0, maximumResults)
     .map(({ reference }) => ({

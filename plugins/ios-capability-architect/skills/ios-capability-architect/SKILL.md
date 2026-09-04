@@ -1,6 +1,6 @@
 ---
 name: ios-capability-architect
-description: Analyze iOS, iPadOS, watchOS, or visionOS app ideas and existing projects; map requirements to public documented Apple frameworks, APIs, system capabilities, permissions, Info.plist keys, entitlements, managed entitlements, extensions, background modes, services, hardware, privacy requirements, App Store risks, architecture, implementation steps, tests, and Swift examples. Use for capability selection, configuration auditing, feasibility, on-device AI, HealthKit, background location, widgets, Live Activities, deprecated API migrations, and Apple-platform technical planning.
+description: Analyze iOS and Apple-platform app ideas or Xcode projects. Map requirements to public Apple frameworks, APIs, capabilities, permissions, Info.plist keys, entitlements, extensions, background modes, privacy and App Store risks, architecture, implementation plans, tests, and Swift examples. Use for feasibility, capability selection, configuration audits, on-device AI, HealthKit, location, widgets, Live Activities, and API migrations. Do not use for general Swift refactoring, non-Apple platforms, build/run debugging, or visual asset design without a capability decision.
 ---
 
 # iOS Capability Architect
@@ -99,7 +99,7 @@ Use SwiftUI by default. Explain UIKit only when it materially improves compatibi
 
 Keep the design proportionate:
 
-- Presentation: SwiftUI screens and explicit permission, unavailable, denied, restricted, offline, and fallback states.
+- Presentation: SwiftUI screens and explicit permission, unavailable, denied, restricted, offline, and fallback states; narrow UIKit or AppKit adapters only where the selected API requires them.
 - Domain: Apple-framework-free value types and use cases.
 - Data: repository protocols, migrations, synchronization policy, and data lifecycle.
 - Device services: actor-isolated protocols for sensors, permissions, notifications, and background scheduling.

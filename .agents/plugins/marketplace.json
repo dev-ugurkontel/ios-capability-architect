@@ -1,7 +1,7 @@
 {
-  "name": "ios-capability-architect",
+  "name": "fillbyte-skills",
   "interface": {
-    "displayName": "iOS Capability Architect"
+    "displayName": "Fillbyte Skills"
   },
   "plugins": [
     {

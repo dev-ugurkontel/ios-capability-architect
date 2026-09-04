@@ -21,7 +21,7 @@ These notes support, but do not replace, the submitter's human review of the exa
 - Source and submission package are MIT licensed.
 - Bundled runtime dependency notices are generated from the locked dependency graph.
 - Apple names are used descriptively; the project does not include Apple logos or claim Apple endorsement.
-- The listing icon is the Fillbyte mark and follows the public Fillbyte brand guide.
+- The listing icon is the Fillbyte mark and contains no Apple or third-party brand asset.
 
 ## User control
 

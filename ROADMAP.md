@@ -1,68 +1,50 @@
-# Roadmap
+# Fillbyte Skills Roadmap
 
-This roadmap communicates direction, not delivery guarantees. Accepted issues and milestones are the source of truth for scheduled work.
+This roadmap describes collection-level direction, not delivery guarantees. Accepted issues and milestones are the source of truth for scheduled work. Domain-specific plans belong to their owning components.
 
-## Completed: open-source foundation
+## Completed: open-source collection foundation
 
-- Establish automated type, test, registry, bundle, and documentation validation.
-- Publish contribution, governance, security, support, and release policies.
-- Make verified-registry coverage measurable and distinguish it clearly from taxonomy-only discovery entries.
-- Strengthen regression coverage for tool schemas, protocol behavior, and acceptance scenarios.
-- Document reproducible plugin packaging and local installation.
+- Establish the `fillbyte/skills` collection, marketplace, and canonical skills.sh identity.
+- Keep every skill inside its owning component with independent discovery and packaging.
+- Publish contribution, governance, privacy, security, support, release, and conduct policies.
+- Validate manifests, metadata, links, generated artifacts, packages, archives, and protocol behavior.
+- Produce reproducible release assets with checksums, SBOMs, and build provenance.
 
-## Completed: first project-aware vertical slice
+## Now: collection-scale quality
 
-- Add a bounded, read-only project configuration audit for `project.yml`, `project.pbxproj`, plist, entitlements, xcconfig, Swift Package, and privacy-manifest surfaces.
-- Compare source configuration with selected reviewed capability profiles without returning file contents or following symbolic links.
-- Report detected, missing, incompatible, manual-review, and unknown states separately.
-- Cover present configuration, missing configuration, deployment-target conflicts, and path-boundary behavior with automated tests.
+- Keep root messaging, automation, package metadata, and GitHub surfaces independent of any one catalog entry.
+- Require 100% statement, branch, function, and line coverage for hand-written TypeScript runtime code.
+- Make workspace commands discover component scripts instead of naming the first plugin.
+- Publish direct, indirect, and negative invocation evals for every skill.
+- Exercise clean install, upgrade, rollback, and uninstall paths for released components.
+- Report component evidence, freshness, false-positive, false-negative, and unsupported rates separately from repository quality gates.
 
-## Now: make project audits release-decision quality
+Completion signal: adding a conforming component requires no collection-level code fork, every measured quality gate is fully satisfied, and a clean consumer can reproduce the documented installation and behavior.
 
-- Inspect generated Xcode build settings in addition to source configuration, while preserving a clear source-of-truth/generated-output distinction.
-- Model targets and build configurations so findings identify the exact app or extension target instead of only the containing file.
-- Parse `PrivacyInfo.xcprivacy` declarations semantically and compare required-reason categories with linked dependencies.
-- Produce a machine-readable remediation plan with reviewable patch suggestions; keep mutation opt-in and outside the read-only MCP tool.
-- Add real-project fixtures for XcodeGen, native `.xcodeproj`, Swift Package dependencies, widgets, Live Activities, HealthKit, and managed entitlements.
-- Establish a 100-scenario evaluation set and publish false-positive, false-negative, unsupported, and evidence-gap rates.
+## Next: full software-lifecycle coverage
 
-Completion signal: an audit of every committed fixture identifies the correct target-level configuration and produces no unsupported certainty claim.
+Grow the catalog through focused components selected by demonstrated developer need. Candidate areas include:
 
-## Next: registry depth and maintainability
+- software discovery, requirements, architecture, and technical decision records;
+- implementation workflows across languages, frameworks, platforms, and infrastructure;
+- tests, debugging, performance, accessibility, compatibility, and release confidence;
+- application, dependency, supply-chain, cloud, and operational security;
+- documentation, migration, maintenance, observability, incident response, and delivery;
+- data engineering, developer experience, automation, and repository governance.
 
-- Expand from 18 reviewed profiles to at least 60 high-usage profiles selected by public Apple-platform workflows, not arbitrary catalog order.
-- Prioritize APNs, CloudKit, Keychain, AuthenticationServices, App Attest, camera and media, maps and weather, Bluetooth and NFC, Wallet and Apple Pay, testing, accessibility, and extension families.
-- Add machine-readable provenance and change-review metadata without implying automatic factual verification.
-- Improve availability modeling for devices, hardware, regions, languages, accounts, managed entitlements, and beta SDKs.
-- Add safe tooling that identifies stale sources and produces a review queue without rewriting claims automatically.
-- Publish contributor guidance and fixtures for researching, reviewing, and superseding capability records.
+New components must remain narrow enough to route reliably. The collection will not create a catch-all skill or duplicate mature capabilities merely to increase catalog size.
 
-Completion signal: reviewed profiles cover at least 30% of the committed technology catalog and the public evaluation set passes without catalog-only recommendations.
+Completion signal: the catalog covers multiple independent software-lifecycle domains while every component retains a precise trigger, explicit trust boundary, reproducible verification, and accountable maintainer surface.
 
-## Then: distribution and adoption
+## Later: ecosystem interoperability
 
-- Submit the completed skills-only public package before introducing a hosted service, then address review feedback without weakening its local-first boundaries.
-- Keep the completed marketplace metadata, starter prompts, five positive and three negative test cases, country policy, attestations, privacy terms, icon, reviewer guide, and release automation synchronized with each submitted version.
-- Publish a five-minute end-to-end example that starts with an app idea, audits a real project, and produces a verified remediation plan.
-- Exercise install, upgrade, rollback, and uninstall procedures across consecutive tagged releases.
-- Keep unauthenticated GitHub release artifacts available even while GitHub Packages requires npm authentication.
-- Publish benchmark results that compare generic planning with registry-backed, project-aware auditing.
+- Publish versioned machine-readable catalog and compatibility metadata.
+- Evaluate additional agent hosts and open interoperability standards without weakening component contracts.
+- Add privacy-preserving hosted capabilities only when a local or static workflow cannot satisfy a demonstrated need.
+- Publish comparative evaluations and adoption evidence without turning benchmark scores into unsupported quality claims.
 
-Completion signal: a new user can install a reviewed package, complete the example without repository knowledge, and reproduce the documented output.
+## Component roadmaps
 
-## Later: hosted and ecosystem integration
+- [iOS Capability Architect](plugins/ios-capability-architect/ROADMAP.md)
 
-- Evaluate a reviewed remote MCP transport only after the skills-only package demonstrates demand.
-- Define privacy-preserving deployment, authentication, rate limits, observability, retention, and incident-response requirements before hosting exists.
-- Add versioned registry exports for external auditing and reproducible analysis.
-- Expand iPadOS, watchOS, tvOS, macOS, and visionOS guidance only with platform-specific evidence and evaluation coverage.
-
-## Non-goals
-
-- Private API recommendations, review bypasses, or hidden entitlement acquisition.
-- Claims of guaranteed App Review approval, background execution, or entitlement access.
-- Automatic promotion of unreviewed web content into verified records.
-- Collection of application ideas, telemetry, credentials, or personal data by default.
-- Replacing Apple documentation, legal counsel, privacy review, or testing on real target devices.
-
-Propose roadmap changes through the feature proposal template and explain the user need, evidence, risks, and measurable completion criteria.
+Propose collection roadmap changes through the feature proposal template and explain the user need, alternatives, risks, ownership, and measurable completion criteria.

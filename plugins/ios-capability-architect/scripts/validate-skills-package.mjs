@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { lstat, mkdtemp, readFile, readdir, rm, stat, symlink } from "node:fs/promises";
+import { lstat, mkdtemp, readFile, readdir, rm, stat, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import process from "node:process";
@@ -17,6 +17,8 @@ const requiredPaths = [
   "SKILL.md",
   "LICENSE",
   "manifest.json",
+  "agents/openai.yaml",
+  "assets/icon.svg",
   "scripts/ios-capability-architect.mjs",
   "data/capabilities.json",
   "data/taxonomy.json",
@@ -89,6 +91,56 @@ const profile = JSON.parse(
 );
 if (profile.data.id !== "healthkit") throw new Error("Packaged CLI profile smoke test failed");
 
+const availability = JSON.parse(
+  execFileSync(
+    "node",
+    [
+      join(skillRoot, "scripts", "ios-capability-architect.mjs"),
+      "availability",
+      "--capability",
+      "foundation-models",
+      "--minimum-os",
+      "26.0",
+      "--device",
+      "iPhone 8",
+      "--region",
+      "TR",
+      "--language",
+      "Turkish"
+    ],
+    { encoding: "utf8" }
+  )
+);
+if (availability.data.results[0]?.determination !== "conditional") {
+  throw new Error("Packaged CLI treated free-text availability constraints as verified");
+}
+
+const auditRoot = await mkdtemp(join(tmpdir(), "ios-capability-architect-audit-"));
+try {
+  await writeFile(join(auditRoot, "project.yml"), "options:\n  deploymentTarget:\n    iOS: '18.0'\n", "utf8");
+  const audit = JSON.parse(
+    execFileSync(
+      "node",
+      [
+        join(skillRoot, "scripts", "ios-capability-architect.mjs"),
+        "audit-project",
+        "--root",
+        auditRoot,
+        "--capability",
+        "privacy-manifest",
+        "--platform",
+        "iOS"
+      ],
+      { encoding: "utf8" }
+    )
+  );
+  if (audit.data.project_root !== "." || JSON.stringify(audit).includes(auditRoot)) {
+    throw new Error("Packaged CLI project audit exposed its absolute project root");
+  }
+} finally {
+  await rm(auditRoot, { recursive: true, force: true });
+}
+
 const symlinkRoot = await mkdtemp(join(tmpdir(), "ios-capability-architect-cli-"));
 try {
   const symlinkPath = join(symlinkRoot, "ios-capability-architect");
@@ -111,7 +163,13 @@ process.stdout.write(
       expanded_bytes: inventory.bytes,
       archive_bytes: archive.length,
       sha256: createHash("sha256").update(archive).digest("hex"),
-      cli_smoke: ["coverage", "profile:healthkit", "symlink:coverage"]
+      cli_smoke: [
+        "coverage",
+        "profile:healthkit",
+        "availability:conditional-constraints",
+        "audit-project:redacted-root",
+        "symlink:coverage"
+      ]
     },
     null,
     2

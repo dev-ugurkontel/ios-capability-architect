@@ -13,12 +13,11 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       include: ["src/**/*.ts"],
-      exclude: ["src/server.ts"],
       thresholds: {
-        branches: 75,
-        functions: 85,
-        lines: 85,
-        statements: 85
+        branches: 100,
+        functions: 100,
+        lines: 100,
+        statements: 100
       }
     }
   }

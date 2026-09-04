@@ -16,10 +16,6 @@
           "type": "json",
           "path": "package-lock.json",
           "jsonpath": "$['packages']['plugins/ios-capability-architect']['version']"
-        },
-        {
-          "type": "generic",
-          "path": "README.md"
         }
       ]
     }

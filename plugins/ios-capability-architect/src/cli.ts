@@ -18,6 +18,19 @@ import {
   searchAppleTechnologyCatalog,
   searchOfficialAppleDocs
 } from "@/engine.js";
+import {
+  analyzeIdeaInputSchema,
+  architectureInputSchema,
+  auditInputSchema,
+  checkAvailabilityInputSchema,
+  getAppleTechnologyInputSchema,
+  getProfileInputSchema,
+  implementationPlanInputSchema,
+  officialDocsSearchInputSchema,
+  projectConfigurationAuditInputSchema,
+  resolveCapabilitiesInputSchema,
+  technologyCatalogSearchInputSchema
+} from "@/schema.js";
 
 const help = `iOS Capability Architect CLI
 
@@ -42,12 +55,17 @@ Commands:
 Common options:
   --idea <text>              App idea for analyze, resolve, or architecture.
   --capability <id>          Capability ID; repeat or comma-separate values.
-  --platform <name>          Apple platform (default: iOS).
+  --platform <name>          Apple platform; analyze also accepts multi-platform (default: iOS).
   --minimum-os <version>     Deployment target for analyze or availability.
+  --ui <framework>           SwiftUI, UIKit, AppKit, or unspecified (default: SwiftUI).
+  --on-device <priority>     required, preferred, or neutral (default: preferred).
+  --privacy <level>          standard, sensitive, or regulated (default: standard).
   --include-beta             Include beta records during resolution.
   --root <path>              Project root for audit-project.
   --query <text>             Search query.
   --limit <number>           Maximum results (default: 10).
+  --scale <size>             prototype, small, medium, or large (default: small).
+  --no-code-spike            Omit the feasibility spike from implementation plans.
   --help                     Show this help.
 
 Every successful command writes one JSON value to stdout. Errors go to stderr.
@@ -63,8 +81,8 @@ const defaultStreams: CliStreams = {
   stderr: (value) => process.stderr.write(value)
 };
 
-function strings(value: string | string[] | undefined): string[] {
-  const values = Array.isArray(value) ? value : value ? [value] : [];
+function strings(value: string[] | undefined): string[] {
+  const values = value ?? [];
   return [
     ...new Set(
       values
@@ -111,8 +129,9 @@ export async function runCli(args: string[], streams: CliStreams = defaultStream
         device: { type: "string" },
         region: { type: "string" },
         language: { type: "string" },
-        scale: { type: "string", default: "production" },
+        scale: { type: "string", default: "small" },
         "code-spike": { type: "boolean", default: false },
+        "no-code-spike": { type: "boolean", default: false },
         coverage: { type: "string", default: "all" }
       }
     });
@@ -130,91 +149,120 @@ export async function runCli(args: string[], streams: CliStreams = defaultStream
     };
     const idea = values.idea?.trim();
     const limit = positiveInteger(values.limit, 10);
+    if (values["code-spike"] && values["no-code-spike"]) {
+      throw new Error("Use either --code-spike or --no-code-spike, not both");
+    }
     let result: unknown;
+
+    const analysisInput = () =>
+      analyzeIdeaInputSchema.parse({
+        idea: requireValue(idea, "--idea"),
+        target_platform: values.platform,
+        minimum_os_version: values["minimum-os"],
+        preferred_ui_framework: values.ui,
+        on_device_priority: values["on-device"],
+        privacy_level: values.privacy
+      });
 
     switch (command) {
       case "analyze":
-        result = analyzeAppIdea({
-          idea: requireValue(idea, "--idea"),
-          target_platform: values.platform,
-          minimum_os_version: values["minimum-os"],
-          preferred_ui_framework: values.ui,
-          on_device_priority: values["on-device"],
-          privacy_level: values.privacy
-        });
+        result = analyzeAppIdea(analysisInput());
         break;
       case "resolve": {
-        const analysis = analyzeAppIdea({
-          idea: requireValue(idea, "--idea"),
-          target_platform: values.platform,
-          minimum_os_version: values["minimum-os"],
-          preferred_ui_framework: values.ui,
-          on_device_priority: values["on-device"],
-          privacy_level: values.privacy
+        const analysis = analyzeAppIdea(analysisInput());
+        const resolutionInput = resolveCapabilitiesInputSchema.parse({
+          requirements: analysis.data.requirements,
+          include_beta: values["include-beta"],
+          maximum_results_per_requirement: limit
         });
         result = {
           analysis,
-          resolution: await resolveCapabilities({
-            requirements: analysis.data.requirements,
-            include_beta: values["include-beta"],
-            maximum_results_per_requirement: Math.min(limit, 10)
-          })
+          resolution: await resolveCapabilities(resolutionInput)
         };
         break;
       }
-      case "profile":
-        result = await getCapabilityProfile(positionals[1] ?? requireCapabilities()[0]!);
+      case "profile": {
+        const input = getProfileInputSchema.parse({
+          capability_id_or_name: positionals[1] ?? requireCapabilities()[0]
+        });
+        result = await getCapabilityProfile(input.capability_id_or_name);
         break;
-      case "technology":
-        result = await getAppleTechnology(positionals[1] ?? requireValue(values.query, "technology name or --query"));
+      }
+      case "technology": {
+        const input = getAppleTechnologyInputSchema.parse({
+          technology_id_or_name: positionals[1] ?? requireValue(values.query, "technology name or --query")
+        });
+        result = await getAppleTechnology(input.technology_id_or_name);
         break;
+      }
       case "availability":
-        result = await checkAvailability({
-          capability_ids: requireCapabilities(),
-          platform: values.platform,
-          os_version: values["minimum-os"],
-          device: values.device,
-          region: values.region,
-          language: values.language,
-          allow_beta: values["include-beta"]
-        });
+        result = await checkAvailability(
+          checkAvailabilityInputSchema.parse({
+            capability_ids: requireCapabilities(),
+            platform: values.platform,
+            os_version: values["minimum-os"],
+            device: values.device,
+            region: values.region,
+            language: values.language,
+            allow_beta: values["include-beta"]
+          })
+        );
         break;
-      case "audit-requirements":
-        result = await auditPermissionsAndEntitlements(requireCapabilities());
+      case "audit-requirements": {
+        const input = auditInputSchema.parse({ capability_ids: requireCapabilities() });
+        result = await auditPermissionsAndEntitlements(input.capability_ids);
         break;
+      }
       case "audit-project":
-        result = await auditProjectConfiguration({
-          project_root: resolve(requireValue(values.root, "--root")),
-          capability_ids: requireCapabilities(),
-          platform: values.platform
-        });
+        result = await auditProjectConfiguration(
+          projectConfigurationAuditInputSchema.parse({
+            project_root: resolve(requireValue(values.root, "--root")),
+            capability_ids: requireCapabilities(),
+            platform: values.platform
+          })
+        );
         break;
-      case "audit-privacy":
-        result = await auditPrivacyAndReview(requireCapabilities());
+      case "audit-privacy": {
+        const input = auditInputSchema.parse({ capability_ids: requireCapabilities() });
+        result = await auditPrivacyAndReview(input.capability_ids);
         break;
+      }
       case "architecture":
-        result = await generateArchitecture(requireValue(idea, "--idea"), requireCapabilities(), values.scale);
+        {
+          const input = architectureInputSchema.parse({
+            idea: requireValue(idea, "--idea"),
+            capability_ids: requireCapabilities(),
+            project_scale: values.scale
+          });
+          result = await generateArchitecture(input.idea, input.capability_ids, input.project_scale);
+        }
         break;
       case "plan":
-        result = await generateImplementationPlan(requireCapabilities(), values["code-spike"]);
+        {
+          const input = implementationPlanInputSchema.parse({
+            capability_ids: requireCapabilities(),
+            include_code_spike: !values["no-code-spike"]
+          });
+          result = await generateImplementationPlan(input.capability_ids, input.include_code_spike);
+        }
         break;
       case "search":
-        result = await searchOfficialAppleDocs(
-          requireValue(values.query ?? positionals.slice(1).join(" "), "--query"),
-          capabilityIds,
-          limit
-        );
+        {
+          const input = officialDocsSearchInputSchema.parse({
+            query: requireValue(values.query ?? positionals.slice(1).join(" "), "--query"),
+            capability_ids: capabilityIds,
+            maximum_results: limit
+          });
+          result = await searchOfficialAppleDocs(input.query, input.capability_ids, input.maximum_results);
+        }
         break;
       case "catalog": {
-        const coverage = values.coverage;
-        if (coverage !== "all" && coverage !== "catalogued" && coverage !== "profiled") {
-          throw new Error("--coverage must be all, catalogued, or profiled");
-        }
-        result = await searchAppleTechnologyCatalog(
-          requireValue(values.query ?? positionals.slice(1).join(" "), "--query"),
-          coverage,
-          limit
-        );
+        const input = technologyCatalogSearchInputSchema.parse({
+          query: requireValue(values.query ?? positionals.slice(1).join(" "), "--query"),
+          coverage_status: values.coverage,
+          maximum_results: limit
+        });
+        result = await searchAppleTechnologyCatalog(input.query, input.coverage_status, input.maximum_results);
         break;
       }
       case "coverage":
@@ -233,7 +281,8 @@ export async function runCli(args: string[], streams: CliStreams = defaultStream
   }
 }
 
-const entryPath = process.argv[1] ? realpathSync(resolve(process.argv[1])) : undefined;
-if (entryPath && realpathSync(fileURLToPath(import.meta.url)) === entryPath) {
+const entryPath = realpathSync(resolve(process.argv[1]!));
+/* v8 ignore next 3 -- The packaged process bootstrap is exercised by validate-skills-package.mjs. */
+if (realpathSync(fileURLToPath(import.meta.url)) === entryPath) {
   process.exitCode = await runCli(process.argv.slice(2));
 }

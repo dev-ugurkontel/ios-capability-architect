@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { readFileSync } from "node:fs";
+import type { Transport } from "@modelcontextprotocol/sdk/shared/transport.js";
+import { readFileSync, realpathSync } from "node:fs";
+import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { z } from "zod";
 import {
   analyzeIdeaInputSchema,
@@ -39,8 +42,7 @@ import {
 } from "@/engine.js";
 import type { ToolEnvelope } from "@/types.js";
 
-function loadPackageVersion(): string {
-  const metadata: unknown = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
+export function packageVersionFromMetadata(metadata: unknown): string {
   if (
     typeof metadata !== "object" ||
     metadata === null ||
@@ -52,10 +54,10 @@ function loadPackageVersion(): string {
   return metadata.version;
 }
 
-const server = new McpServer({
-  name: "ios-capability-architect",
-  version: loadPackageVersion()
-});
+function loadPackageVersion(): string {
+  const metadata: unknown = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
+  return packageVersionFromMetadata(metadata);
+}
 
 const readOnlyAnnotations = {
   readOnlyHint: true,
@@ -66,8 +68,8 @@ const readOnlyAnnotations = {
 
 const outputSchema = {
   schema_version: z.literal("1.0"),
-  generated_at: z.string(),
-  documentation_cutoff: z.string(),
+  generated_at: z.iso.datetime({ offset: true }),
+  documentation_cutoff: z.iso.date(),
   data: z.unknown(),
   warnings: z.array(z.string())
 };
@@ -79,212 +81,225 @@ function result<T>(payload: ToolEnvelope<T>) {
   };
 }
 
-server.registerTool(
-  "analyze_app_idea",
-  {
-    title: "Analyze an iOS app idea",
-    description:
-      "Turn a natural-language Apple-platform app idea into explicit requirements, assumptions, constraints, and at most three architecture-changing questions. Use before capability resolution.",
-    inputSchema: analyzeIdeaInputSchema,
-    outputSchema,
-    annotations: readOnlyAnnotations
-  },
-  (input) => result(analyzeAppIdea(input))
-);
+export function createServer(version = loadPackageVersion()): McpServer {
+  const server = new McpServer({
+    name: "ios-capability-architect",
+    version
+  });
 
-server.registerTool(
-  "resolve_ios_capabilities",
-  {
-    title: "Resolve iOS capabilities",
-    description:
-      "Match structured requirements to relevant verified Apple frameworks, APIs, capabilities, entitlements, permissions, and extensions. Excludes beta records unless explicitly requested.",
-    inputSchema: resolveCapabilitiesInputSchema,
-    outputSchema,
-    annotations: readOnlyAnnotations
-  },
-  async (input) => result(await resolveCapabilities(input))
-);
+  server.registerTool(
+    "analyze_app_idea",
+    {
+      title: "Analyze an iOS app idea",
+      description:
+        "Use this before capability selection to turn an Apple-platform app idea into explicit requirements, assumptions, constraints, and at most three architecture-changing questions.",
+      inputSchema: analyzeIdeaInputSchema,
+      outputSchema,
+      annotations: readOnlyAnnotations
+    },
+    (input) => result(analyzeAppIdea(input))
+  );
 
-server.registerTool(
-  "get_capability_profile",
-  {
-    title: "Get an Apple capability profile",
-    description:
-      "Return the full verified registry profile for one Apple technology or capability, including availability, permissions, entitlements, constraints, review risks, and official sources.",
-    inputSchema: getProfileInputSchema,
-    outputSchema,
-    annotations: readOnlyAnnotations
-  },
-  async ({ capability_id_or_name }) => result(await getCapabilityProfile(capability_id_or_name))
-);
+  server.registerTool(
+    "resolve_ios_capabilities",
+    {
+      title: "Resolve iOS capabilities",
+      description:
+        "Use this when structured product requirements need verified Apple frameworks, APIs, capabilities, entitlements, permissions, or extensions. Beta records stay excluded unless requested.",
+      inputSchema: resolveCapabilitiesInputSchema,
+      outputSchema,
+      annotations: readOnlyAnnotations
+    },
+    async (input) => result(await resolveCapabilities(input))
+  );
 
-server.registerTool(
-  "get_apple_technology",
-  {
-    title: "Get an Apple technology",
-    description:
-      "Look up one exact Apple technology catalog entry. Returns either a reviewed capability profile or an explicitly non-recommendable catalog-only research result without inventing architecture evidence.",
-    inputSchema: getAppleTechnologyInputSchema,
-    outputSchema: { ...outputSchema, data: getAppleTechnologyResultSchema },
-    annotations: readOnlyAnnotations
-  },
-  async ({ technology_id_or_name }) => result(await getAppleTechnology(technology_id_or_name))
-);
+  server.registerTool(
+    "get_capability_profile",
+    {
+      title: "Get an Apple capability profile",
+      description:
+        "Use this when one reviewed Apple capability needs its complete availability, permission, entitlement, constraint, review-risk, and official-source profile.",
+      inputSchema: getProfileInputSchema,
+      outputSchema,
+      annotations: readOnlyAnnotations
+    },
+    async ({ capability_id_or_name }) => result(await getCapabilityProfile(capability_id_or_name))
+  );
 
-server.registerTool(
-  "compare_implementation_options",
-  {
-    title: "Compare iOS implementation options",
-    description:
-      "Compare two to six verified Apple technology options across deployment, on-device behavior, privacy, hardware, entitlement, review, and maintenance constraints.",
-    inputSchema: compareOptionsInputSchema,
-    outputSchema,
-    annotations: readOnlyAnnotations
-  },
-  async ({ capability_ids, criteria }) => result(await compareImplementationOptions(capability_ids, criteria))
-);
+  server.registerTool(
+    "get_apple_technology",
+    {
+      title: "Get an Apple technology",
+      description:
+        "Use this when one exact Apple technology needs catalog lookup. It returns a reviewed profile or an explicitly non-recommendable research lead without inventing evidence.",
+      inputSchema: getAppleTechnologyInputSchema,
+      outputSchema: { ...outputSchema, data: getAppleTechnologyResultSchema },
+      annotations: readOnlyAnnotations
+    },
+    async ({ technology_id_or_name }) => result(await getAppleTechnology(technology_id_or_name))
+  );
 
-server.registerTool(
-  "check_availability",
-  {
-    title: "Check Apple API availability",
-    description:
-      "Check selected records against declared platform, OS, device, region, language, and beta constraints. Results are advisory and identify required runtime checks.",
-    inputSchema: checkAvailabilityInputSchema,
-    outputSchema,
-    annotations: readOnlyAnnotations
-  },
-  async (input) => result(await checkAvailability(input))
-);
+  server.registerTool(
+    "compare_implementation_options",
+    {
+      title: "Compare iOS implementation options",
+      description:
+        "Use this when choosing among two to six reviewed Apple technologies across deployment, on-device, privacy, hardware, entitlement, review, and maintenance constraints.",
+      inputSchema: compareOptionsInputSchema,
+      outputSchema,
+      annotations: readOnlyAnnotations
+    },
+    async ({ capability_ids, criteria }) => result(await compareImplementationOptions(capability_ids, criteria))
+  );
 
-server.registerTool(
-  "audit_permissions_and_entitlements",
-  {
-    title: "Audit permissions and entitlements",
-    description:
-      "Separate and aggregate runtime user permissions, Info.plist keys, Xcode capabilities, ordinary entitlements, managed entitlements, background modes, and extension targets.",
-    inputSchema: auditInputSchema,
-    outputSchema,
-    annotations: readOnlyAnnotations
-  },
-  async ({ capability_ids }) => result(await auditPermissionsAndEntitlements(capability_ids))
-);
+  server.registerTool(
+    "check_availability",
+    {
+      title: "Check Apple API availability",
+      description:
+        "Use this when selected capabilities must be checked against a declared platform, OS version, device, region, language, or beta policy. Results remain advisory.",
+      inputSchema: checkAvailabilityInputSchema,
+      outputSchema,
+      annotations: readOnlyAnnotations
+    },
+    async (input) => result(await checkAvailability(input))
+  );
 
-server.registerTool(
-  "audit_ios_project_configuration",
-  {
-    title: "Audit an iOS project's capability configuration",
-    description:
-      "Read a local Apple-platform project configuration and compare its deployment target, plist keys, entitlements, background modes, and privacy manifest presence with selected verified capability profiles. The bounded scan follows no symlinks, returns no file contents, and makes no changes.",
-    inputSchema: projectConfigurationAuditInputSchema,
-    outputSchema,
-    annotations: readOnlyAnnotations
-  },
-  async (input) => result(await auditProjectConfiguration(input))
-);
+  server.registerTool(
+    "audit_permissions_and_entitlements",
+    {
+      title: "Audit permissions and entitlements",
+      description:
+        "Use this when selected capabilities need a separated inventory of permissions, Info.plist keys, Xcode capabilities, entitlements, background modes, and extensions.",
+      inputSchema: auditInputSchema,
+      outputSchema,
+      annotations: readOnlyAnnotations
+    },
+    async ({ capability_ids }) => result(await auditPermissionsAndEntitlements(capability_ids))
+  );
 
-server.registerTool(
-  "audit_privacy_and_app_review",
-  {
-    title: "Audit privacy and App Review risks",
-    description:
-      "Assess privacy manifests, required-reason APIs, sensitive data handling, security controls, and App Store review considerations for selected capabilities.",
-    inputSchema: auditInputSchema,
-    outputSchema,
-    annotations: readOnlyAnnotations
-  },
-  async ({ capability_ids }) => result(await auditPrivacyAndReview(capability_ids))
-);
+  server.registerTool(
+    "audit_ios_project_configuration",
+    {
+      title: "Audit an iOS project's capability configuration",
+      description:
+        "Use this when an existing local Apple project needs a read-only capability configuration audit. The bounded scan follows no symlinks, returns no file contents, and makes no changes.",
+      inputSchema: projectConfigurationAuditInputSchema,
+      outputSchema,
+      annotations: readOnlyAnnotations
+    },
+    async (input) => result(await auditProjectConfiguration(input))
+  );
 
-server.registerTool(
-  "generate_ios_architecture",
-  {
-    title: "Generate an iOS architecture",
-    description:
-      "Generate a proportionate SwiftUI-first layered architecture and data flow from a product idea and selected verified Apple capabilities.",
-    inputSchema: architectureInputSchema,
-    outputSchema,
-    annotations: readOnlyAnnotations
-  },
-  async ({ idea, capability_ids, project_scale }) =>
-    result(await generateArchitecture(idea, capability_ids, project_scale))
-);
+  server.registerTool(
+    "audit_privacy_and_app_review",
+    {
+      title: "Audit privacy and App Review risks",
+      description:
+        "Use this when selected capabilities involve privacy manifests, required-reason APIs, sensitive data, security controls, disclosures, or App Store review risk.",
+      inputSchema: auditInputSchema,
+      outputSchema,
+      annotations: readOnlyAnnotations
+    },
+    async ({ capability_ids }) => result(await auditPrivacyAndReview(capability_ids))
+  );
 
-server.registerTool(
-  "generate_implementation_plan",
-  {
-    title: "Generate an iOS implementation plan",
-    description:
-      "Create a dependency-ordered proof-of-concept, MVP, integration, permission, background, privacy, testing, and release plan for selected capabilities.",
-    inputSchema: implementationPlanInputSchema,
-    outputSchema,
-    annotations: readOnlyAnnotations
-  },
-  async ({ capability_ids, include_code_spike }) =>
-    result(await generateImplementationPlan(capability_ids, include_code_spike))
-);
+  server.registerTool(
+    "generate_ios_architecture",
+    {
+      title: "Generate an iOS architecture",
+      description:
+        "Use this after capability selection to generate a proportionate SwiftUI-first architecture and data flow for the product idea.",
+      inputSchema: architectureInputSchema,
+      outputSchema,
+      annotations: readOnlyAnnotations
+    },
+    async ({ idea, capability_ids, project_scale }) =>
+      result(await generateArchitecture(idea, capability_ids, project_scale))
+  );
 
-server.registerTool(
-  "search_official_apple_docs",
-  {
-    title: "Search verified Apple documentation",
-    description:
-      "Search the plugin's verified local index of official Apple documentation. This does not perform live web search; use the link-verification workflow to refresh source status.",
-    inputSchema: officialDocsSearchInputSchema,
-    outputSchema,
-    annotations: readOnlyAnnotations
-  },
-  async ({ query, capability_ids, maximum_results }) =>
-    result(await searchOfficialAppleDocs(query, capability_ids, maximum_results))
-);
+  server.registerTool(
+    "generate_implementation_plan",
+    {
+      title: "Generate an iOS implementation plan",
+      description:
+        "Use this after capability selection to create a dependency-ordered feasibility, MVP, integration, permission, background, privacy, testing, and release plan.",
+      inputSchema: implementationPlanInputSchema,
+      outputSchema,
+      annotations: readOnlyAnnotations
+    },
+    async ({ capability_ids, include_code_spike }) =>
+      result(await generateImplementationPlan(capability_ids, include_code_spike))
+  );
 
-server.registerTool(
-  "search_apple_technology_catalog",
-  {
-    title: "Search the Apple technology catalog",
-    description:
-      "Discover profiled and catalog-only Apple technologies without treating catalog presence as implementation evidence.",
-    inputSchema: technologyCatalogSearchInputSchema,
-    outputSchema,
-    annotations: readOnlyAnnotations
-  },
-  async ({ query, coverage_status, maximum_results }) =>
-    result(await searchAppleTechnologyCatalog(query, coverage_status, maximum_results))
-);
+  server.registerTool(
+    "search_official_apple_docs",
+    {
+      title: "Search verified Apple documentation",
+      description:
+        "Use this when selected capabilities need references from the verified local Apple source index. It is not live web search and does not prove current semantics.",
+      inputSchema: officialDocsSearchInputSchema,
+      outputSchema,
+      annotations: readOnlyAnnotations
+    },
+    async ({ query, capability_ids, maximum_results }) =>
+      result(await searchOfficialAppleDocs(query, capability_ids, maximum_results))
+  );
 
-server.registerTool(
-  "get_registry_coverage",
-  {
-    title: "Measure registry coverage",
-    description:
-      "Report catalog size, reviewed profile count, profile coverage percentage, categories, and official index sources.",
-    inputSchema: registryCoverageInputSchema,
-    outputSchema,
-    annotations: readOnlyAnnotations
-  },
-  async () => result(await reportRegistryCoverage())
-);
+  server.registerTool(
+    "search_apple_technology_catalog",
+    {
+      title: "Search the Apple technology catalog",
+      description:
+        "Use this for broad Apple technology discovery when the exact capability is unknown. Catalog-only results are research leads, not implementation evidence.",
+      inputSchema: technologyCatalogSearchInputSchema,
+      outputSchema,
+      annotations: readOnlyAnnotations
+    },
+    async ({ query, coverage_status, maximum_results }) =>
+      result(await searchAppleTechnologyCatalog(query, coverage_status, maximum_results))
+  );
 
-server.registerTool(
-  "refresh_capability_registry",
-  {
-    title: "Plan a capability registry refresh",
-    description:
-      "Return a dry-run refresh plan and source inventory. Runtime mutation is intentionally disabled; reviewed repository changes are required for registry updates.",
-    inputSchema: refreshRegistryInputSchema,
-    outputSchema,
-    annotations: readOnlyAnnotations
-  },
-  async ({ dry_run, source_urls }) => result(await refreshCapabilityRegistry(dry_run, source_urls))
-);
+  server.registerTool(
+    "get_registry_coverage",
+    {
+      title: "Measure registry coverage",
+      description:
+        "Use this when measuring the reviewed registry against the committed Apple technology catalog, including counts, coverage percentage, categories, and index sources.",
+      inputSchema: registryCoverageInputSchema,
+      outputSchema,
+      annotations: readOnlyAnnotations
+    },
+    async () => result(await reportRegistryCoverage())
+  );
 
-async function main(): Promise<void> {
-  await server.connect(new StdioServerTransport());
+  server.registerTool(
+    "refresh_capability_registry",
+    {
+      title: "Plan a capability registry refresh",
+      description:
+        "Use this when maintainers need a non-mutating source inventory and conservative registry refresh plan. Runtime mutation is intentionally disabled.",
+      inputSchema: refreshRegistryInputSchema,
+      outputSchema,
+      annotations: readOnlyAnnotations
+    },
+    async ({ dry_run, source_urls }) => result(await refreshCapabilityRegistry(dry_run, source_urls))
+  );
+
+  return server;
+}
+
+export async function runServer(transport: Transport): Promise<void> {
+  await createServer().connect(transport);
   console.error("ios-capability-architect MCP server running on stdio");
 }
 
-main().catch((error: unknown) => {
-  const message = error instanceof Error ? error.message : String(error);
-  console.error(`ios-capability-architect failed: ${message}`);
-  process.exitCode = 1;
-});
+const entryPath = realpathSync(resolve(process.argv[1]!));
+/* v8 ignore next 6 -- The packaged stdio process bootstrap is exercised by smoke-mcp.ts. */
+if (realpathSync(fileURLToPath(import.meta.url)) === entryPath) {
+  runServer(new StdioServerTransport()).catch((error: unknown) => {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`ios-capability-architect failed: ${message}`);
+    process.exitCode = 1;
+  });
+}

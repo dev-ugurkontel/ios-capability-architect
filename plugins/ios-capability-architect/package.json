@@ -2,26 +2,36 @@
   "name": "@fillbyte/ios-capability-architect",
   "version": "0.9.0",
   "type": "module",
-  "description": "Read-only MCP and CLI tools for evidence-backed Apple capability planning and project configuration auditing.",
+  "description": "Apple-platform agent skill, Codex plugin, MCP server, and CLI for evidence-backed capability architecture and Xcode audits.",
   "license": "MIT",
   "author": "Fillbyte",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fillbyte/ios-capability-architect.git",
+    "url": "git+https://github.com/fillbyte/skills.git",
     "directory": "plugins/ios-capability-architect"
   },
-  "homepage": "https://github.com/fillbyte/ios-capability-architect/tree/main/plugins/ios-capability-architect#readme",
+  "homepage": "https://github.com/fillbyte/skills/tree/main/plugins/ios-capability-architect#readme",
   "bugs": {
-    "url": "https://github.com/fillbyte/ios-capability-architect/issues"
+    "url": "https://github.com/fillbyte/skills/issues"
   },
   "keywords": [
+    "agent-skills",
     "apple",
+    "apple-platform",
+    "app-store",
+    "architecture",
+    "capabilities",
     "codex",
+    "developer-tools",
+    "entitlements",
     "ios",
     "mcp",
     "plugin",
+    "privacy",
     "swift",
-    "swiftui"
+    "swiftui",
+    "xcode",
+    "xcodegen"
   ],
   "sideEffects": false,
   "bin": {

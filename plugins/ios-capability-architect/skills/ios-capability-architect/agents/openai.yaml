@@ -1,0 +1,9 @@
+interface:
+  display_name: "iOS Capability Architect"
+  short_description: "Plan Apple capabilities and audit Xcode projects"
+  icon_small: "./assets/icon.svg"
+  icon_large: "./assets/icon.svg"
+  brand_color: "#0A84FF"
+  default_prompt: "Use $ios-capability-architect to map this Apple-platform app to verified capabilities, configuration, risks, and an implementation plan."
+policy:
+  allow_implicit_invocation: true

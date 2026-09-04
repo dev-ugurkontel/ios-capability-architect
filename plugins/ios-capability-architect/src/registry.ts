@@ -68,7 +68,7 @@ const emptyArrays = {
   release_notes: []
 } satisfies Partial<CapabilityRecord>;
 
-function hasOwn(record: RawRecord, field: keyof CapabilityRecord): boolean {
+function hasOwn(record: Partial<CapabilityRecord>, field: keyof CapabilityRecord): boolean {
   return Object.prototype.hasOwnProperty.call(record, field);
 }
 
@@ -79,7 +79,7 @@ function classifyKnowledge(value: unknown): KnowledgeState {
   return "verified_value";
 }
 
-function buildKnowledgeState(raw: RawRecord): CapabilityKnowledgeState {
+export function deriveKnowledgeState(raw: Partial<CapabilityRecord>): CapabilityKnowledgeState {
   const fields = Object.fromEntries(
     knowledgeTrackedFields.map((field) => [field, hasOwn(raw, field) ? classifyKnowledge(raw[field]) : "unknown"])
   ) as CapabilityKnowledgeState["fields"];
@@ -113,7 +113,7 @@ function normalizeRecord(raw: RawRecord): CapabilityRecord {
     network_requirement: "Depends on the selected API and feature configuration.",
     cloud_dependency: null,
     ...raw,
-    knowledge_state: buildKnowledgeState(raw)
+    knowledge_state: deriveKnowledgeState(raw)
   } satisfies CapabilityRecord;
 }
 
@@ -146,14 +146,15 @@ export async function findRecord(idOrName: string): Promise<CapabilityRecord | u
   const query = idOrName.trim().toLocaleLowerCase("en-US");
   if (!query) return undefined;
   const records = await loadRegistry();
-  return (
-    records.find(
-      (record) =>
-        record.id === query ||
-        record.name.toLocaleLowerCase("en-US") === query ||
-        record.aliases.some((alias) => alias.toLocaleLowerCase("en-US") === query)
-    ) ?? records.find((record) => searchableText(record).includes(query))
+  const exact = records.find(
+    (record) =>
+      record.id === query ||
+      record.name.toLocaleLowerCase("en-US") === query ||
+      record.aliases.some((alias) => alias.toLocaleLowerCase("en-US") === query)
   );
+  if (exact) return exact;
+  const partial = records.filter((record) => searchableText(record).includes(query));
+  return partial.length === 1 ? partial[0] : undefined;
 }
 
 export async function searchRecords(query: string, limit = 10): Promise<CapabilityRecord[]> {

@@ -23226,6 +23226,16 @@ var knowledgeStateSchema = external_exports.object({
   completeness: external_exports.enum(["complete", "partial"]),
   fields: external_exports.record(external_exports.enum(knowledgeTrackedFields), external_exports.enum(knowledgeStates))
 });
+var osVersionSchema = external_exports.string().trim().regex(/^\d+(?:\.\d+){0,2}(?:\s+(?:beta|rc)(?:\s+\d+)?)?$/i, "Use a numeric OS version such as 18 or 18.1");
+var capabilityIdentifierSchema = external_exports.string().trim().min(1).max(200);
+var availabilityContextSchema = external_exports.string().trim().min(1).max(200);
+var officialAppleDeveloperUrlSchema = external_exports.url().refine(
+  (url2) => {
+    const parsed = new URL(url2);
+    return parsed.protocol === "https:" && parsed.hostname === "developer.apple.com";
+  },
+  { message: "Use an official https://developer.apple.com URL" }
+);
 var capabilityRecordSchema = external_exports.object({
   id: external_exports.string().regex(/^[a-z0-9]+(?:[._-][a-z0-9]+)*$/),
   name: external_exports.string().min(1),
@@ -23308,17 +23318,17 @@ var capabilityRegistrySchema = external_exports.object({
   });
 });
 var analyzeIdeaInputSchema = external_exports.object({
-  idea: external_exports.string().min(10).max(1e4),
-  target_platform: external_exports.enum(["iOS", "iPadOS", "watchOS", "visionOS", "multi-platform"]).default("iOS"),
-  minimum_os_version: external_exports.string().optional(),
-  preferred_ui_framework: external_exports.enum(["SwiftUI", "UIKit", "unspecified"]).default("SwiftUI"),
-  on_device_priority: external_exports.enum(["required", "preferred", "neutral"]).default("preferred"),
-  privacy_level: external_exports.enum(["standard", "sensitive", "regulated"]).default("standard")
+  idea: external_exports.string().trim().min(10).max(1e4).describe("Natural-language Apple-platform product idea or feature request."),
+  target_platform: external_exports.enum(["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS", "Mac Catalyst", "multi-platform"]).default("iOS").describe("Primary Apple platform or multi-platform scope."),
+  minimum_os_version: osVersionSchema.optional().describe("Deployment target such as 18 or 18.1."),
+  preferred_ui_framework: external_exports.enum(["SwiftUI", "UIKit", "AppKit", "unspecified"]).default("SwiftUI").describe("Preferred presentation framework; choose unspecified when no preference exists."),
+  on_device_priority: external_exports.enum(["required", "preferred", "neutral"]).default("preferred").describe("Whether local and offline processing is mandatory, preferred, or neutral."),
+  privacy_level: external_exports.enum(["standard", "sensitive", "regulated"]).default("standard").describe("Highest expected data-sensitivity and compliance level.")
 });
 var resolveCapabilitiesInputSchema = external_exports.object({
   requirements: external_exports.array(
     external_exports.object({
-      id: external_exports.string(),
+      id: capabilityIdentifierSchema.describe("Stable requirement identifier unique within this request."),
       kind: external_exports.enum([
         "product_goal",
         "data",
@@ -23331,20 +23341,20 @@ var resolveCapabilitiesInputSchema = external_exports.object({
         "privacy",
         "monetization",
         "platform"
-      ]),
-      description: external_exports.string(),
-      keywords: external_exports.array(external_exports.string()).default([]),
-      confidence: external_exports.enum(["explicit", "inferred"]).default("explicit")
+      ]).describe("Requirement category used for deterministic capability matching."),
+      description: external_exports.string().trim().min(1).max(2e3).describe("Concrete product or technical requirement without implementation guesses."),
+      keywords: external_exports.array(external_exports.string().trim().min(1).max(100)).max(50).default([]).describe("Relevant framework, feature, domain, or constraint terms; omit generic filler words."),
+      confidence: external_exports.enum(["explicit", "inferred"]).default("explicit").describe("Whether the user stated the requirement or the analysis inferred it.")
     })
-  ).min(1),
-  include_beta: external_exports.boolean().default(false),
-  maximum_results_per_requirement: external_exports.number().int().min(1).max(10).default(4)
+  ).min(1).max(100).describe("Structured requirements returned by analyze_app_idea or prepared with the same fields."),
+  include_beta: external_exports.boolean().default(false).describe("Allow prerelease capability profiles in matches."),
+  maximum_results_per_requirement: external_exports.number().int().min(1).max(10).default(4).describe("Maximum reviewed matches returned for each requirement.")
 });
 var getProfileInputSchema = external_exports.object({
-  capability_id_or_name: external_exports.string().min(1)
+  capability_id_or_name: capabilityIdentifierSchema.describe("Exact or recognizable reviewed capability ID or name.")
 });
 var getAppleTechnologyInputSchema = external_exports.object({
-  technology_id_or_name: external_exports.string().trim().min(1).max(200)
+  technology_id_or_name: external_exports.string().trim().min(1).max(200).describe("Exact Apple technology catalog ID or name, such as HealthKit or technology.arkit.")
 });
 var technologyCatalogEntrySchema = external_exports.object({
   id: external_exports.string().min(1),
@@ -23375,7 +23385,7 @@ var getAppleTechnologyResultSchema = external_exports.discriminatedUnion("kind",
   })
 ]);
 var compareOptionsInputSchema = external_exports.object({
-  capability_ids: external_exports.array(external_exports.string()).min(2).max(6),
+  capability_ids: external_exports.array(capabilityIdentifierSchema).min(2).max(6).describe("Two through six reviewed capability IDs to compare."),
   criteria: external_exports.array(
     external_exports.enum([
       "complexity",
@@ -23390,48 +23400,48 @@ var compareOptionsInputSchema = external_exports.object({
       "maintenance",
       "testability"
     ])
-  ).default(["complexity", "minimum_os", "on_device", "privacy", "app_review", "testability"])
+  ).default(["complexity", "minimum_os", "on_device", "privacy", "app_review", "testability"]).describe("Decision criteria to emphasize in the comparison.")
 });
 var checkAvailabilityInputSchema = external_exports.object({
-  capability_ids: external_exports.array(external_exports.string()).min(1).max(30),
-  platform: external_exports.string().default("iOS"),
-  os_version: external_exports.string().optional(),
-  device: external_exports.string().optional(),
-  region: external_exports.string().optional(),
-  language: external_exports.string().optional(),
-  allow_beta: external_exports.boolean().default(false)
+  capability_ids: external_exports.array(capabilityIdentifierSchema).min(1).max(30).describe("Reviewed capability IDs to check."),
+  platform: external_exports.enum(["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS", "Mac Catalyst"]).default("iOS").describe("Apple platform whose compatibility should be evaluated."),
+  os_version: osVersionSchema.optional().describe("Target OS version such as 18 or 18.1."),
+  device: availabilityContextSchema.optional().describe("Declared device family or model; free-text registry constraints still require a runtime check."),
+  region: availabilityContextSchema.optional().describe("Declared deployment region; free-text regional constraints still require current verification."),
+  language: availabilityContextSchema.optional().describe("Declared user or feature language; free-text language constraints still require current verification."),
+  allow_beta: external_exports.boolean().default(false).describe("Treat prerelease profiles as conditional candidates.")
 });
 var auditInputSchema = external_exports.object({
-  capability_ids: external_exports.array(external_exports.string()).min(1).max(30)
+  capability_ids: external_exports.array(capabilityIdentifierSchema).min(1).max(30).describe("Reviewed capability IDs included in the audit.")
 });
 var projectConfigurationAuditInputSchema = external_exports.object({
-  project_root: external_exports.string().trim().min(1).max(4096),
-  capability_ids: external_exports.array(external_exports.string()).min(1).max(30),
-  platform: external_exports.enum(["iOS", "iPadOS", "watchOS", "tvOS", "visionOS", "macOS"]).default("iOS")
+  project_root: external_exports.string().trim().min(1).max(4096).describe("Local project directory explicitly placed in scope for a bounded read-only scan."),
+  capability_ids: external_exports.array(capabilityIdentifierSchema).min(1).max(30).describe("Reviewed capability IDs whose configuration requirements should be checked."),
+  platform: external_exports.enum(["iOS", "iPadOS", "watchOS", "tvOS", "visionOS", "macOS", "Mac Catalyst"]).default("iOS").describe("Target platform used to evaluate the reviewed availability requirements.")
 });
 var architectureInputSchema = external_exports.object({
-  idea: external_exports.string().min(10),
-  capability_ids: external_exports.array(external_exports.string()).min(1).max(30),
-  project_scale: external_exports.enum(["prototype", "small", "medium", "large"]).default("small")
+  idea: external_exports.string().trim().min(10).max(1e4).describe("Apple-platform app or feature being architected."),
+  capability_ids: external_exports.array(capabilityIdentifierSchema).min(1).max(30).describe("Selected reviewed capability IDs."),
+  project_scale: external_exports.enum(["prototype", "small", "medium", "large"]).default("small").describe("Expected product scale used to keep the architecture proportionate.")
 });
 var implementationPlanInputSchema = external_exports.object({
-  capability_ids: external_exports.array(external_exports.string()).min(1).max(30),
-  include_code_spike: external_exports.boolean().default(true)
+  capability_ids: external_exports.array(capabilityIdentifierSchema).min(1).max(30).describe("Selected reviewed capability IDs."),
+  include_code_spike: external_exports.boolean().default(true).describe("Include a small feasibility implementation before the MVP phases.")
 });
 var officialDocsSearchInputSchema = external_exports.object({
-  query: external_exports.string().min(2).max(200),
-  capability_ids: external_exports.array(external_exports.string()).max(20).default([]),
-  maximum_results: external_exports.number().int().min(1).max(20).default(10)
+  query: external_exports.string().trim().min(2).max(200).describe("Terms to match against the verified local Apple source index."),
+  capability_ids: external_exports.array(capabilityIdentifierSchema).max(20).default([]).describe("Optional reviewed capability IDs that bound the source search."),
+  maximum_results: external_exports.number().int().min(1).max(20).default(10).describe("Maximum source references to return.")
 });
 var technologyCatalogSearchInputSchema = external_exports.object({
-  query: external_exports.string().trim().min(2).max(200),
-  coverage_status: external_exports.enum(["all", "catalogued", "profiled"]).default("all"),
-  maximum_results: external_exports.number().int().min(1).max(50).default(20)
+  query: external_exports.string().trim().min(2).max(200).describe("Apple technology name or discovery terms."),
+  coverage_status: external_exports.enum(["all", "catalogued", "profiled"]).default("all").describe("Return every catalog entry, catalog-only entries, or reviewed-profile entries."),
+  maximum_results: external_exports.number().int().min(1).max(50).default(20).describe("Maximum catalog entries to return.")
 });
 var registryCoverageInputSchema = external_exports.object({});
 var refreshRegistryInputSchema = external_exports.object({
-  dry_run: external_exports.boolean().default(true),
-  source_urls: external_exports.array(external_exports.url()).max(50).default([])
+  dry_run: external_exports.boolean().default(true).describe("Keep true for a refresh plan; false only confirms that runtime mutation is refused."),
+  source_urls: external_exports.array(officialAppleDeveloperUrlSchema).max(50).default([]).describe("Optional developer.apple.com source URLs to include in the non-mutating refresh plan.")
 });
 
 // src/registry.ts
@@ -23471,7 +23481,7 @@ function classifyKnowledge(value) {
   if (typeof value === "object" && value !== null && Object.keys(value).length === 0) return "verified_none";
   return "verified_value";
 }
-function buildKnowledgeState(raw) {
+function deriveKnowledgeState(raw) {
   const fields = Object.fromEntries(
     knowledgeTrackedFields.map((field) => [field, hasOwn(raw, field) ? classifyKnowledge(raw[field]) : "unknown"])
   );
@@ -23503,7 +23513,7 @@ function normalizeRecord(raw) {
     network_requirement: "Depends on the selected API and feature configuration.",
     cloud_dependency: null,
     ...raw,
-    knowledge_state: buildKnowledgeState(raw)
+    knowledge_state: deriveKnowledgeState(raw)
   };
 }
 var cachedRecords;
@@ -23525,9 +23535,12 @@ async function findRecord(idOrName) {
   const query = idOrName.trim().toLocaleLowerCase("en-US");
   if (!query) return void 0;
   const records = await loadRegistry();
-  return records.find(
+  const exact = records.find(
     (record2) => record2.id === query || record2.name.toLocaleLowerCase("en-US") === query || record2.aliases.some((alias) => alias.toLocaleLowerCase("en-US") === query)
-  ) ?? records.find((record2) => searchableText(record2).includes(query));
+  );
+  if (exact) return exact;
+  const partial2 = records.filter((record2) => searchableText(record2).includes(query));
+  return partial2.length === 1 ? partial2[0] : void 0;
 }
 async function searchRecords(query, limit = 10) {
   const tokens = query.toLocaleLowerCase("en-US").split(/[^\p{L}\p{N}]+/u).filter((token) => token.length > 2);
@@ -23622,13 +23635,40 @@ async function searchTechnologyCatalog(query, limit = 20) {
 }
 
 // src/project-audit.ts
-import { lstat, readdir, readFile, realpath } from "node:fs/promises";
+import { lstat, open as open2, readdir, realpath } from "node:fs/promises";
+import { constants } from "node:fs";
 import { basename, extname, join, relative, resolve, sep } from "node:path";
-var MAX_FILES = 500;
-var MAX_DIRECTORIES = 1e3;
-var MAX_ENTRIES = 1e4;
-var MAX_FILE_BYTES = 1e6;
-var MAX_TOTAL_BYTES = 5e6;
+
+// src/version.ts
+function parsePlatformVersion(value) {
+  if (!value) return void 0;
+  const match = /\d+(?:\.\d+){0,2}/.exec(value.trim());
+  if (!match) return void 0;
+  return match[0].split(".").map(Number);
+}
+function comparePlatformVersions(left, right) {
+  const componentCount = Math.max(left.length, right.length);
+  for (let index = 0; index < componentCount; index += 1) {
+    const difference = (left[index] ?? 0) - (right[index] ?? 0);
+    if (difference !== 0) return difference;
+  }
+  return 0;
+}
+
+// src/project-audit.ts
+var defaultLimits = {
+  maximumFiles: 500,
+  maximumDirectories: 1e3,
+  maximumEntries: 1e4,
+  maximumFileBytes: 1e6,
+  maximumTotalBytes: 5e6
+};
+var defaultFileSystem = {
+  realpath: async (path) => realpath(path),
+  lstat: async (path) => lstat(path),
+  readdir: async (path, options) => readdir(path, options),
+  open: async (path, flags) => open2(path, flags)
+};
 var ignoredDirectories = /* @__PURE__ */ new Set([
   ".build",
   ".derived-data",
@@ -23652,10 +23692,32 @@ function isConfigurationFile(name) {
 function normalizePath(path) {
   return path.split(sep).join("/");
 }
-async function collectConfigurationFiles(projectRoot) {
+async function readBoundedText(handle, maximumBytes) {
+  const buffer = Buffer.allocUnsafe(maximumBytes + 1);
+  let offset = 0;
+  while (offset < buffer.length) {
+    const { bytesRead } = await handle.read(buffer, offset, buffer.length - offset, offset);
+    if (bytesRead === 0) break;
+    offset += bytesRead;
+  }
+  return offset > maximumBytes ? void 0 : { content: buffer.subarray(0, offset).toString("utf8"), bytesRead: offset };
+}
+async function collectConfigurationFiles(projectRoot, dependencies) {
+  const limits = { ...defaultLimits, ...dependencies.limits };
+  const fileSystem = { ...defaultFileSystem, ...dependencies.fileSystem };
   const absoluteRoot = resolve(projectRoot);
-  const root = await realpath(absoluteRoot);
-  const rootStat = await lstat(root);
+  let root;
+  try {
+    root = await fileSystem.realpath(absoluteRoot);
+  } catch {
+    throw new Error("project_root must be an existing readable directory");
+  }
+  let rootStat;
+  try {
+    rootStat = await fileSystem.lstat(root);
+  } catch {
+    throw new Error("project_root must be an existing readable directory");
+  }
   if (!rootStat.isDirectory()) throw new Error("project_root must be a directory");
   const files = [];
   const skipped = [];
@@ -23663,53 +23725,80 @@ async function collectConfigurationFiles(projectRoot) {
   let directoryCount = 0;
   let entryCount = 0;
   async function walk(directory) {
-    if (files.length >= MAX_FILES || totalBytes >= MAX_TOTAL_BYTES || directoryCount >= MAX_DIRECTORIES || entryCount >= MAX_ENTRIES)
-      return;
     directoryCount += 1;
     let entries;
     try {
-      entries = await readdir(directory, { withFileTypes: true });
+      entries = await fileSystem.readdir(directory, { withFileTypes: true });
     } catch {
       skipped.push(`${normalizePath(relative(root, directory)) || "."} (unreadable directory)`);
       return;
     }
     entries.sort((left, right) => left.name.localeCompare(right.name));
     for (const entry of entries) {
-      entryCount += 1;
-      if (files.length >= MAX_FILES || totalBytes >= MAX_TOTAL_BYTES || directoryCount >= MAX_DIRECTORIES || entryCount >= MAX_ENTRIES)
+      if (files.length >= limits.maximumFiles || totalBytes >= limits.maximumTotalBytes || entryCount >= limits.maximumEntries)
         break;
+      entryCount += 1;
       if (entry.isSymbolicLink()) {
         skipped.push(`${normalizePath(relative(root, join(directory, entry.name)))} (symlink)`);
         continue;
       }
       if (entry.isDirectory()) {
-        if (!ignoredDirectories.has(entry.name)) await walk(join(directory, entry.name));
+        if (!ignoredDirectories.has(entry.name) && directoryCount < limits.maximumDirectories)
+          await walk(join(directory, entry.name));
         continue;
       }
       if (!entry.isFile() || !isConfigurationFile(entry.name)) continue;
       const absolutePath = join(directory, entry.name);
-      const canonicalPath = await realpath(absolutePath);
+      let canonicalPath;
+      try {
+        canonicalPath = await fileSystem.realpath(absolutePath);
+      } catch {
+        skipped.push(`${normalizePath(relative(root, absolutePath))} (unreadable file)`);
+        continue;
+      }
       if (canonicalPath !== root && !canonicalPath.startsWith(`${root}${sep}`)) {
         skipped.push(`${normalizePath(relative(root, absolutePath))} (outside root)`);
         continue;
       }
-      const stat = await lstat(canonicalPath);
-      if (stat.size > MAX_FILE_BYTES || totalBytes + stat.size > MAX_TOTAL_BYTES) {
-        skipped.push(`${normalizePath(relative(root, canonicalPath))} (size limit)`);
+      const relativePath = normalizePath(relative(root, canonicalPath));
+      let handle;
+      try {
+        handle = await fileSystem.open(absolutePath, constants.O_RDONLY | constants.O_NOFOLLOW);
+      } catch {
+        skipped.push(`${relativePath} (unreadable file or symlink race)`);
         continue;
       }
-      files.push({
-        path: normalizePath(relative(root, canonicalPath)),
-        content: await readFile(canonicalPath, "utf8")
-      });
-      totalBytes += stat.size;
+      try {
+        const stat = await handle.stat();
+        if (!stat.isFile()) {
+          skipped.push(`${relativePath} (not a regular file)`);
+          continue;
+        }
+        const maximumBytes = Math.min(limits.maximumFileBytes, limits.maximumTotalBytes - totalBytes);
+        if (stat.size > maximumBytes) {
+          skipped.push(`${relativePath} (size limit)`);
+          continue;
+        }
+        const boundedText = await readBoundedText(handle, maximumBytes);
+        if (boundedText === void 0) {
+          skipped.push(`${relativePath} (size limit)`);
+          continue;
+        }
+        files.push({ path: relativePath, content: boundedText.content });
+        totalBytes += boundedText.bytesRead;
+      } catch {
+        skipped.push(`${relativePath} (unreadable file)`);
+      } finally {
+        await handle.close();
+      }
     }
   }
   await walk(root);
-  if (files.length >= MAX_FILES) skipped.push(`file limit reached (${MAX_FILES})`);
-  if (directoryCount >= MAX_DIRECTORIES) skipped.push(`directory limit reached (${MAX_DIRECTORIES})`);
-  if (entryCount >= MAX_ENTRIES) skipped.push(`entry limit reached (${MAX_ENTRIES})`);
-  if (totalBytes >= MAX_TOTAL_BYTES) skipped.push(`total byte limit reached (${MAX_TOTAL_BYTES})`);
+  if (files.length >= limits.maximumFiles) skipped.push(`file limit reached (${limits.maximumFiles})`);
+  if (directoryCount >= limits.maximumDirectories)
+    skipped.push(`directory limit reached (${limits.maximumDirectories})`);
+  if (entryCount >= limits.maximumEntries) skipped.push(`entry limit reached (${limits.maximumEntries})`);
+  if (totalBytes >= limits.maximumTotalBytes) skipped.push(`total byte limit reached (${limits.maximumTotalBytes})`);
   return { root, files, skipped };
 }
 function evidenceFor(files, needles) {
@@ -23746,25 +23835,32 @@ function parseConfigurationRequirement(value) {
     conditional
   };
 }
-function parseVersion(value) {
-  const match = /^(\d+)(?:\.(\d+))?/.exec(value.trim());
-  return match ? [Number(match[1]), Number(match[2] ?? 0)] : void 0;
-}
-function compareVersions(left, right) {
-  return left[0] === right[0] ? left[1] - right[1] : left[0] - right[0];
-}
-function deploymentTargets(files) {
+var deploymentTargetConfiguration = {
+  iOS: { buildSetting: "IPHONEOS_DEPLOYMENT_TARGET", xcodegenPlatform: "iOS" },
+  iPadOS: { buildSetting: "IPHONEOS_DEPLOYMENT_TARGET", xcodegenPlatform: "iOS" },
+  "Mac Catalyst": { buildSetting: "IPHONEOS_DEPLOYMENT_TARGET", xcodegenPlatform: "iOS" },
+  watchOS: { buildSetting: "WATCHOS_DEPLOYMENT_TARGET", xcodegenPlatform: "watchOS" },
+  tvOS: { buildSetting: "TVOS_DEPLOYMENT_TARGET", xcodegenPlatform: "tvOS" },
+  visionOS: { buildSetting: "XROS_DEPLOYMENT_TARGET", xcodegenPlatform: "visionOS" },
+  macOS: { buildSetting: "MACOSX_DEPLOYMENT_TARGET", xcodegenPlatform: "macOS" }
+};
+function deploymentTargets(files, platform) {
   const results = [];
+  const configuration = deploymentTargetConfiguration[platform];
+  if (!configuration) return results;
   const patterns = [
-    /IPHONEOS_DEPLOYMENT_TARGET\s*=\s*["']?(\d+(?:\.\d+)?)/g,
-    /deploymentTarget\s*:\s*\{[^}]*iOS\s*:\s*["']?(\d+(?:\.\d+)?)/gs,
-    /^\s*iOS\s*:\s*["']?(\d+(?:\.\d+)?)["']?\s*$/gm
+    new RegExp(`${configuration.buildSetting}\\s*=\\s*["']?(\\d+(?:\\.\\d+){0,2})`, "g"),
+    new RegExp(
+      `deploymentTarget\\s*:\\s*\\{[^}]*${configuration.xcodegenPlatform}\\s*:\\s*["']?(\\d+(?:\\.\\d+){0,2})`,
+      "gs"
+    ),
+    new RegExp(`^\\s*${configuration.xcodegenPlatform}\\s*:\\s*["']?(\\d+(?:\\.\\d+){0,2})["']?\\s*$`, "gm")
   ];
   for (const file2 of files) {
     if (!/[.]pbxproj$|project[.]ya?ml$|[.]xcconfig$/.test(file2.path)) continue;
     for (const pattern of patterns) {
       for (const match of file2.content.matchAll(pattern)) {
-        if (match[1]) results.push({ version: match[1], path: file2.path });
+        results.push({ version: match[1], path: file2.path });
       }
     }
   }
@@ -23795,9 +23891,10 @@ function addConfigurationFindings(findings, files, record2, category, values, kn
     );
   }
 }
-async function auditProjectConfiguration(input2) {
-  const scanned = await collectConfigurationFiles(input2.project_root);
-  const records = await Promise.all(input2.capability_ids.map((id) => findRecord(id)));
+async function auditProjectConfiguration(input2, dependencies = {}) {
+  const scanned = await collectConfigurationFiles(input2.project_root, dependencies);
+  const recordLookup = dependencies.findRecord ?? findRecord;
+  const records = await Promise.all(input2.capability_ids.map((id) => recordLookup(id)));
   const unknown2 = input2.capability_ids.filter((_, index) => !records[index]);
   if (unknown2.length > 0) throw new Error(`Unknown capabilities: ${unknown2.join(", ")}`);
   const findings = [];
@@ -23824,8 +23921,9 @@ async function auditProjectConfiguration(input2) {
         })
       );
     }
+    const unsupportedPlatform = record2.knowledge_state.fields.platforms !== "unknown" && !record2.platforms.includes(input2.platform);
     const unavailableOnPlatform = record2.knowledge_state.fields.minimum_os_version !== "unknown" && record2.minimum_os_version[input2.platform] === null;
-    if (unavailableOnPlatform) continue;
+    if (unsupportedPlatform || unavailableOnPlatform) continue;
     addConfigurationFindings(findings, scanned.files, record2, "entitlement", record2.entitlements, "entitlements");
     addConfigurationFindings(
       findings,
@@ -23877,8 +23975,21 @@ async function auditProjectConfiguration(input2) {
       );
     }
   }
-  const targets = deploymentTargets(scanned.files);
+  const targets = deploymentTargets(scanned.files, input2.platform);
   for (const record2 of records.filter((value) => Boolean(value))) {
+    if (record2.knowledge_state.fields.platforms !== "unknown" && !record2.platforms.includes(input2.platform)) {
+      findings.push(
+        finding({
+          capability_id: record2.id,
+          category: "deployment_target",
+          requirement: `${record2.name} is not listed as supported on ${input2.platform}`,
+          status: "incompatible",
+          severity: "error",
+          recommendation: `Remove ${record2.name} from the ${input2.platform} target or choose a reviewed alternative that supports this platform.`
+        })
+      );
+      continue;
+    }
     if (record2.knowledge_state.fields.minimum_os_version === "unknown") continue;
     const minimum = record2.minimum_os_version[input2.platform];
     if (minimum === void 0) continue;
@@ -23895,7 +24006,7 @@ async function auditProjectConfiguration(input2) {
       );
       continue;
     }
-    const minimumVersion = parseVersion(minimum);
+    const minimumVersion = parsePlatformVersion(minimum);
     if (!minimumVersion) continue;
     if (targets.length === 0) {
       findings.push(
@@ -23911,8 +24022,8 @@ async function auditProjectConfiguration(input2) {
       continue;
     }
     const incompatible = targets.filter(({ version: version2 }) => {
-      const parsed = parseVersion(version2);
-      return parsed ? compareVersions(parsed, minimumVersion) < 0 : false;
+      const parsed = parsePlatformVersion(version2);
+      return comparePlatformVersions(parsed, minimumVersion) < 0;
     });
     findings.push(
       finding({
@@ -23934,7 +24045,7 @@ async function auditProjectConfiguration(input2) {
     { detected: 0, not_detected: 0, incompatible: 0, manual_review: 0, unknown: 0 }
   );
   return {
-    project_root: scanned.root,
+    project_root: ".",
     scanned_files: scanned.files.map(({ path }) => path),
     skipped_entries: scanned.skipped,
     selected_capabilities: input2.capability_ids,
@@ -24127,7 +24238,6 @@ function normalizedPhrase(value) {
 function containsWholePhrase(haystack, needle) {
   const haystackTokens = phraseTokens(haystack);
   const needleTokens = phraseTokens(needle);
-  if (needleTokens.length === 0) return false;
   return haystackTokens.some(
     (_, index) => needleTokens.every((token, offset) => haystackTokens[index + offset] === token)
   );
@@ -24229,9 +24339,7 @@ async function getAppleTechnology(idOrName) {
   const catalogEntry = await findTechnologyCatalogEntry(idOrName);
   if (!catalogEntry) throw new Error(`Unknown Apple technology: ${idOrName}`);
   if (catalogEntry.coverage_status === "profiled") {
-    const profileId = catalogEntry.profile_ids[0];
-    const profile = (await loadRegistry()).find((record2) => record2.id === profileId);
-    if (!profile) throw new Error(`Catalog profile invariant failed for Apple technology: ${idOrName}`);
+    const profile = (await getCapabilityProfile(catalogEntry.profile_ids[0])).data;
     return envelope({ kind: "reviewed_profile", catalog_entry: catalogEntry, profile });
   }
   return envelope(
@@ -24248,17 +24356,12 @@ async function getAppleTechnology(idOrName) {
     ]
   );
 }
-function parseMajor(version2) {
-  if (!version2) return void 0;
-  const match = /\d+/.exec(version2);
-  return match ? Number(match[0]) : void 0;
-}
 async function checkAvailability(input2) {
   const records = await resolveIds(input2.capability_ids);
-  const requestedMajor = parseMajor(input2.os_version);
+  const requestedVersion = parsePlatformVersion(input2.os_version);
   const results = records.map((record2) => {
     const minimum = record2.minimum_os_version[input2.platform];
-    const minimumMajor = parseMajor(minimum ?? void 0);
+    const minimumVersion = parsePlatformVersion(minimum ?? void 0);
     const incompatibleReasons = [];
     const conditionalReasons = [];
     if (!record2.platforms.includes(input2.platform))
@@ -24276,18 +24379,32 @@ async function checkAvailability(input2) {
       incompatibleReasons.push("This record is deprecated and is excluded from new implementation recommendations.");
     if (record2.stable_or_beta === "unknown")
       conditionalReasons.push("The current lifecycle status is not verified in this record.");
-    if (requestedMajor !== void 0 && minimumMajor !== void 0 && requestedMajor < minimumMajor)
+    if (requestedVersion !== void 0 && minimumVersion !== void 0 && comparePlatformVersions(requestedVersion, minimumVersion) < 0)
       incompatibleReasons.push(`Requires ${input2.platform} ${minimum} or later.`);
-    if (record2.hardware_requirements.length > 0 && !input2.device)
-      conditionalReasons.push("Runtime hardware eligibility must be checked.");
-    if (record2.region_restrictions.length > 0 && !input2.region)
-      conditionalReasons.push("Runtime region availability must be checked.");
-    if (record2.language_restrictions.length > 0 && !input2.language)
-      conditionalReasons.push("Runtime language availability must be checked.");
+    if (record2.supported_devices.length > 0 || record2.hardware_requirements.length > 0)
+      conditionalReasons.push(
+        input2.device ? `The declared device (${input2.device}) requires runtime comparison with the listed device and hardware constraints.` : "No device was provided; runtime device and hardware eligibility must be checked."
+      );
+    if (record2.region_restrictions.length > 0)
+      conditionalReasons.push(
+        input2.region ? `The declared region (${input2.region}) requires current comparison with the listed regional constraints.` : "No region was provided; current regional availability must be checked."
+      );
+    if (record2.language_restrictions.length > 0)
+      conditionalReasons.push(
+        input2.language ? `The declared language (${input2.language}) requires current comparison with the listed language constraints.` : "No language was provided; current language availability must be checked."
+      );
     const determination = incompatibleReasons.length > 0 ? "incompatible" : conditionalReasons.length > 0 ? "conditional" : "verified_compatible";
     const reasons = [...incompatibleReasons, ...conditionalReasons];
     return {
       capability_id: record2.id,
+      declared_constraints: {
+        platform: input2.platform,
+        os_version: input2.os_version ?? null,
+        device: input2.device ?? null,
+        region: input2.region ?? null,
+        language: input2.language ?? null,
+        allow_beta: input2.allow_beta
+      },
       status: determination === "verified_compatible" ? "compatible_on_declared_constraints" : "conditional_or_incompatible",
       determination,
       minimum_os_version: minimum === null ? "unavailable" : minimum ?? "not specified",
@@ -24370,7 +24487,7 @@ async function generateArchitecture(idea, capabilityIds, projectScale) {
   const components = [
     {
       layer: "Presentation",
-      recommendation: "SwiftUI feature views and explicit permission-state UI; use UIKit adapters only for APIs without suitable SwiftUI surfaces."
+      recommendation: "SwiftUI feature views and explicit permission-state UI; use UIKit or AppKit adapters only for APIs without suitable SwiftUI surfaces."
     },
     { layer: "Domain", recommendation: "Small use-case types and value models that do not import Apple frameworks." },
     {
@@ -24413,7 +24530,7 @@ async function generateArchitecture(idea, capabilityIds, projectScale) {
     pattern: projectScale === "prototype" ? "Feature-local MV pattern with protocols at Apple framework boundaries" : "Feature modules with presentation, domain, and adapter boundaries",
     components,
     data_flow: "SwiftUI -> use case -> service protocol -> Apple framework adapter -> local store; events return through AsyncSequence or typed callbacks.",
-    mermaid: "flowchart LR\n  UI[SwiftUI] --> UC[Use Cases]\n  UC --> SP[Service Protocols]\n  SP --> AF[Apple Framework Adapters]\n  AF --> OS[(iOS services)]\n  SP --> DB[(Local persistence)]\n  SP -. only if required .-> API[Backend]"
+    mermaid: "flowchart LR\n  UI[SwiftUI] --> UC[Use Cases]\n  UC --> SP[Service Protocols]\n  SP --> AF[Apple Framework Adapters]\n  AF --> OS[(Apple platform services)]\n  SP --> DB[(Local persistence)]\n  SP -. only if required .-> API[Backend]"
   });
 }
 async function generateImplementationPlan(capabilityIds, includeCodeSpike) {
@@ -24466,13 +24583,13 @@ async function generateImplementationPlan(capabilityIds, includeCodeSpike) {
 }
 async function searchOfficialAppleDocs(query, capabilityIds, maximumResults) {
   const records = capabilityIds.length > 0 ? await resolveIds(capabilityIds) : await searchRecords(query, maximumResults);
-  const queryTokens = query.toLocaleLowerCase("en-US").split(/\W+/).filter(Boolean);
+  const queryTokens = query.toLocaleLowerCase("en-US").split(/[^\p{L}\p{N}]+/u).filter(Boolean);
   const references = deduplicateDocumentation(records).map((reference) => ({
     reference,
     score: queryTokens.filter(
       (token) => `${reference.title} ${reference.url}`.toLocaleLowerCase("en-US").includes(token)
     ).length
-  })).sort((left, right) => right.score - left.score).slice(0, maximumResults).map(({ reference }) => ({
+  })).filter(({ score }) => score > 0).sort((left, right) => right.score - left.score).slice(0, maximumResults).map(({ reference }) => ({
     title: reference.title,
     url: reference.url,
     source_type: reference.source_type,
@@ -24532,12 +24649,17 @@ Commands:
 Common options:
   --idea <text>              App idea for analyze, resolve, or architecture.
   --capability <id>          Capability ID; repeat or comma-separate values.
-  --platform <name>          Apple platform (default: iOS).
+  --platform <name>          Apple platform; analyze also accepts multi-platform (default: iOS).
   --minimum-os <version>     Deployment target for analyze or availability.
+  --ui <framework>           SwiftUI, UIKit, AppKit, or unspecified (default: SwiftUI).
+  --on-device <priority>     required, preferred, or neutral (default: preferred).
+  --privacy <level>          standard, sensitive, or regulated (default: standard).
   --include-beta             Include beta records during resolution.
   --root <path>              Project root for audit-project.
   --query <text>             Search query.
   --limit <number>           Maximum results (default: 10).
+  --scale <size>             prototype, small, medium, or large (default: small).
+  --no-code-spike            Omit the feasibility spike from implementation plans.
   --help                     Show this help.
 
 Every successful command writes one JSON value to stdout. Errors go to stderr.
@@ -24547,7 +24669,7 @@ var defaultStreams = {
   stderr: (value) => process.stderr.write(value)
 };
 function strings(value) {
-  const values = Array.isArray(value) ? value : value ? [value] : [];
+  const values = value ?? [];
   return [
     ...new Set(
       values.flatMap((item) => item.split(",")).map((item) => item.trim()).filter(Boolean)
@@ -24588,8 +24710,9 @@ async function runCli(args, streams = defaultStreams) {
         device: { type: "string" },
         region: { type: "string" },
         language: { type: "string" },
-        scale: { type: "string", default: "production" },
+        scale: { type: "string", default: "small" },
         "code-spike": { type: "boolean", default: false },
+        "no-code-spike": { type: "boolean", default: false },
         coverage: { type: "string", default: "all" }
       }
     });
@@ -24606,90 +24729,117 @@ async function runCli(args, streams = defaultStreams) {
     };
     const idea = values.idea?.trim();
     const limit = positiveInteger(values.limit, 10);
+    if (values["code-spike"] && values["no-code-spike"]) {
+      throw new Error("Use either --code-spike or --no-code-spike, not both");
+    }
     let result;
+    const analysisInput = () => analyzeIdeaInputSchema.parse({
+      idea: requireValue(idea, "--idea"),
+      target_platform: values.platform,
+      minimum_os_version: values["minimum-os"],
+      preferred_ui_framework: values.ui,
+      on_device_priority: values["on-device"],
+      privacy_level: values.privacy
+    });
     switch (command) {
       case "analyze":
-        result = analyzeAppIdea({
-          idea: requireValue(idea, "--idea"),
-          target_platform: values.platform,
-          minimum_os_version: values["minimum-os"],
-          preferred_ui_framework: values.ui,
-          on_device_priority: values["on-device"],
-          privacy_level: values.privacy
-        });
+        result = analyzeAppIdea(analysisInput());
         break;
       case "resolve": {
-        const analysis = analyzeAppIdea({
-          idea: requireValue(idea, "--idea"),
-          target_platform: values.platform,
-          minimum_os_version: values["minimum-os"],
-          preferred_ui_framework: values.ui,
-          on_device_priority: values["on-device"],
-          privacy_level: values.privacy
+        const analysis = analyzeAppIdea(analysisInput());
+        const resolutionInput = resolveCapabilitiesInputSchema.parse({
+          requirements: analysis.data.requirements,
+          include_beta: values["include-beta"],
+          maximum_results_per_requirement: limit
         });
         result = {
           analysis,
-          resolution: await resolveCapabilities({
-            requirements: analysis.data.requirements,
-            include_beta: values["include-beta"],
-            maximum_results_per_requirement: Math.min(limit, 10)
-          })
+          resolution: await resolveCapabilities(resolutionInput)
         };
         break;
       }
-      case "profile":
-        result = await getCapabilityProfile(positionals[1] ?? requireCapabilities()[0]);
+      case "profile": {
+        const input2 = getProfileInputSchema.parse({
+          capability_id_or_name: positionals[1] ?? requireCapabilities()[0]
+        });
+        result = await getCapabilityProfile(input2.capability_id_or_name);
         break;
-      case "technology":
-        result = await getAppleTechnology(positionals[1] ?? requireValue(values.query, "technology name or --query"));
+      }
+      case "technology": {
+        const input2 = getAppleTechnologyInputSchema.parse({
+          technology_id_or_name: positionals[1] ?? requireValue(values.query, "technology name or --query")
+        });
+        result = await getAppleTechnology(input2.technology_id_or_name);
         break;
+      }
       case "availability":
-        result = await checkAvailability({
-          capability_ids: requireCapabilities(),
-          platform: values.platform,
-          os_version: values["minimum-os"],
-          device: values.device,
-          region: values.region,
-          language: values.language,
-          allow_beta: values["include-beta"]
-        });
+        result = await checkAvailability(
+          checkAvailabilityInputSchema.parse({
+            capability_ids: requireCapabilities(),
+            platform: values.platform,
+            os_version: values["minimum-os"],
+            device: values.device,
+            region: values.region,
+            language: values.language,
+            allow_beta: values["include-beta"]
+          })
+        );
         break;
-      case "audit-requirements":
-        result = await auditPermissionsAndEntitlements(requireCapabilities());
+      case "audit-requirements": {
+        const input2 = auditInputSchema.parse({ capability_ids: requireCapabilities() });
+        result = await auditPermissionsAndEntitlements(input2.capability_ids);
         break;
+      }
       case "audit-project":
-        result = await auditProjectConfiguration2({
-          project_root: resolve2(requireValue(values.root, "--root")),
-          capability_ids: requireCapabilities(),
-          platform: values.platform
-        });
+        result = await auditProjectConfiguration2(
+          projectConfigurationAuditInputSchema.parse({
+            project_root: resolve2(requireValue(values.root, "--root")),
+            capability_ids: requireCapabilities(),
+            platform: values.platform
+          })
+        );
         break;
-      case "audit-privacy":
-        result = await auditPrivacyAndReview(requireCapabilities());
+      case "audit-privacy": {
+        const input2 = auditInputSchema.parse({ capability_ids: requireCapabilities() });
+        result = await auditPrivacyAndReview(input2.capability_ids);
         break;
+      }
       case "architecture":
-        result = await generateArchitecture(requireValue(idea, "--idea"), requireCapabilities(), values.scale);
+        {
+          const input2 = architectureInputSchema.parse({
+            idea: requireValue(idea, "--idea"),
+            capability_ids: requireCapabilities(),
+            project_scale: values.scale
+          });
+          result = await generateArchitecture(input2.idea, input2.capability_ids, input2.project_scale);
+        }
         break;
       case "plan":
-        result = await generateImplementationPlan(requireCapabilities(), values["code-spike"]);
+        {
+          const input2 = implementationPlanInputSchema.parse({
+            capability_ids: requireCapabilities(),
+            include_code_spike: !values["no-code-spike"]
+          });
+          result = await generateImplementationPlan(input2.capability_ids, input2.include_code_spike);
+        }
         break;
       case "search":
-        result = await searchOfficialAppleDocs(
-          requireValue(values.query ?? positionals.slice(1).join(" "), "--query"),
-          capabilityIds,
-          limit
-        );
+        {
+          const input2 = officialDocsSearchInputSchema.parse({
+            query: requireValue(values.query ?? positionals.slice(1).join(" "), "--query"),
+            capability_ids: capabilityIds,
+            maximum_results: limit
+          });
+          result = await searchOfficialAppleDocs(input2.query, input2.capability_ids, input2.maximum_results);
+        }
         break;
       case "catalog": {
-        const coverage = values.coverage;
-        if (coverage !== "all" && coverage !== "catalogued" && coverage !== "profiled") {
-          throw new Error("--coverage must be all, catalogued, or profiled");
-        }
-        result = await searchAppleTechnologyCatalog(
-          requireValue(values.query ?? positionals.slice(1).join(" "), "--query"),
-          coverage,
-          limit
-        );
+        const input2 = technologyCatalogSearchInputSchema.parse({
+          query: requireValue(values.query ?? positionals.slice(1).join(" "), "--query"),
+          coverage_status: values.coverage,
+          maximum_results: limit
+        });
+        result = await searchAppleTechnologyCatalog(input2.query, input2.coverage_status, input2.maximum_results);
         break;
       }
       case "coverage":
@@ -24708,8 +24858,8 @@ async function runCli(args, streams = defaultStreams) {
     return 1;
   }
 }
-var entryPath = process.argv[1] ? realpathSync(resolve2(process.argv[1])) : void 0;
-if (entryPath && realpathSync(fileURLToPath(import.meta.url)) === entryPath) {
+var entryPath = realpathSync(resolve2(process.argv[1]));
+if (realpathSync(fileURLToPath(import.meta.url)) === entryPath) {
   process.exitCode = await runCli(process.argv.slice(2));
 }
 export {

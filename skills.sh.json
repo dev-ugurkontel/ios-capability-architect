@@ -1,0 +1,11 @@
+{
+  "$schema": "https://skills.sh/schemas/skills.sh.schema.json",
+  "notGrouped": "bottom",
+  "groupings": [
+    {
+      "title": "Apple Platforms",
+      "description": "Agent skills for Apple-platform architecture, Xcode configuration, capabilities, entitlements, privacy, and App Store readiness.",
+      "skills": ["ios-capability-architect"]
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "skill": "ios-capability-architect",
+  "cases": [
+    {
+      "id": "direct-name",
+      "kind": "direct",
+      "prompt": "Use iOS Capability Architect to plan my HealthKit app.",
+      "should_invoke": true
+    },
+    {
+      "id": "explicit-skill",
+      "kind": "direct",
+      "prompt": "Use $ios-capability-architect to audit this Xcode project.",
+      "should_invoke": true
+    },
+    {
+      "id": "indirect-entitlements",
+      "kind": "indirect",
+      "prompt": "Which capabilities, plist keys, and entitlements does this iOS feature need?",
+      "should_invoke": true
+    },
+    {
+      "id": "indirect-availability",
+      "kind": "indirect",
+      "prompt": "Can I ship this Live Activities design on iOS 16.0, and what fallback should I use?",
+      "should_invoke": true
+    },
+    {
+      "id": "negative-general-swift",
+      "kind": "negative",
+      "prompt": "Refactor this pure Swift sorting function.",
+      "should_invoke": false
+    },
+    {
+      "id": "negative-android",
+      "kind": "negative",
+      "prompt": "Configure Android manifest permissions for a Kotlin app.",
+      "should_invoke": false
+    },
+    {
+      "id": "negative-visual-design",
+      "kind": "negative",
+      "prompt": "Create a polished App Store screenshot composition.",
+      "should_invoke": false
+    }
+  ]
+}

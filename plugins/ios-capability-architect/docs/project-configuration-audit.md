@@ -6,7 +6,7 @@
 
 - `project_root`: the local directory whose configuration surfaces may be inspected;
 - `capability_ids`: one or more reviewed registry profiles;
-- `platform`: the platform used for minimum-version comparison.
+- `platform`: `iOS`, `iPadOS`, `watchOS`, `tvOS`, `visionOS`, `macOS`, or `Mac Catalyst`, used for minimum-version comparison.
 
 ## Inspected surfaces
 
@@ -18,7 +18,7 @@
 - `PrivacyInfo.xcprivacy`;
 - `Package.swift`.
 
-`.git`, dependency, and generated-build directories are ignored. Symbolic links are not followed. Files larger than 1 MB, more than 500 matching files, more than 1,000 traversed directories, more than 10,000 entries, and more than 5 MB of total source are excluded by bounded scan limits. Unreadable subdirectories are reported as skipped instead of failing the entire audit.
+`.git`, dependency, and generated-build directories are ignored. Symbolic links are not followed, including files changed into links during a scan. Files larger than 1 MB, more than 500 matching files, more than 1,000 traversed directories, more than 10,000 entries, and more than 5 MB of total source are excluded by bounded scan limits. Unreadable files and subdirectories are reported as skipped instead of failing the entire audit.
 
 ## Finding states
 
@@ -28,4 +28,6 @@
 - `manual_review`: source files cannot prove the requirement, such as Apple-managed entitlement approval or disclosure correctness;
 - `unknown`: the registry lacks enough reviewed evidence to conclude whether configuration is required.
 
-The result returns relative file paths and findings, not source contents. It cannot prove App ID state, signing, provisioning profiles, managed-entitlement approval, generated target membership, or runtime availability.
+The result redacts the supplied root as `.` and returns only relative file paths and findings, not source contents or the absolute project path. It cannot prove App ID state, signing, provisioning profiles, managed-entitlement approval, generated target membership, or runtime availability.
+
+Native Xcode deployment targets are read from the platform-appropriate build setting: `IPHONEOS_DEPLOYMENT_TARGET`, `WATCHOS_DEPLOYMENT_TARGET`, `TVOS_DEPLOYMENT_TARGET`, `XROS_DEPLOYMENT_TARGET`, or `MACOSX_DEPLOYMENT_TARGET`. XcodeGen platform keys are mapped to the same declared platform before comparison.

@@ -21,7 +21,7 @@ For a released archive, verify both the checksum and GitHub build provenance bef
 ```bash
 shasum -a 256 -c SHA256SUMS
 gh attestation verify ios-capability-architect-skill-<version>.zip \
-  -R fillbyte/ios-capability-architect
+  -R fillbyte/skills
 ```
 
 ## CLI checks
