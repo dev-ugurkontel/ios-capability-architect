@@ -75,6 +75,7 @@ for (const file of files) {
 
 execFileSync("zip", ["-X", "-q", archivePath, "-@"], {
   cwd: skillRoot,
+  env: { ...process.env, TZ: "UTC" },
   input: `${files.join("\n")}\n`
 });
 
