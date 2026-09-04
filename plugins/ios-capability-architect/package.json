@@ -75,6 +75,7 @@
     "validate:plugin": "tsx scripts/validate-plugin-layout.ts",
     "validate:registry": "tsx scripts/validate-registry.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "verify:reproducibility": "node scripts/verify-skills-reproducibility.mjs",
     "verify:docs": "tsx scripts/verify-doc-links.ts"
   },
   "dependencies": {

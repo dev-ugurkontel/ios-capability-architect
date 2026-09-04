@@ -52,8 +52,9 @@
     "validate:release-metadata": "node scripts/validate-release-metadata.mjs",
     "validate:submission": "node scripts/validate-submission-pack.mjs",
     "validate:registry": "npm run validate:registry --workspaces --if-present",
+    "verify:reproducibility": "npm run verify:reproducibility --workspaces --if-present",
     "verify:docs": "npm run verify:docs --workspaces --if-present",
-    "verify": "npm run check && npm run validate:plugin && npm run test:coverage && npm run build && npm run smoke:mcp && npm run smoke:skills"
+    "verify": "npm run check && npm run validate:plugin && npm run test:coverage && npm run build && npm run verify:reproducibility && npm run smoke:mcp && npm run smoke:skills"
   },
   "packageManager": "npm@11.17.0",
   "engines": {
