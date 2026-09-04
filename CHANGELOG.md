@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented in this file. The project follows [Semantic Versioning](https://semver.org/) and uses Conventional Commit messages to drive release automation.
 
+## [1.0.1](https://github.com/fillbyte/skills/compare/v1.0.0...v1.0.1) (2026-09-04)
+
+
+### Bug Fixes
+
+* **build:** make skills archive timezone independent ([#44](https://github.com/fillbyte/skills/issues/44)) ([122867c](https://github.com/fillbyte/skills/commit/122867c1c6b9c470143b9e9cb6c895fd3e3894ad))
+
 ## [1.0.0](https://github.com/fillbyte/skills/compare/v0.9.0...v1.0.0) (2026-09-04)
 
 
