@@ -92,14 +92,16 @@ assert(
 );
 for (const keyword of [
   "agent-skills",
-  "apple",
-  "apple-platform",
+  "automation",
   "codex",
+  "developer-experience",
   "developer-tools",
-  "ios",
   "mcp",
+  "open-source",
+  "plugins",
+  "software-engineering",
   "skills",
-  "xcode"
+  "testing"
 ]) {
   assert(rootPackage.keywords?.includes(keyword), `package.json must include the ${keyword} discovery keyword`);
 }

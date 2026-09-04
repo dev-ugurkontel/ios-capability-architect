@@ -241,7 +241,6 @@ function normalizedPhrase(value: string): string {
 function containsWholePhrase(haystack: string, needle: string): boolean {
   const haystackTokens = phraseTokens(haystack);
   const needleTokens = phraseTokens(needle);
-  if (needleTokens.length === 0) return false;
   return haystackTokens.some((_, index) =>
     needleTokens.every((token, offset) => haystackTokens[index + offset] === token)
   );
@@ -368,9 +367,7 @@ export async function getAppleTechnology(idOrName: string): Promise<ToolEnvelope
   if (!catalogEntry) throw new Error(`Unknown Apple technology: ${idOrName}`);
 
   if (catalogEntry.coverage_status === "profiled") {
-    const profileId = catalogEntry.profile_ids[0];
-    const profile = (await loadRegistry()).find((record) => record.id === profileId);
-    if (!profile) throw new Error(`Catalog profile invariant failed for Apple technology: ${idOrName}`);
+    const profile = (await getCapabilityProfile(catalogEntry.profile_ids[0]!)).data;
     return envelope({ kind: "reviewed_profile", catalog_entry: catalogEntry, profile });
   }
 

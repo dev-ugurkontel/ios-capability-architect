@@ -6,9 +6,9 @@ Thank you for helping make Fillbyte's agent skills accurate, useful, and trustwo
 
 Every contribution should preserve these properties:
 
-- **Evidence before assertion.** Platform claims must be supported by current, official Apple documentation.
-- **Conservative recommendations.** Unknown, beta, region-limited, managed, or entitlement-gated behavior must be identified explicitly.
-- **Deterministic tooling.** The MCP server is read-only and must not silently mutate the registry, contact unrelated services, or depend on model-generated facts.
+- **Evidence before assertion.** Material domain claims must be supported by current primary sources defined by the owning component.
+- **Conservative recommendations.** Unknown, prerelease, region-limited, account-gated, or externally approved behavior must be identified explicitly.
+- **Deterministic tooling.** Components must not silently mutate data, contact unrelated services, or convert model-generated facts into trusted state.
 - **Privacy by default.** Collect, expose, and retain no more information than the requested analysis requires.
 - **Focused changes.** Keep pull requests reviewable and avoid unrelated formatting or refactoring.
 - **One source of truth.** A skill lives inside its owning plugin; generated bundles and archives are rebuilt from reviewed source.
@@ -25,7 +25,7 @@ Requirements:
 
 - Node.js 24.x
 - npm 11.x
-- Network access only when running the explicit Apple documentation link check
+- Network access only for explicit, component-owned source-verification commands
 
 Install and run the local quality gates:
 
@@ -35,9 +35,9 @@ npm run verify
 npm run verify:docs
 ```
 
-`npm run verify` runs formatting, lint, type, registry, plugin-layout, coverage, build, and MCP smoke checks. The final documentation command accesses only the allowlisted Apple Developer documentation host. It verifies reachability, not the meaning of a source; factual changes still require human review.
+`npm run verify` runs formatting, lint, type, component validation, 100% runtime coverage, builds, and shipped-interface smoke checks. `npm run verify:docs` runs component-owned link checks against their allowlisted primary-source hosts. Reachability does not prove the meaning of a source; factual changes still require human review.
 
-Verification also builds the public skills-only archive, rejects unsafe archive paths and symlinks, and runs the packaged CLI from the generated distribution. Submission-facing changes must update and validate `docs/openai-submission` without weakening the local-first privacy boundary.
+Verification also builds each public distribution, rejects unsafe archive paths and symlinks, and exercises packaged interfaces. Changes to the current iOS Capability Architect directory submission must update and validate `docs/openai-submission` without weakening that component's local-first privacy boundary.
 
 ## Adding a skill or plugin
 
@@ -98,7 +98,7 @@ A pull request should:
 
 - explain the problem and why the chosen solution is appropriate;
 - list user-visible and schema changes;
-- identify official evidence for platform claims;
+- identify authoritative evidence for material technical claims;
 - include tests and the exact commands run;
 - note compatibility, privacy, security, and App Review implications;
 - update documentation and the committed runtime bundle when applicable;

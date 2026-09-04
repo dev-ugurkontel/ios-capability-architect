@@ -10,7 +10,7 @@ body:
       options:
         - label: I searched existing issues, pull requests, and the roadmap.
           required: true
-        - label: This proposal does not rely on private APIs, review bypasses, or unverified entitlement access.
+        - label: This proposal does not rely on private interfaces, policy bypasses, or unverified privileged access.
           required: true
   - type: textarea
     id: problem
@@ -42,5 +42,5 @@ body:
   - type: textarea
     id: sources
     attributes:
-      label: Official sources
-      description: Link official Apple or OpenAI documentation that supports relevant platform claims.
+      label: Authoritative sources
+      description: Link the narrowest authoritative documentation supporting relevant platform, framework, protocol, or service claims.

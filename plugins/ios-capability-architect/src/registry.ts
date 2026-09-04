@@ -68,7 +68,7 @@ const emptyArrays = {
   release_notes: []
 } satisfies Partial<CapabilityRecord>;
 
-function hasOwn(record: RawRecord, field: keyof CapabilityRecord): boolean {
+function hasOwn(record: Partial<CapabilityRecord>, field: keyof CapabilityRecord): boolean {
   return Object.prototype.hasOwnProperty.call(record, field);
 }
 
@@ -79,7 +79,7 @@ function classifyKnowledge(value: unknown): KnowledgeState {
   return "verified_value";
 }
 
-function buildKnowledgeState(raw: RawRecord): CapabilityKnowledgeState {
+export function deriveKnowledgeState(raw: Partial<CapabilityRecord>): CapabilityKnowledgeState {
   const fields = Object.fromEntries(
     knowledgeTrackedFields.map((field) => [field, hasOwn(raw, field) ? classifyKnowledge(raw[field]) : "unknown"])
   ) as CapabilityKnowledgeState["fields"];
@@ -113,7 +113,7 @@ function normalizeRecord(raw: RawRecord): CapabilityRecord {
     network_requirement: "Depends on the selected API and feature configuration.",
     cloud_dependency: null,
     ...raw,
-    knowledge_state: buildKnowledgeState(raw)
+    knowledge_state: deriveKnowledgeState(raw)
   } satisfies CapabilityRecord;
 }
 

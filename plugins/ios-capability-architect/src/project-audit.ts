@@ -1,15 +1,51 @@
-import { lstat, open, readdir, realpath, type FileHandle } from "node:fs/promises";
+import { lstat, open, readdir, realpath } from "node:fs/promises";
 import { constants, type Dirent } from "node:fs";
 import { basename, extname, join, relative, resolve, sep } from "node:path";
 import { findRecord } from "@/registry.js";
 import type { CapabilityRecord, ProjectConfigurationAudit, ProjectConfigurationFinding } from "@/types.js";
 import { comparePlatformVersions, parsePlatformVersion } from "@/version.js";
 
-const MAX_FILES = 500;
-const MAX_DIRECTORIES = 1_000;
-const MAX_ENTRIES = 10_000;
-const MAX_FILE_BYTES = 1_000_000;
-const MAX_TOTAL_BYTES = 5_000_000;
+interface ProjectAuditLimits {
+  maximumFiles: number;
+  maximumDirectories: number;
+  maximumEntries: number;
+  maximumFileBytes: number;
+  maximumTotalBytes: number;
+}
+
+interface ProjectAuditFileSystem {
+  realpath(path: string): Promise<string>;
+  lstat(path: string): Promise<{ isDirectory(): boolean }>;
+  readdir(path: string, options: { withFileTypes: true }): Promise<Dirent[]>;
+  open(path: string, flags: number): Promise<ProjectAuditFileHandle>;
+}
+
+interface ProjectAuditFileHandle {
+  read(buffer: Buffer, offset: number, length: number, position: number): Promise<{ bytesRead: number }>;
+  stat(): Promise<{ isFile(): boolean; size: number }>;
+  close(): Promise<void>;
+}
+
+interface ProjectAuditDependencies {
+  limits?: Partial<ProjectAuditLimits>;
+  fileSystem?: Partial<ProjectAuditFileSystem>;
+  findRecord?: (id: string) => Promise<CapabilityRecord | undefined>;
+}
+
+const defaultLimits: ProjectAuditLimits = {
+  maximumFiles: 500,
+  maximumDirectories: 1_000,
+  maximumEntries: 10_000,
+  maximumFileBytes: 1_000_000,
+  maximumTotalBytes: 5_000_000
+};
+
+const defaultFileSystem: ProjectAuditFileSystem = {
+  realpath: async (path) => realpath(path),
+  lstat: async (path) => lstat(path),
+  readdir: async (path, options) => readdir(path, options),
+  open: async (path, flags) => open(path, flags)
+};
 const ignoredDirectories = new Set([
   ".build",
   ".derived-data",
@@ -43,7 +79,7 @@ function normalizePath(path: string): string {
 }
 
 async function readBoundedText(
-  handle: FileHandle,
+  handle: ProjectAuditFileHandle,
   maximumBytes: number
 ): Promise<{ content: string; bytesRead: number } | undefined> {
   const buffer = Buffer.allocUnsafe(maximumBytes + 1);
@@ -58,21 +94,26 @@ async function readBoundedText(
     : { content: buffer.subarray(0, offset).toString("utf8"), bytesRead: offset };
 }
 
-async function collectConfigurationFiles(projectRoot: string): Promise<{
+async function collectConfigurationFiles(
+  projectRoot: string,
+  dependencies: ProjectAuditDependencies
+): Promise<{
   root: string;
   files: ScannedConfigurationFile[];
   skipped: string[];
 }> {
+  const limits = { ...defaultLimits, ...dependencies.limits };
+  const fileSystem = { ...defaultFileSystem, ...dependencies.fileSystem };
   const absoluteRoot = resolve(projectRoot);
   let root: string;
   try {
-    root = await realpath(absoluteRoot);
+    root = await fileSystem.realpath(absoluteRoot);
   } catch {
     throw new Error("project_root must be an existing readable directory");
   }
   let rootStat;
   try {
-    rootStat = await lstat(root);
+    rootStat = await fileSystem.lstat(root);
   } catch {
     throw new Error("project_root must be an existing readable directory");
   }
@@ -85,17 +126,10 @@ async function collectConfigurationFiles(projectRoot: string): Promise<{
   let entryCount = 0;
 
   async function walk(directory: string): Promise<void> {
-    if (
-      files.length >= MAX_FILES ||
-      totalBytes >= MAX_TOTAL_BYTES ||
-      directoryCount >= MAX_DIRECTORIES ||
-      entryCount >= MAX_ENTRIES
-    )
-      return;
     directoryCount += 1;
     let entries: Dirent[];
     try {
-      entries = await readdir(directory, { withFileTypes: true });
+      entries = await fileSystem.readdir(directory, { withFileTypes: true });
     } catch {
       skipped.push(`${normalizePath(relative(root, directory)) || "."} (unreadable directory)`);
       return;
@@ -103,20 +137,20 @@ async function collectConfigurationFiles(projectRoot: string): Promise<{
     entries.sort((left, right) => left.name.localeCompare(right.name));
 
     for (const entry of entries) {
-      entryCount += 1;
       if (
-        files.length >= MAX_FILES ||
-        totalBytes >= MAX_TOTAL_BYTES ||
-        directoryCount >= MAX_DIRECTORIES ||
-        entryCount >= MAX_ENTRIES
+        files.length >= limits.maximumFiles ||
+        totalBytes >= limits.maximumTotalBytes ||
+        entryCount >= limits.maximumEntries
       )
         break;
+      entryCount += 1;
       if (entry.isSymbolicLink()) {
         skipped.push(`${normalizePath(relative(root, join(directory, entry.name)))} (symlink)`);
         continue;
       }
       if (entry.isDirectory()) {
-        if (!ignoredDirectories.has(entry.name)) await walk(join(directory, entry.name));
+        if (!ignoredDirectories.has(entry.name) && directoryCount < limits.maximumDirectories)
+          await walk(join(directory, entry.name));
         continue;
       }
       if (!entry.isFile() || !isConfigurationFile(entry.name)) continue;
@@ -124,7 +158,7 @@ async function collectConfigurationFiles(projectRoot: string): Promise<{
       const absolutePath = join(directory, entry.name);
       let canonicalPath: string;
       try {
-        canonicalPath = await realpath(absolutePath);
+        canonicalPath = await fileSystem.realpath(absolutePath);
       } catch {
         skipped.push(`${normalizePath(relative(root, absolutePath))} (unreadable file)`);
         continue;
@@ -134,9 +168,9 @@ async function collectConfigurationFiles(projectRoot: string): Promise<{
         continue;
       }
       const relativePath = normalizePath(relative(root, canonicalPath));
-      let handle: FileHandle;
+      let handle: ProjectAuditFileHandle;
       try {
-        handle = await open(absolutePath, constants.O_RDONLY | constants.O_NOFOLLOW);
+        handle = await fileSystem.open(absolutePath, constants.O_RDONLY | constants.O_NOFOLLOW);
       } catch {
         skipped.push(`${relativePath} (unreadable file or symlink race)`);
         continue;
@@ -147,7 +181,7 @@ async function collectConfigurationFiles(projectRoot: string): Promise<{
           skipped.push(`${relativePath} (not a regular file)`);
           continue;
         }
-        const maximumBytes = Math.min(MAX_FILE_BYTES, MAX_TOTAL_BYTES - totalBytes);
+        const maximumBytes = Math.min(limits.maximumFileBytes, limits.maximumTotalBytes - totalBytes);
         if (stat.size > maximumBytes) {
           skipped.push(`${relativePath} (size limit)`);
           continue;
@@ -168,10 +202,11 @@ async function collectConfigurationFiles(projectRoot: string): Promise<{
   }
 
   await walk(root);
-  if (files.length >= MAX_FILES) skipped.push(`file limit reached (${MAX_FILES})`);
-  if (directoryCount >= MAX_DIRECTORIES) skipped.push(`directory limit reached (${MAX_DIRECTORIES})`);
-  if (entryCount >= MAX_ENTRIES) skipped.push(`entry limit reached (${MAX_ENTRIES})`);
-  if (totalBytes >= MAX_TOTAL_BYTES) skipped.push(`total byte limit reached (${MAX_TOTAL_BYTES})`);
+  if (files.length >= limits.maximumFiles) skipped.push(`file limit reached (${limits.maximumFiles})`);
+  if (directoryCount >= limits.maximumDirectories)
+    skipped.push(`directory limit reached (${limits.maximumDirectories})`);
+  if (entryCount >= limits.maximumEntries) skipped.push(`entry limit reached (${limits.maximumEntries})`);
+  if (totalBytes >= limits.maximumTotalBytes) skipped.push(`total byte limit reached (${limits.maximumTotalBytes})`);
   return { root, files, skipped };
 }
 
@@ -249,7 +284,7 @@ function deploymentTargets(
     if (!/[.]pbxproj$|project[.]ya?ml$|[.]xcconfig$/.test(file.path)) continue;
     for (const pattern of patterns) {
       for (const match of file.content.matchAll(pattern)) {
-        if (match[1]) results.push({ version: match[1], path: file.path });
+        results.push({ version: match[1]!, path: file.path });
       }
     }
   }
@@ -314,13 +349,17 @@ function addConfigurationFindings(
   }
 }
 
-export async function auditProjectConfiguration(input: {
-  project_root: string;
-  capability_ids: string[];
-  platform: string;
-}): Promise<ProjectConfigurationAudit> {
-  const scanned = await collectConfigurationFiles(input.project_root);
-  const records = await Promise.all(input.capability_ids.map((id) => findRecord(id)));
+export async function auditProjectConfiguration(
+  input: {
+    project_root: string;
+    capability_ids: string[];
+    platform: string;
+  },
+  dependencies: ProjectAuditDependencies = {}
+): Promise<ProjectConfigurationAudit> {
+  const scanned = await collectConfigurationFiles(input.project_root, dependencies);
+  const recordLookup = dependencies.findRecord ?? findRecord;
+  const records = await Promise.all(input.capability_ids.map((id) => recordLookup(id)));
   const unknown = input.capability_ids.filter((_, index) => !records[index]);
   if (unknown.length > 0) throw new Error(`Unknown capabilities: ${unknown.join(", ")}`);
 
@@ -464,8 +503,8 @@ export async function auditProjectConfiguration(input: {
       continue;
     }
     const incompatible = targets.filter(({ version }) => {
-      const parsed = parsePlatformVersion(version);
-      return parsed ? comparePlatformVersions(parsed, minimumVersion) < 0 : false;
+      const parsed = parsePlatformVersion(version)!;
+      return comparePlatformVersions(parsed, minimumVersion) < 0;
     });
     findings.push(
       finding({

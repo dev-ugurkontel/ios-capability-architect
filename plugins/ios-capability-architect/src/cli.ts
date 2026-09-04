@@ -81,8 +81,8 @@ const defaultStreams: CliStreams = {
   stderr: (value) => process.stderr.write(value)
 };
 
-function strings(value: string | string[] | undefined): string[] {
-  const values = Array.isArray(value) ? value : value ? [value] : [];
+function strings(value: string[] | undefined): string[] {
+  const values = value ?? [];
   return [
     ...new Set(
       values
@@ -281,7 +281,8 @@ export async function runCli(args: string[], streams: CliStreams = defaultStream
   }
 }
 
-const entryPath = process.argv[1] ? realpathSync(resolve(process.argv[1])) : undefined;
-if (entryPath && realpathSync(fileURLToPath(import.meta.url)) === entryPath) {
+const entryPath = realpathSync(resolve(process.argv[1]!));
+/* v8 ignore next 3 -- The packaged process bootstrap is exercised by validate-skills-package.mjs. */
+if (realpathSync(fileURLToPath(import.meta.url)) === entryPath) {
   process.exitCode = await runCli(process.argv.slice(2));
 }

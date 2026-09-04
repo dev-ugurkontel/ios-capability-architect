@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  analyzeAppIdea,
   auditPermissionsAndEntitlements,
   auditPrivacyAndReview,
   checkAvailability,
@@ -46,6 +47,49 @@ describe("read-only architecture tools", () => {
     expect(withoutTarget.data.results[0]?.determination).toBe("conditional");
     expect(incompatible.data.results[0]?.status).toBe("conditional_or_incompatible");
     expect(incompatible.data.results[0]?.determination).toBe("incompatible");
+  });
+
+  it("covers every declared availability state without converting uncertainty into success", async () => {
+    const unsupported = await checkAvailability({
+      capability_ids: ["core-motion"],
+      platform: "tvOS",
+      os_version: "26.0",
+      allow_beta: false
+    });
+    const unknownMinimum = await checkAvailability({
+      capability_ids: ["privacy-manifest"],
+      platform: "iOS",
+      os_version: "18.0",
+      allow_beta: false
+    });
+    const betaRejected = await checkAvailability({
+      capability_ids: ["foundation-models-ios27-beta"],
+      platform: "iOS",
+      os_version: "27.0",
+      allow_beta: false
+    });
+    const betaAllowed = await checkAvailability({
+      capability_ids: ["foundation-models-ios27-beta"],
+      platform: "iOS",
+      os_version: "27.0",
+      allow_beta: true
+    });
+    const deprecated = await checkAvailability({
+      capability_ids: ["uiwebview"],
+      platform: "iOS",
+      os_version: "18.0",
+      allow_beta: false
+    });
+
+    expect(unsupported.data.results[0]?.reasons).toContain("tvOS is not listed as supported.");
+    expect(unknownMinimum.data.results[0]?.reasons).toContain(
+      "The minimum iOS version is not verified in this record."
+    );
+    expect(betaRejected.data.results[0]?.reasons).toContain("This record is beta and beta use was not allowed.");
+    expect(betaAllowed.data.results[0]?.reasons).toContain("This record is beta and requires prerelease validation.");
+    expect(deprecated.data.results[0]?.reasons).toContain(
+      "This record is deprecated and is excluded from new implementation recommendations."
+    );
   });
 
   it("keeps free-text device, region, and language restrictions conditional", async () => {
@@ -169,6 +213,24 @@ describe("read-only architecture tools", () => {
     expect(adjacent.data.catalog_research_leads[0]?.catalog_entry.id).toBe("technology.visionkit");
     expect(adjacent.data.catalog_research_leads[0]?.recommendation_eligible).toBe(false);
     expect(adjacent.data.matches.some((match) => match.capability_id === "vision")).toBe(false);
+
+    const orderedLeads = await resolveCapabilities({
+      requirements: [
+        {
+          id: "req-discovery",
+          kind: "product_goal",
+          description: "Compare ARKit with AlarmKit",
+          keywords: ["ARKit", "AlarmKit"],
+          confidence: "explicit"
+        }
+      ],
+      include_beta: false,
+      maximum_results_per_requirement: 4
+    });
+    expect(orderedLeads.data.catalog_research_leads.map(({ catalog_entry }) => catalog_entry.name)).toEqual([
+      "AlarmKit",
+      "ARKit"
+    ]);
   });
 
   it("does not create matches or research leads from stopwords and substrings", async () => {
@@ -269,16 +331,72 @@ describe("read-only architecture tools", () => {
     expect(plan.data.phases).toHaveLength(7);
   });
 
+  it("covers positive and fallback architecture branches", async () => {
+    const integrated = await generateArchitecture(
+      "A shared on-device model with background delivery",
+      ["swiftdata", "app-groups", "foundation-models", "background-tasks", "apns"],
+      "large"
+    );
+    const minimal = await generateArchitecture("A simple local app", ["swift"], "small");
+    const integratedText = JSON.stringify(integrated.data.components);
+    const minimalText = JSON.stringify(minimal.data.components);
+
+    expect(integrated.data.pattern).toContain("Feature modules");
+    expect(integratedText).toContain("SwiftData");
+    expect(integratedText).toContain("App Group container");
+    expect(integratedText).toContain("URLSession");
+    expect(integratedText).toContain("Runtime availability gate");
+    expect(integratedText).toContain("Event-driven");
+    expect(minimalText).toContain("smallest persistence mechanism");
+    expect(minimalText).toContain("app container");
+    expect(minimalText).toContain("No server by default");
+    expect(minimalText).toContain("Not required");
+    expect(minimalText).toContain("Foreground-only");
+  });
+
+  it("extracts all architecture-changing questions and explicit assumptions", () => {
+    const analysis = analyzeAppIdea({
+      idea: "A machine learning health background assistant",
+      target_platform: "iOS",
+      minimum_os_version: "18.0",
+      preferred_ui_framework: "UIKit",
+      on_device_priority: "required",
+      privacy_level: "sensitive"
+    });
+
+    expect(analysis.data.open_questions).toEqual([
+      "Which exact data types must the app read, write, or derive?",
+      "Is background work event-driven, periodic, or expected to be continuous?",
+      "What input and output modality must the AI feature support?"
+    ]);
+    expect(analysis.data.requirements).toContainEqual(
+      expect.objectContaining({ id: "req-on_device", description: "Processing must remain on device" })
+    );
+    expect(analysis.data.assumptions).toContain("The deployment target is 18.0.");
+  });
+
   it("searches verified sources and the broader discovery catalog separately", async () => {
     const docs = await searchOfficialAppleDocs("HealthKit", ["healthkit"], 5);
+    const discoveredDocs = await searchOfficialAppleDocs("HealthKit", [], 5);
     const unrelatedDocs = await searchOfficialAppleDocs("definitely-unrelated-query", ["healthkit"], 5);
     const catalog = await searchAppleTechnologyCatalog("AlarmKit", "catalogued", 5);
     const coverage = await reportRegistryCoverage();
 
     expect(docs.data.results[0]?.url).toMatch(/^https:\/\/developer\.apple\.com\//);
+    expect(discoveredDocs.data.results[0]?.url).toMatch(/^https:\/\/developer\.apple\.com\//);
     expect(unrelatedDocs.data.results).toEqual([]);
     expect(catalog.data.results[0]?.coverage_status).toBe("catalogued");
     expect(coverage.data.catalog_only_technology_count).toBeGreaterThan(100);
+  });
+
+  it("omits knowledge-gap warnings when every audited field is reviewed", async () => {
+    const configuration = await auditPermissionsAndEntitlements(["core-spotlight"]);
+    const privacy = await auditPrivacyAndReview(["core-spotlight"]);
+
+    expect(configuration.data.knowledge_gaps).toEqual([]);
+    expect(configuration.warnings).toEqual([]);
+    expect(privacy.data.knowledge_gaps).toEqual([]);
+    expect(privacy.warnings).toEqual([]);
   });
 
   it("keeps registry refreshes read-only", async () => {
@@ -296,5 +414,8 @@ describe("read-only architecture tools", () => {
   it("rejects unknown profiles", async () => {
     await expect(getCapabilityProfile("not-a-real-capability")).rejects.toThrow("Unknown capability");
     await expect(getAppleTechnology("not-a-real-technology")).rejects.toThrow("Unknown Apple technology");
+    await expect(compareImplementationOptions(["not-a-real-capability"], [])).rejects.toThrow(
+      "Unknown capabilities: not-a-real-capability"
+    );
   });
 });

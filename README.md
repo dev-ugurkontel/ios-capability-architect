@@ -6,44 +6,49 @@
 [![skills.sh](https://skills.sh/b/fillbyte/skills)](https://skills.sh/fillbyte/skills)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Production-grade agent skills and Codex plugins for software engineering.
+Open-source building blocks for capable software-engineering agents.
 
-The current catalog covers iOS and Apple-platform capability architecture, Xcode and XcodeGen audits, entitlements, permissions, privacy, Swift and SwiftUI planning, and App Store delivery.
+Fillbyte Skills is a growing collection of production-grade agent skills, Codex plugins, MCP servers, and deterministic developer tools. The collection is designed for the full software lifecycle—from research and architecture through implementation, testing, security, operations, and delivery—without making one platform, stack, vendor, or domain its identity.
 
-Fillbyte Skills is an open-source collection of focused workflows and local tools for software engineering agents. Each skill is independently discoverable and installable; related skills, MCP servers, CLIs, and assets can also ship together as a versioned plugin.
+Every component remains independently discoverable, installable, testable, and versioned. The catalog below describes what is available today; it does not limit where the collection can grow.
+
+## Principles
+
+- **Focused:** one component owns one clear job and declares when it should and should not run.
+- **Composable:** skills, plugins, MCP servers, CLIs, references, and assets can work independently or ship together.
+- **Verifiable:** deterministic checks cover behavior, schemas, packaging, documentation, security boundaries, and generated artifacts.
+- **Evidence-aware:** material claims identify their source, freshness, uncertainty, and manual verification requirements.
+- **Safe by default:** capabilities expose the least authority needed and make external actions, data access, and trust boundaries explicit.
+- **Open:** source, contribution rules, release evidence, support paths, and limitations are public.
 
 ## Catalog
 
-| Skill                                                        | Use when                                                                                                                                                               | Available as                                                |
+| Component                                                    | Purpose                                                                                                                                                                | Interfaces                                                  |
 | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| [iOS Capability Architect](plugins/ios-capability-architect) | Planning an Apple-platform app, selecting public APIs, auditing Xcode configuration, or reviewing permissions, entitlements, privacy, availability, and App Store risk | Agent skill, Codex plugin, local MCP server, standalone CLI |
+| [iOS Capability Architect](plugins/ios-capability-architect) | Map Apple-platform product requirements and existing projects to documented capabilities, configuration evidence, architecture, implementation, and verification plans | Agent skill, Codex plugin, local MCP server, standalone CLI |
 
-The current catalog contains one Apple-platform engineering component. Additional skills will remain separate, narrowly triggered components under the same collection identity.
+Browse the canonical collection at [skills.sh/fillbyte/skills](https://skills.sh/fillbyte/skills). Each catalog entry links to its own technical documentation, trust boundary, and installation options.
 
-## Install
+## Use the collection
 
-### Agent skill
-
-Install the individual skill with the open `skills` CLI for Codex, Claude Code, Cursor, GitHub Copilot, and other compatible agents:
+Install an individual skill with the open `skills` CLI. For example:
 
 ```bash
 npx skills add https://github.com/fillbyte/skills --skill ios-capability-architect
 ```
 
-Browse its canonical directory page at [skills.sh/fillbyte/skills/ios-capability-architect](https://skills.sh/fillbyte/skills/ios-capability-architect).
+The component directory page is [skills.sh/fillbyte/skills/ios-capability-architect](https://skills.sh/fillbyte/skills/ios-capability-architect).
 
-### Codex plugin
-
-Install the repository marketplace and then the plugin:
+Install the Fillbyte Skills marketplace and then a selected Codex plugin:
 
 ```bash
 codex plugin marketplace add fillbyte/skills
 codex plugin add ios-capability-architect@fillbyte-skills
 ```
 
-Start a new Codex task after installation so the skill and MCP tool inventory are loaded. For a reproducible installation, add `--ref <release-tag>` when adding the marketplace and choose a tag whose release notes use the `fillbyte-skills` marketplace identity.
+Start a new Codex task after installation so its skill and tool inventory can load. For reproducible installs, select a reviewed release tag when adding the marketplace.
 
-Releases through `v0.9.0` used the legacy marketplace name `ios-capability-architect`. Existing users can migrate once to the collection identity:
+Releases through `v0.9.0` used `ios-capability-architect` as the marketplace name. Existing users can migrate once:
 
 ```bash
 codex plugin remove ios-capability-architect@ios-capability-architect
@@ -52,76 +57,57 @@ codex plugin marketplace add fillbyte/skills
 codex plugin add ios-capability-architect@fillbyte-skills
 ```
 
-## iOS Capability Architect
+## Collection contract
 
-iOS Capability Architect turns an iOS, iPadOS, macOS, watchOS, tvOS, visionOS, Mac Catalyst, or multi-platform product idea into an evidence-backed capability map, proportionate SwiftUI-first architecture, implementation sequence, and test plan. Against an existing Apple-platform project, it can audit supported Xcode and XcodeGen source configuration without modifying files or returning their contents.
+A component belongs in this collection only when it has:
 
-It keeps commonly conflated concepts separate:
+- a focused, discriminating skill or plugin identity;
+- positive, indirect, and negative invocation evidence;
+- explicit input, output, data, permission, network, and side-effect boundaries;
+- deterministic tests for ordinary, edge, failure, and distribution behavior;
+- reproducible generated artifacts with drift detection;
+- component-level documentation, ownership, support, privacy, security, and migration guidance;
+- root catalog, marketplace, package, and directory metadata that remain synchronized.
 
-- runtime user permissions;
-- Info.plist purpose strings;
-- Xcode Signing & Capabilities settings;
-- ordinary and Apple-managed entitlements;
-- background modes and extension targets;
-- privacy manifests, required-reason APIs, and App Store review risks.
+The root describes the collection. Domain-specific instructions and implementation details live under their owning component so a current catalog entry never becomes the identity or architectural constraint of future work.
 
-The local MCP server exposes fifteen read-only tools for idea analysis, capability resolution, availability, project configuration, privacy, architecture, implementation planning, official-source lookup, and catalog coverage. A dependency-free CLI provides the same deterministic evidence workflows to skills-only installations.
-
-### Evidence model
-
-The committed Apple technology catalog and reviewed capability registry have deliberately different trust levels:
-
-- **193 catalog identities** support discovery across 32 categories.
-- **46 evidence-backed profiles** map 48 catalog identities into recommendation workflows.
-- **24.9% profile coverage** is reported explicitly; catalog-only entries remain research leads and are never promoted to recommendations automatically.
-
-Platform claims cite dated, technology-specific Apple sources. Unknown, beta, deprecated, hardware-, region-, language-, account-, or approval-constrained behavior remains visible instead of being silently normalized into certainty. Link reachability does not replace human semantic review.
-
-See the [architecture](plugins/ios-capability-architect/docs/architecture.md), [tool contracts](plugins/ios-capability-architect/docs/tool-contracts.md), [project audit contract](plugins/ios-capability-architect/docs/project-configuration-audit.md), and [platform verification](plugins/ios-capability-architect/docs/platform-verification.md).
-
-## Repository design
+## Repository structure
 
 ```text
-.agents/plugins/marketplace.json        # Fillbyte Skills marketplace
-skills.sh.json                          # skills.sh catalog grouping
+.agents/plugins/marketplace.json        # collection marketplace
+skills.sh.json                          # public catalog groupings
 plugins/
-└── ios-capability-architect/
+└── <component>/
     ├── .codex-plugin/plugin.json       # plugin identity and discovery metadata
-    ├── .mcp.json                       # local MCP runtime declaration
-    ├── skills/ios-capability-architect/
-    │   ├── SKILL.md                    # canonical agent workflow
-    │   ├── agents/openai.yaml          # skill UI and invocation metadata
-    │   ├── assets/                     # packaged skill assets
-    │   └── references/                 # progressively loaded guidance
-    ├── src/                            # typed deterministic engine and CLI
-    ├── data/                           # reviewed registry and discovery catalog
-    ├── bundle/                         # committed dependency-free runtimes
-    ├── tests/                          # behavior and boundary regression tests
-    └── docs/                           # technical contracts and evidence policy
+    ├── skills/<skill>/                 # canonical skill and UI metadata
+    ├── src/                            # reviewed source when executable tooling exists
+    ├── tests/                          # behavior and boundary evidence
+    ├── docs/                           # component contracts and technical evidence
+    └── bundle/                         # reproducibly generated runtime artifacts
 ```
 
-The canonical skill stays inside its owning plugin so instructions, local tools, assets, and release metadata version together. Discovery tools already locate the nested skill, so a duplicate root copy would create drift without improving installation.
+Canonical skills stay inside their owning components so instructions, tools, assets, and release metadata version together. Discovery tools locate nested skills directly; duplicate root copies are prohibited because they create drift.
 
-## Safety and privacy
+## Quality bar
 
-The current plugin is local, deterministic, and read-only:
+The repository treats a green build as evidence, not ceremony:
 
-- no hosted service, account, authentication, telemetry, advertising, or remote data store;
-- no runtime registry mutation or hidden web requests;
-- bounded project scanning with no symbolic-link traversal;
-- relative paths and structured findings in audit output, never source contents;
-- no private APIs, hidden entitlement acquisition, permission manipulation, App Review bypasses, or background-execution guarantees.
+- hand-written TypeScript runtime code must maintain **100% statement, branch, function, and line coverage**;
+- formatting, lint, strict type checks, schema validation, and behavior tests must pass without warnings;
+- generated runtimes and archives must reproduce byte-for-byte from reviewed source;
+- installation, protocol, package, and archive smoke tests must exercise the shipped interfaces;
+- documentation links, manifests, marketplace metadata, release metadata, checksums, SBOMs, and provenance must be validated;
+- CodeQL, dependency auditing, and secret scanning must report no unresolved release-blocking finding.
 
-Tool results are architectural evidence, not proof of a specific App ID's provisioning, a managed entitlement grant, real-device behavior, or App Review approval. Runtime availability, authorization, hardware, region, language, signing, and device tests remain mandatory.
-
-Read [PRIVACY.md](PRIVACY.md), [SECURITY.md](SECURITY.md), and the plugin [threat model](plugins/ios-capability-architect/docs/security.md) before changing these boundaries.
+Coverage is not a substitute for meaningful assertions, real integration tests, security review, source freshness, or target-environment validation. Component-specific evidence metrics describe scope and uncertainty; they are not presented as repository quality scores.
 
 ## Development
 
 Requirements:
 
-- Node.js 24.x and npm 11.x;
-- network access only for the explicit Apple documentation link check.
+- Node.js 24.x;
+- npm 11.x;
+- network access only for explicit, component-owned source-verification commands.
 
 Install and run the complete local gate:
 
@@ -131,36 +117,24 @@ npm run verify
 npm run verify:docs
 ```
 
-`npm run verify` checks formatting, lint, TypeScript, release and submission metadata, registry integrity, plugin layout, coverage, deterministic bundles, MCP protocol behavior, and the skills-only archive. `npm run verify:docs` performs allowlisted conditional requests to `developer.apple.com`; success proves reachability, not that a source still supports every recorded claim.
-
-The repository uses Node.js 24 as a tested project baseline, TypeScript 7 strict mode, typed ESLint, Prettier, Zod contracts, Vitest coverage thresholds, CodeQL, dependency auditing, deterministic archives, checksums, SBOMs, and GitHub build-provenance attestations.
+Workspace commands discover every component that implements the corresponding script. Adding a component must not require copying the first component's hard-coded root automation.
 
 ## Distribution
 
-Each GitHub release includes:
+Release automation verifies tagged source before publishing component packages or attaching release assets. Components can ship skills-only archives, plugin bundles, npm packages, checksums, CycloneDX SBOMs, and GitHub build-provenance attestations when those formats match the component's contract.
 
-- the GitHub npm package tarball for `@fillbyte/ios-capability-architect`;
-- a standalone skills-only ZIP with the skill, references, UI metadata, evidence data, and local CLI;
-- `SHA256SUMS`;
-- a CycloneDX SBOM;
-- GitHub build-provenance attestations.
-
-Verify a downloaded release asset with:
+Verify a downloaded asset with:
 
 ```bash
 shasum -a 256 -c SHA256SUMS
 gh attestation verify <downloaded-asset> -R fillbyte/skills
 ```
 
-GitHub Packages requires an authenticated npm client even for this public scoped package. Configure the `@fillbyte` scope for `https://npm.pkg.github.com`, keep tokens outside the repository, and use release assets when an unauthenticated archive is preferable.
-
-Release Please owns version and changelog updates. Merging its release pull request creates the tag and GitHub release; publication then verifies the tagged source before attaching artifacts and publishing the package. OpenAI directory review is a separate human-authorized process documented in [docs/openai-submission](docs/openai-submission).
+Release Please owns version and changelog updates. Public directory review, remote hosting, credentials, deployments, and marketplace publication remain separate, explicitly authorized operations.
 
 ## Contributing
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md) before proposing a skill, plugin, tool, or capability record. Changes must preserve focused invocation, explicit trust boundaries, current primary evidence, deterministic behavior, and regression coverage.
-
-Project policy and support are documented in [GOVERNANCE.md](GOVERNANCE.md), [ROADMAP.md](ROADMAP.md), [SUPPORT.md](SUPPORT.md), [TERMS.md](TERMS.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), and [CITATION.cff](CITATION.cff).
+Read [CONTRIBUTING.md](CONTRIBUTING.md) before proposing a skill, plugin, tool, or evidence record. Project policy and support are documented in [GOVERNANCE.md](GOVERNANCE.md), [ROADMAP.md](ROADMAP.md), [SUPPORT.md](SUPPORT.md), [PRIVACY.md](PRIVACY.md), [SECURITY.md](SECURITY.md), [TERMS.md](TERMS.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), and [CITATION.cff](CITATION.cff).
 
 ## License
 

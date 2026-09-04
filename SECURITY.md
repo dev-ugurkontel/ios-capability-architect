@@ -23,15 +23,17 @@ You should receive an acknowledgement within 5 business days and an initial asse
 Security-relevant areas include every distributed skill and plugin, especially:
 
 - MCP input validation, tool annotations, and protocol handling;
-- skills-only CLI argument handling, archive paths, and project-audit boundaries;
+- CLI argument handling, archive paths, filesystem boundaries, and project audits;
 - unexpected file, process, network, or registry mutation;
 - command, path, or prompt injection that crosses a documented trust boundary;
-- exposure of secrets, personal data, or private app details;
+- exposure of secrets, personal data, or private project details;
 - dependency or build-chain compromise;
-- misleading permission, entitlement, privacy, or App Review guidance with a plausible security impact.
+- misleading technical, permission, privacy, or platform guidance with a plausible security impact.
 
-Incorrect but non-security-sensitive Apple-platform facts should be reported through the capability correction issue template. Vulnerabilities in Apple, OpenAI, Node.js, or another dependency should be reported to the owning project unless this repository introduces or amplifies the issue.
+Incorrect but non-security-sensitive domain facts should use the most specific issue template available. Vulnerabilities in a platform, host, runtime, or dependency should be reported to the owning project unless this repository introduces or amplifies the issue.
 
 ## Security expectations
 
-The current iOS Capability Architect MCP server and skills-only CLI are designed to be local, read-only, deterministic, and free of telemetry or authentication secrets. Skills archives are built from the same reviewed engine and registry, contain no MCP server, and are checksum-protected release assets. Documentation link verification is an explicit developer action restricted to an allowlisted Apple host. Contributions that change these boundaries require a documented threat-model update and maintainer review. See [PRIVACY.md](PRIVACY.md) for the public data-handling notice.
+Every component must document its permissions, side effects, network behavior, authentication, data flow, and failure modes. Generated artifacts must be reproducible from reviewed source, dependency changes must remain locked and auditable, and release assets must carry integrity and provenance evidence appropriate to their format.
+
+The current iOS Capability Architect MCP server and skills-only CLI are local, read-only, deterministic, and free of telemetry or authentication secrets. Its documentation link verification is a separate developer action restricted to an allowlisted Apple host. Contributions that change a component boundary require a threat-model update and maintainer review. See [PRIVACY.md](PRIVACY.md) for the public data-handling notice.

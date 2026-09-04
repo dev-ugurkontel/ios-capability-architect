@@ -23481,7 +23481,7 @@ function classifyKnowledge(value) {
   if (typeof value === "object" && value !== null && Object.keys(value).length === 0) return "verified_none";
   return "verified_value";
 }
-function buildKnowledgeState(raw) {
+function deriveKnowledgeState(raw) {
   const fields = Object.fromEntries(
     knowledgeTrackedFields.map((field) => [field, hasOwn(raw, field) ? classifyKnowledge(raw[field]) : "unknown"])
   );
@@ -23513,7 +23513,7 @@ function normalizeRecord(raw) {
     network_requirement: "Depends on the selected API and feature configuration.",
     cloud_dependency: null,
     ...raw,
-    knowledge_state: buildKnowledgeState(raw)
+    knowledge_state: deriveKnowledgeState(raw)
   };
 }
 var cachedRecords;
@@ -23656,11 +23656,19 @@ function comparePlatformVersions(left, right) {
 }
 
 // src/project-audit.ts
-var MAX_FILES = 500;
-var MAX_DIRECTORIES = 1e3;
-var MAX_ENTRIES = 1e4;
-var MAX_FILE_BYTES = 1e6;
-var MAX_TOTAL_BYTES = 5e6;
+var defaultLimits = {
+  maximumFiles: 500,
+  maximumDirectories: 1e3,
+  maximumEntries: 1e4,
+  maximumFileBytes: 1e6,
+  maximumTotalBytes: 5e6
+};
+var defaultFileSystem = {
+  realpath: async (path) => realpath(path),
+  lstat: async (path) => lstat(path),
+  readdir: async (path, options) => readdir(path, options),
+  open: async (path, flags) => open2(path, flags)
+};
 var ignoredDirectories = /* @__PURE__ */ new Set([
   ".build",
   ".derived-data",
@@ -23694,17 +23702,19 @@ async function readBoundedText(handle, maximumBytes) {
   }
   return offset > maximumBytes ? void 0 : { content: buffer.subarray(0, offset).toString("utf8"), bytesRead: offset };
 }
-async function collectConfigurationFiles(projectRoot) {
+async function collectConfigurationFiles(projectRoot, dependencies) {
+  const limits = { ...defaultLimits, ...dependencies.limits };
+  const fileSystem = { ...defaultFileSystem, ...dependencies.fileSystem };
   const absoluteRoot = resolve(projectRoot);
   let root;
   try {
-    root = await realpath(absoluteRoot);
+    root = await fileSystem.realpath(absoluteRoot);
   } catch {
     throw new Error("project_root must be an existing readable directory");
   }
   let rootStat;
   try {
-    rootStat = await lstat(root);
+    rootStat = await fileSystem.lstat(root);
   } catch {
     throw new Error("project_root must be an existing readable directory");
   }
@@ -23715,34 +23725,33 @@ async function collectConfigurationFiles(projectRoot) {
   let directoryCount = 0;
   let entryCount = 0;
   async function walk(directory) {
-    if (files.length >= MAX_FILES || totalBytes >= MAX_TOTAL_BYTES || directoryCount >= MAX_DIRECTORIES || entryCount >= MAX_ENTRIES)
-      return;
     directoryCount += 1;
     let entries;
     try {
-      entries = await readdir(directory, { withFileTypes: true });
+      entries = await fileSystem.readdir(directory, { withFileTypes: true });
     } catch {
       skipped.push(`${normalizePath(relative(root, directory)) || "."} (unreadable directory)`);
       return;
     }
     entries.sort((left, right) => left.name.localeCompare(right.name));
     for (const entry of entries) {
-      entryCount += 1;
-      if (files.length >= MAX_FILES || totalBytes >= MAX_TOTAL_BYTES || directoryCount >= MAX_DIRECTORIES || entryCount >= MAX_ENTRIES)
+      if (files.length >= limits.maximumFiles || totalBytes >= limits.maximumTotalBytes || entryCount >= limits.maximumEntries)
         break;
+      entryCount += 1;
       if (entry.isSymbolicLink()) {
         skipped.push(`${normalizePath(relative(root, join(directory, entry.name)))} (symlink)`);
         continue;
       }
       if (entry.isDirectory()) {
-        if (!ignoredDirectories.has(entry.name)) await walk(join(directory, entry.name));
+        if (!ignoredDirectories.has(entry.name) && directoryCount < limits.maximumDirectories)
+          await walk(join(directory, entry.name));
         continue;
       }
       if (!entry.isFile() || !isConfigurationFile(entry.name)) continue;
       const absolutePath = join(directory, entry.name);
       let canonicalPath;
       try {
-        canonicalPath = await realpath(absolutePath);
+        canonicalPath = await fileSystem.realpath(absolutePath);
       } catch {
         skipped.push(`${normalizePath(relative(root, absolutePath))} (unreadable file)`);
         continue;
@@ -23754,7 +23763,7 @@ async function collectConfigurationFiles(projectRoot) {
       const relativePath = normalizePath(relative(root, canonicalPath));
       let handle;
       try {
-        handle = await open2(absolutePath, constants.O_RDONLY | constants.O_NOFOLLOW);
+        handle = await fileSystem.open(absolutePath, constants.O_RDONLY | constants.O_NOFOLLOW);
       } catch {
         skipped.push(`${relativePath} (unreadable file or symlink race)`);
         continue;
@@ -23765,7 +23774,7 @@ async function collectConfigurationFiles(projectRoot) {
           skipped.push(`${relativePath} (not a regular file)`);
           continue;
         }
-        const maximumBytes = Math.min(MAX_FILE_BYTES, MAX_TOTAL_BYTES - totalBytes);
+        const maximumBytes = Math.min(limits.maximumFileBytes, limits.maximumTotalBytes - totalBytes);
         if (stat.size > maximumBytes) {
           skipped.push(`${relativePath} (size limit)`);
           continue;
@@ -23785,10 +23794,11 @@ async function collectConfigurationFiles(projectRoot) {
     }
   }
   await walk(root);
-  if (files.length >= MAX_FILES) skipped.push(`file limit reached (${MAX_FILES})`);
-  if (directoryCount >= MAX_DIRECTORIES) skipped.push(`directory limit reached (${MAX_DIRECTORIES})`);
-  if (entryCount >= MAX_ENTRIES) skipped.push(`entry limit reached (${MAX_ENTRIES})`);
-  if (totalBytes >= MAX_TOTAL_BYTES) skipped.push(`total byte limit reached (${MAX_TOTAL_BYTES})`);
+  if (files.length >= limits.maximumFiles) skipped.push(`file limit reached (${limits.maximumFiles})`);
+  if (directoryCount >= limits.maximumDirectories)
+    skipped.push(`directory limit reached (${limits.maximumDirectories})`);
+  if (entryCount >= limits.maximumEntries) skipped.push(`entry limit reached (${limits.maximumEntries})`);
+  if (totalBytes >= limits.maximumTotalBytes) skipped.push(`total byte limit reached (${limits.maximumTotalBytes})`);
   return { root, files, skipped };
 }
 function evidenceFor(files, needles) {
@@ -23850,7 +23860,7 @@ function deploymentTargets(files, platform) {
     if (!/[.]pbxproj$|project[.]ya?ml$|[.]xcconfig$/.test(file2.path)) continue;
     for (const pattern of patterns) {
       for (const match of file2.content.matchAll(pattern)) {
-        if (match[1]) results.push({ version: match[1], path: file2.path });
+        results.push({ version: match[1], path: file2.path });
       }
     }
   }
@@ -23881,9 +23891,10 @@ function addConfigurationFindings(findings, files, record2, category, values, kn
     );
   }
 }
-async function auditProjectConfiguration(input2) {
-  const scanned = await collectConfigurationFiles(input2.project_root);
-  const records = await Promise.all(input2.capability_ids.map((id) => findRecord(id)));
+async function auditProjectConfiguration(input2, dependencies = {}) {
+  const scanned = await collectConfigurationFiles(input2.project_root, dependencies);
+  const recordLookup = dependencies.findRecord ?? findRecord;
+  const records = await Promise.all(input2.capability_ids.map((id) => recordLookup(id)));
   const unknown2 = input2.capability_ids.filter((_, index) => !records[index]);
   if (unknown2.length > 0) throw new Error(`Unknown capabilities: ${unknown2.join(", ")}`);
   const findings = [];
@@ -24012,7 +24023,7 @@ async function auditProjectConfiguration(input2) {
     }
     const incompatible = targets.filter(({ version: version2 }) => {
       const parsed = parsePlatformVersion(version2);
-      return parsed ? comparePlatformVersions(parsed, minimumVersion) < 0 : false;
+      return comparePlatformVersions(parsed, minimumVersion) < 0;
     });
     findings.push(
       finding({
@@ -24227,7 +24238,6 @@ function normalizedPhrase(value) {
 function containsWholePhrase(haystack, needle) {
   const haystackTokens = phraseTokens(haystack);
   const needleTokens = phraseTokens(needle);
-  if (needleTokens.length === 0) return false;
   return haystackTokens.some(
     (_, index) => needleTokens.every((token, offset) => haystackTokens[index + offset] === token)
   );
@@ -24329,9 +24339,7 @@ async function getAppleTechnology(idOrName) {
   const catalogEntry = await findTechnologyCatalogEntry(idOrName);
   if (!catalogEntry) throw new Error(`Unknown Apple technology: ${idOrName}`);
   if (catalogEntry.coverage_status === "profiled") {
-    const profileId = catalogEntry.profile_ids[0];
-    const profile = (await loadRegistry()).find((record2) => record2.id === profileId);
-    if (!profile) throw new Error(`Catalog profile invariant failed for Apple technology: ${idOrName}`);
+    const profile = (await getCapabilityProfile(catalogEntry.profile_ids[0])).data;
     return envelope({ kind: "reviewed_profile", catalog_entry: catalogEntry, profile });
   }
   return envelope(
@@ -24661,7 +24669,7 @@ var defaultStreams = {
   stderr: (value) => process.stderr.write(value)
 };
 function strings(value) {
-  const values = Array.isArray(value) ? value : value ? [value] : [];
+  const values = value ?? [];
   return [
     ...new Set(
       values.flatMap((item) => item.split(",")).map((item) => item.trim()).filter(Boolean)
@@ -24850,8 +24858,8 @@ async function runCli(args, streams = defaultStreams) {
     return 1;
   }
 }
-var entryPath = process.argv[1] ? realpathSync(resolve2(process.argv[1])) : void 0;
-if (entryPath && realpathSync(fileURLToPath(import.meta.url)) === entryPath) {
+var entryPath = realpathSync(resolve2(process.argv[1]));
+if (realpathSync(fileURLToPath(import.meta.url)) === entryPath) {
   process.exitCode = await runCli(process.argv.slice(2));
 }
 export {

@@ -2,7 +2,7 @@
 
 ## Mission
 
-Fillbyte Skills publishes focused, evidence-backed workflows and tools for software engineering agents. Each component owns a narrow problem and explicit trust boundary. The current iOS Capability Architect component maps Apple-platform product ideas and projects to public frameworks, permissions, entitlements, architecture, and delivery plans.
+Fillbyte Skills publishes focused, evidence-aware workflows and tools across the software lifecycle. The collection is intentionally independent of any single platform, stack, vendor, or domain. Each component owns a narrow problem, public contract, release lifecycle, and explicit trust boundary.
 
 The project is stewarded in the Fillbyte GitHub organization. Copyright and authorship remain attributed to their respective individual contributors.
 
@@ -30,7 +30,7 @@ Security response and conduct enforcement may be handled privately until disclos
 
 - Authors do not approve their own pull requests when another maintainer is available.
 - Required automated checks must pass before merge.
-- Domain claims require current primary evidence and human semantic review; Apple-platform claims require official Apple sources.
+- Domain claims require current primary evidence and human semantic review; component documentation defines the authoritative source policy for its domain.
 - Breaking changes require migration notes and an appropriate release plan.
 - Generated bundle changes must be traceable to reviewed source changes.
 - Maintainers may close stale or out-of-scope proposals with a clear explanation.

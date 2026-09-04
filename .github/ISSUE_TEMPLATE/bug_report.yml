@@ -35,8 +35,8 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: Include macOS, Node.js, npm, and Codex host versions when applicable.
-      placeholder: macOS 15.x; Node.js 24.x; npm 11.x; Codex version ...
+      description: Include the operating system, runtime, package manager, agent host, and relevant tool versions.
+      placeholder: OS and version; runtime and version; package manager; agent host ...
     validations:
       required: true
   - type: textarea

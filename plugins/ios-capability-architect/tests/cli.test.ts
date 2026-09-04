@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { runCli } from "@/cli.js";
 
 function capture() {
@@ -19,6 +19,21 @@ function capture() {
 }
 
 describe("skills-only CLI", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("uses process streams when no custom streams are supplied", async () => {
+    const stdout = vi.spyOn(process.stdout, "write").mockImplementation(() => true);
+    const stderr = vi.spyOn(process.stderr, "write").mockImplementation(() => true);
+
+    await expect(runCli(["--help"])).resolves.toBe(0);
+    await expect(runCli(["unknown-command"])).resolves.toBe(1);
+
+    expect(stdout).toHaveBeenCalledWith(expect.stringContaining("iOS Capability Architect CLI"));
+    expect(stderr).toHaveBeenCalledWith(expect.stringContaining("Unknown command"));
+  });
+
   it("prints help without invoking a command", async () => {
     const output = capture();
     await expect(runCli(["--help"], output.streams)).resolves.toBe(0);
@@ -41,6 +56,10 @@ describe("skills-only CLI", () => {
     await expect(runCli(["profile", "healthkit"], output.streams)).resolves.toBe(0);
     const result = JSON.parse(output.stdout()) as { data: { id: string } };
     expect(result.data.id).toBe("healthkit");
+
+    const optionFallback = capture();
+    await expect(runCli(["profile", "--capability", "healthkit"], optionFallback.streams)).resolves.toBe(0);
+    expect(JSON.parse(optionFallback.stdout())).toMatchObject({ data: { id: "healthkit" } });
   });
 
   it("returns an exact catalog-only technology without promoting it to a profile", async () => {
@@ -54,6 +73,15 @@ describe("skills-only CLI", () => {
       recommendation_eligible: false,
       catalog_entry: { id: "technology.arkit" }
     });
+
+    const queryFallback = capture();
+    await expect(runCli(["technology", "--query", "ARKit"], queryFallback.streams)).resolves.toBe(0);
+    expect(JSON.parse(queryFallback.stdout())).toMatchObject({ data: { catalog_entry: { id: "technology.arkit" } } });
+
+    const positionalCatalog = capture();
+    await expect(runCli(["catalog", "HealthKit"], positionalCatalog.streams)).resolves.toBe(0);
+    const positionalResults = JSON.parse(positionalCatalog.stdout()) as { data: { results: Array<{ id: string }> } };
+    expect(positionalResults.data.results.some(({ id }) => id === "technology.healthkit")).toBe(true);
   });
 
   it("runs the bounded project audit", async () => {
@@ -199,10 +227,38 @@ describe("skills-only CLI", () => {
     await expect(runCli(["coverage", "--limit", "0"], invalidLimit.streams)).resolves.toBe(1);
     expect(invalidLimit.stderr()).toContain("--limit must be an integer");
 
+    for (const limit of ["1.5", "101"]) {
+      const invalidBound = capture();
+      await expect(runCli(["coverage", "--limit", limit], invalidBound.streams)).resolves.toBe(1);
+      expect(invalidBound.stderr()).toContain("--limit must be an integer");
+    }
+
     const invalidCoverage = capture();
     await expect(
       runCli(["catalog", "--query", "HealthKit", "--coverage", "verified"], invalidCoverage.streams)
     ).resolves.toBe(1);
     expect(invalidCoverage.stderr()).toContain("Invalid option");
+
+    const conflictingFlags = capture();
+    await expect(
+      runCli(["plan", "--capability", "healthkit", "--code-spike", "--no-code-spike"], conflictingFlags.streams)
+    ).resolves.toBe(1);
+    expect(conflictingFlags.stderr()).toContain("Use either --code-spike or --no-code-spike");
+
+    const missingIdea = capture();
+    await expect(runCli(["analyze"], missingIdea.streams)).resolves.toBe(1);
+    expect(missingIdea.stderr()).toContain("Missing required option: --idea");
+
+    const nonError = capture();
+    await expect(
+      runCli(["coverage"], {
+        stdout: () => {
+          // eslint-disable-next-line @typescript-eslint/only-throw-error -- Exercises defensive normalization of host callbacks that violate the Error convention.
+          throw "non-error failure";
+        },
+        stderr: nonError.streams.stderr
+      })
+    ).resolves.toBe(1);
+    expect(nonError.stderr()).toContain("non-error failure");
   });
 });
