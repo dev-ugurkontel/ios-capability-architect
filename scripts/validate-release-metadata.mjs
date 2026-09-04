@@ -94,12 +94,17 @@ assert(
   skillsConfig.groupings?.some((group) => group.skills?.includes("ios-capability-architect")),
   "skills.sh.json must feature ios-capability-architect"
 );
+const readmeLines = new Set(rootReadme.split("\n"));
 assert(
-  rootReadme.includes("npx skills add https://github.com/fillbyte/skills --skill ios-capability-architect"),
+  readmeLines.has("npx skills add https://github.com/fillbyte/skills --skill ios-capability-architect"),
   "README.md must contain the canonical skills CLI installation command"
 );
+const readmeLinks = [...rootReadme.matchAll(/\]\((https?:\/\/[^)\s]+)\)/g)].map((match) => new URL(match[1]));
 assert(
-  rootReadme.includes("https://skills.sh/fillbyte/skills/ios-capability-architect"),
+  readmeLinks.some(
+    (url) =>
+      url.origin === "https://skills.sh" && url.pathname === "/fillbyte/skills/ios-capability-architect" && !url.search
+  ),
   "README.md must link to the canonical skills.sh page"
 );
 
