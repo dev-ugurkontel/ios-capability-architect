@@ -31,6 +31,10 @@ describe("capability registry", () => {
     expect((await findRecord("Dynamic Island"))?.id).toBe("activitykit");
   });
 
+  it("does not resolve an ambiguous partial phrase to an arbitrary profile", async () => {
+    expect(await findRecord("apple")).toBeUndefined();
+  });
+
   it("loads the reviewed foundational language and UI profiles", async () => {
     const expected = ["swift", "swift-concurrency", "swiftui", "uikit", "foundation"];
     for (const id of expected) {

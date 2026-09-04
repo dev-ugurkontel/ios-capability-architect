@@ -146,14 +146,15 @@ export async function findRecord(idOrName: string): Promise<CapabilityRecord | u
   const query = idOrName.trim().toLocaleLowerCase("en-US");
   if (!query) return undefined;
   const records = await loadRegistry();
-  return (
-    records.find(
-      (record) =>
-        record.id === query ||
-        record.name.toLocaleLowerCase("en-US") === query ||
-        record.aliases.some((alias) => alias.toLocaleLowerCase("en-US") === query)
-    ) ?? records.find((record) => searchableText(record).includes(query))
+  const exact = records.find(
+    (record) =>
+      record.id === query ||
+      record.name.toLocaleLowerCase("en-US") === query ||
+      record.aliases.some((alias) => alias.toLocaleLowerCase("en-US") === query)
   );
+  if (exact) return exact;
+  const partial = records.filter((record) => searchableText(record).includes(query));
+  return partial.length === 1 ? partial[0] : undefined;
 }
 
 export async function searchRecords(query: string, limit = 10): Promise<CapabilityRecord[]> {

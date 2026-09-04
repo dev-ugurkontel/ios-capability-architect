@@ -48,6 +48,37 @@ describe("read-only architecture tools", () => {
     expect(incompatible.data.results[0]?.determination).toBe("incompatible");
   });
 
+  it("keeps free-text device, region, and language restrictions conditional", async () => {
+    const result = await checkAvailability({
+      capability_ids: ["foundation-models"],
+      platform: "iOS",
+      os_version: "26.0",
+      device: "iPhone 8",
+      region: "TR",
+      language: "Turkish",
+      allow_beta: false
+    });
+
+    expect(result.data.results[0]).toMatchObject({
+      determination: "conditional",
+      declared_constraints: {
+        platform: "iOS",
+        os_version: "26.0",
+        device: "iPhone 8",
+        region: "TR",
+        language: "Turkish",
+        allow_beta: false
+      }
+    });
+    expect(result.data.results[0]?.reasons).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining("declared device"),
+        expect.stringContaining("declared region"),
+        expect.stringContaining("declared language")
+      ])
+    );
+  });
+
   it("compares minor and patch OS versions instead of only their major version", async () => {
     const tooOld = await checkAvailability({
       capability_ids: ["activitykit"],
@@ -240,10 +271,12 @@ describe("read-only architecture tools", () => {
 
   it("searches verified sources and the broader discovery catalog separately", async () => {
     const docs = await searchOfficialAppleDocs("HealthKit", ["healthkit"], 5);
+    const unrelatedDocs = await searchOfficialAppleDocs("definitely-unrelated-query", ["healthkit"], 5);
     const catalog = await searchAppleTechnologyCatalog("AlarmKit", "catalogued", 5);
     const coverage = await reportRegistryCoverage();
 
     expect(docs.data.results[0]?.url).toMatch(/^https:\/\/developer\.apple\.com\//);
+    expect(unrelatedDocs.data.results).toEqual([]);
     expect(catalog.data.results[0]?.coverage_status).toBe("catalogued");
     expect(coverage.data.catalog_only_technology_count).toBeGreaterThan(100);
   });

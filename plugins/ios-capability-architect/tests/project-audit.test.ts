@@ -46,6 +46,8 @@ describe("iOS project configuration audit", () => {
         expect.objectContaining({ requirement: "NSHealthUpdateUsageDescription", status: "detected" })
       ])
     );
+    expect(audit.data.project_root).toBe(".");
+    expect(JSON.stringify(audit.data)).not.toContain(root);
     expect(JSON.stringify(audit.data)).not.toContain("Read sleep trends");
   });
 
@@ -143,6 +145,32 @@ describe("iOS project configuration audit", () => {
         ({ capability_id: capabilityId, category }) =>
           capabilityId === "app-attest" &&
           ["entitlement", "xcode_capability", "info_plist_key", "background_mode"].includes(category)
+      )
+    ).toBe(false);
+  });
+
+  it("rejects a platform omitted from a reviewed capability even when no minimum key exists", async () => {
+    const root = await temporaryProject();
+    await writeFile(join(root, "project.pbxproj"), "MACOSX_DEPLOYMENT_TARGET = 15.0;\n");
+
+    const audit = await auditProjectConfiguration({
+      project_root: root,
+      capability_ids: ["background-tasks"],
+      platform: "macOS"
+    });
+
+    expect(audit.data.findings).toContainEqual(
+      expect.objectContaining({
+        capability_id: "background-tasks",
+        category: "deployment_target",
+        requirement: "BackgroundTasks is not listed as supported on macOS",
+        status: "incompatible",
+        severity: "error"
+      })
+    );
+    expect(
+      audit.data.findings.some(({ category }) =>
+        ["entitlement", "xcode_capability", "info_plist_key", "background_mode"].includes(category)
       )
     ).toBe(false);
   });
@@ -642,6 +670,13 @@ describe("iOS project configuration audit", () => {
     await expect(
       auditProjectConfiguration({ project_root: root, capability_ids: ["not-real"], platform: "iOS" })
     ).rejects.toThrow("Unknown capabilities: not-real");
+    await expect(
+      auditProjectConfiguration({
+        project_root: join(root, "missing-private-name"),
+        capability_ids: ["healthkit"],
+        platform: "iOS"
+      })
+    ).rejects.toThrow("project_root must be an existing readable directory");
   });
 
   it("does not follow symbolic links outside the selected project", async () => {

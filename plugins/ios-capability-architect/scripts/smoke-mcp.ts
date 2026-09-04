@@ -73,8 +73,31 @@ try {
     arguments: { project_root: pluginRoot, capability_ids: ["swiftdata"], platform: "iOS" }
   });
   if (auditResponse.isError) throw new Error("audit_ios_project_configuration returned an MCP error");
-  const auditEnvelope = auditResponse.structuredContent as { data?: { findings?: unknown[] } } | undefined;
+  const auditEnvelope = auditResponse.structuredContent as
+    { data?: { project_root?: string; findings?: unknown[] } } | undefined;
   if (!auditEnvelope?.data?.findings?.length) throw new Error("Project audit returned no structured findings");
+  if (auditEnvelope.data.project_root !== "." || JSON.stringify(auditEnvelope).includes(pluginRoot)) {
+    throw new Error("Project audit exposed its absolute project root");
+  }
+
+  const availabilityResponse = await client.callTool({
+    name: "check_availability",
+    arguments: {
+      capability_ids: ["foundation-models"],
+      platform: "iOS",
+      os_version: "26.0",
+      device: "iPhone 8",
+      region: "TR",
+      language: "Turkish",
+      allow_beta: false
+    }
+  });
+  if (availabilityResponse.isError) throw new Error("check_availability returned an MCP error");
+  const availabilityEnvelope = availabilityResponse.structuredContent as
+    { data?: { results?: Array<{ determination?: string }> } } | undefined;
+  if (availabilityEnvelope?.data?.results?.[0]?.determination !== "conditional") {
+    throw new Error("Human-readable availability constraints were not kept conditional");
+  }
 
   console.log(
     JSON.stringify(
@@ -85,6 +108,7 @@ try {
         profile_smoke: "healthkit",
         technology_smoke: "ARKit",
         project_audit_smoke: "swiftdata",
+        availability_smoke: "foundation-models",
         structured_output: true
       },
       null,

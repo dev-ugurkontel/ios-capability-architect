@@ -90,7 +90,17 @@ assert(
   JSON.stringify([...manifest.keywords].sort()) === JSON.stringify([...pluginPackage.keywords].sort()),
   "Plugin manifest and package discovery keywords must match"
 );
-for (const keyword of ["agent-skills", "codex", "developer-tools", "mcp", "skills"]) {
+for (const keyword of [
+  "agent-skills",
+  "apple",
+  "apple-platform",
+  "codex",
+  "developer-tools",
+  "ios",
+  "mcp",
+  "skills",
+  "xcode"
+]) {
   assert(rootPackage.keywords?.includes(keyword), `package.json must include the ${keyword} discovery keyword`);
 }
 

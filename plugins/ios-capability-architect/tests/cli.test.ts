@@ -144,6 +144,17 @@ describe("skills-only CLI", () => {
     const planResult = JSON.parse(plan.stdout()) as { data: { phases: Array<{ deliverables: string[] }> } };
     expect(planResult.data.phases[0]?.deliverables).toEqual(["Documented feasibility result"]);
 
+    const macApp = capture();
+    await expect(
+      runCli(
+        ["analyze", "--idea", "A native macOS document organizer", "--platform", "macOS", "--ui", "AppKit"],
+        macApp.streams
+      )
+    ).resolves.toBe(0);
+    const macAppResult = JSON.parse(macApp.stdout()) as { data: { assumptions: string[] } };
+    expect(macAppResult.data.assumptions).toContain("macOS is the primary target.");
+    expect(macAppResult.data.assumptions).toContain("AppKit is the default UI approach.");
+
     for (const args of [
       ["analyze", "--idea", "A health journal", "--platform", "android"],
       ["architecture", "--idea", "A health journal", "--capability", "healthkit", "--scale", "production"],

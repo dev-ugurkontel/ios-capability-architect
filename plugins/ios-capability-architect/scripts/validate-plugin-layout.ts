@@ -72,6 +72,8 @@ const skill = await readFile(new URL("skills/ios-capability-architect/SKILL.md",
 if (!skill.startsWith("---\n")) throw new Error("Skill must start with YAML frontmatter");
 if (!/\nname:\s*ios-capability-architect\s*\n/.test(skill)) throw new Error("Skill frontmatter name is invalid");
 if (!/\ndescription:\s*.+\n/.test(skill)) throw new Error("Skill frontmatter description is missing");
+if (!/\ndescription:.*\bUse for\b.*\bDo not use for\b.*\n/.test(skill))
+  throw new Error("Skill frontmatter description must include positive and negative invocation boundaries");
 
 const skillMetadata = await readFile(new URL("skills/ios-capability-architect/agents/openai.yaml", pluginRoot), "utf8");
 if (!skillMetadata.includes('default_prompt: "Use $ios-capability-architect'))

@@ -66,8 +66,8 @@ const readOnlyAnnotations = {
 
 const outputSchema = {
   schema_version: z.literal("1.0"),
-  generated_at: z.string(),
-  documentation_cutoff: z.string(),
+  generated_at: z.iso.datetime({ offset: true }),
+  documentation_cutoff: z.iso.date(),
   data: z.unknown(),
   warnings: z.array(z.string())
 };

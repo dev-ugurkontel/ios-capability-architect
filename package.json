@@ -3,7 +3,7 @@
   "version": "0.9.0",
   "private": true,
   "type": "module",
-  "description": "Production-grade agent skills and Codex plugins from Fillbyte.",
+  "description": "Production-grade agent skills and Codex plugins for Apple-platform engineering, Xcode audits, entitlements, privacy, and software development.",
   "license": "MIT",
   "author": "Fillbyte",
   "repository": {
@@ -17,11 +17,15 @@
   "keywords": [
     "agent-skills",
     "ai-agents",
+    "apple",
+    "apple-platform",
     "codex",
     "developer-tools",
+    "ios",
     "mcp",
     "plugins",
-    "skills"
+    "skills",
+    "xcode"
   ],
   "workspaces": [
     "plugins/*"

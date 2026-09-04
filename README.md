@@ -6,7 +6,9 @@
 [![skills.sh](https://skills.sh/b/fillbyte/skills)](https://skills.sh/fillbyte/skills)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Production-grade agent skills and Codex plugins from Fillbyte.
+Production-grade agent skills and Codex plugins for software engineering.
+
+The current catalog covers iOS and Apple-platform capability architecture, Xcode and XcodeGen audits, entitlements, permissions, privacy, Swift and SwiftUI planning, and App Store delivery.
 
 Fillbyte Skills is an open-source collection of focused workflows and local tools for software engineering agents. Each skill is independently discoverable and installable; related skills, MCP servers, CLIs, and assets can also ship together as a versioned plugin.
 
@@ -16,7 +18,7 @@ Fillbyte Skills is an open-source collection of focused workflows and local tool
 | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
 | [iOS Capability Architect](plugins/ios-capability-architect) | Planning an Apple-platform app, selecting public APIs, auditing Xcode configuration, or reviewing permissions, entitlements, privacy, availability, and App Store risk | Agent skill, Codex plugin, local MCP server, standalone CLI |
 
-The current catalog starts with Apple-platform engineering. Future skills will remain separate, narrowly triggered components under the same collection identity.
+The current catalog contains one Apple-platform engineering component. Additional skills will remain separate, narrowly triggered components under the same collection identity.
 
 ## Install
 
@@ -52,7 +54,7 @@ codex plugin add ios-capability-architect@fillbyte-skills
 
 ## iOS Capability Architect
 
-iOS Capability Architect turns an iOS, iPadOS, watchOS, or visionOS product idea into an evidence-backed capability map, proportionate SwiftUI-first architecture, implementation sequence, and test plan. Against an existing Apple-platform project, it can audit supported Xcode and XcodeGen source configuration without modifying files or returning their contents.
+iOS Capability Architect turns an iOS, iPadOS, macOS, watchOS, tvOS, visionOS, Mac Catalyst, or multi-platform product idea into an evidence-backed capability map, proportionate SwiftUI-first architecture, implementation sequence, and test plan. Against an existing Apple-platform project, it can audit supported Xcode and XcodeGen source configuration without modifying files or returning their contents.
 
 It keeps commonly conflated concepts separate:
 

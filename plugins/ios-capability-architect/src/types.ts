@@ -302,7 +302,7 @@ export interface ProjectConfigurationFinding {
 }
 
 export interface ProjectConfigurationAudit {
-  project_root: string;
+  project_root: ".";
   scanned_files: string[];
   skipped_entries: string[];
   selected_capabilities: string[];

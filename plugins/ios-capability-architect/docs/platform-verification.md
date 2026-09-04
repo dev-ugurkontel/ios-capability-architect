@@ -8,7 +8,7 @@ Platform contract reviewed: 2026-09-04. Apple capability evidence retains its pe
 | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
 | Required manifest        | `.codex-plugin/plugin.json`                                                                                                  |
 | Workflow instructions    | One or more skill folders containing `SKILL.md`                                                                              |
-| Actions/tools            | MCP server tools with explicit input/output schemas and safety annotations                                                   |
+| Actions/tools            | MCP server tools with explicit input schemas, structured envelope output schemas, and safety annotations                     |
 | Bundled local server     | `.mcp.json`, referenced by `mcpServers`                                                                                      |
 | Registered remote server | `.app.json` compatibility mapping after registration                                                                         |
 | Authentication           | Defined by the MCP connection/server when needed; not needed for this local read-only plugin                                 |

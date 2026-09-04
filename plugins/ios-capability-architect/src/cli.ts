@@ -55,9 +55,9 @@ Commands:
 Common options:
   --idea <text>              App idea for analyze, resolve, or architecture.
   --capability <id>          Capability ID; repeat or comma-separate values.
-  --platform <name>          Apple platform (default: iOS).
+  --platform <name>          Apple platform; analyze also accepts multi-platform (default: iOS).
   --minimum-os <version>     Deployment target for analyze or availability.
-  --ui <framework>           SwiftUI, UIKit, or unspecified (default: SwiftUI).
+  --ui <framework>           SwiftUI, UIKit, AppKit, or unspecified (default: SwiftUI).
   --on-device <priority>     required, preferred, or neutral (default: preferred).
   --privacy <level>          standard, sensitive, or regulated (default: standard).
   --include-beta             Include beta records during resolution.

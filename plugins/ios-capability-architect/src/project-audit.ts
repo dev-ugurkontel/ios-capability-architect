@@ -1,5 +1,5 @@
-import { lstat, readdir, readFile, realpath } from "node:fs/promises";
-import type { Dirent } from "node:fs";
+import { lstat, open, readdir, realpath, type FileHandle } from "node:fs/promises";
+import { constants, type Dirent } from "node:fs";
 import { basename, extname, join, relative, resolve, sep } from "node:path";
 import { findRecord } from "@/registry.js";
 import type { CapabilityRecord, ProjectConfigurationAudit, ProjectConfigurationFinding } from "@/types.js";
@@ -42,14 +42,40 @@ function normalizePath(path: string): string {
   return path.split(sep).join("/");
 }
 
+async function readBoundedText(
+  handle: FileHandle,
+  maximumBytes: number
+): Promise<{ content: string; bytesRead: number } | undefined> {
+  const buffer = Buffer.allocUnsafe(maximumBytes + 1);
+  let offset = 0;
+  while (offset < buffer.length) {
+    const { bytesRead } = await handle.read(buffer, offset, buffer.length - offset, offset);
+    if (bytesRead === 0) break;
+    offset += bytesRead;
+  }
+  return offset > maximumBytes
+    ? undefined
+    : { content: buffer.subarray(0, offset).toString("utf8"), bytesRead: offset };
+}
+
 async function collectConfigurationFiles(projectRoot: string): Promise<{
   root: string;
   files: ScannedConfigurationFile[];
   skipped: string[];
 }> {
   const absoluteRoot = resolve(projectRoot);
-  const root = await realpath(absoluteRoot);
-  const rootStat = await lstat(root);
+  let root: string;
+  try {
+    root = await realpath(absoluteRoot);
+  } catch {
+    throw new Error("project_root must be an existing readable directory");
+  }
+  let rootStat;
+  try {
+    rootStat = await lstat(root);
+  } catch {
+    throw new Error("project_root must be an existing readable directory");
+  }
   if (!rootStat.isDirectory()) throw new Error("project_root must be a directory");
 
   const files: ScannedConfigurationFile[] = [];
@@ -96,21 +122,48 @@ async function collectConfigurationFiles(projectRoot: string): Promise<{
       if (!entry.isFile() || !isConfigurationFile(entry.name)) continue;
 
       const absolutePath = join(directory, entry.name);
-      const canonicalPath = await realpath(absolutePath);
+      let canonicalPath: string;
+      try {
+        canonicalPath = await realpath(absolutePath);
+      } catch {
+        skipped.push(`${normalizePath(relative(root, absolutePath))} (unreadable file)`);
+        continue;
+      }
       if (canonicalPath !== root && !canonicalPath.startsWith(`${root}${sep}`)) {
         skipped.push(`${normalizePath(relative(root, absolutePath))} (outside root)`);
         continue;
       }
-      const stat = await lstat(canonicalPath);
-      if (stat.size > MAX_FILE_BYTES || totalBytes + stat.size > MAX_TOTAL_BYTES) {
-        skipped.push(`${normalizePath(relative(root, canonicalPath))} (size limit)`);
+      const relativePath = normalizePath(relative(root, canonicalPath));
+      let handle: FileHandle;
+      try {
+        handle = await open(absolutePath, constants.O_RDONLY | constants.O_NOFOLLOW);
+      } catch {
+        skipped.push(`${relativePath} (unreadable file or symlink race)`);
         continue;
       }
-      files.push({
-        path: normalizePath(relative(root, canonicalPath)),
-        content: await readFile(canonicalPath, "utf8")
-      });
-      totalBytes += stat.size;
+      try {
+        const stat = await handle.stat();
+        if (!stat.isFile()) {
+          skipped.push(`${relativePath} (not a regular file)`);
+          continue;
+        }
+        const maximumBytes = Math.min(MAX_FILE_BYTES, MAX_TOTAL_BYTES - totalBytes);
+        if (stat.size > maximumBytes) {
+          skipped.push(`${relativePath} (size limit)`);
+          continue;
+        }
+        const boundedText = await readBoundedText(handle, maximumBytes);
+        if (boundedText === undefined) {
+          skipped.push(`${relativePath} (size limit)`);
+          continue;
+        }
+        files.push({ path: relativePath, content: boundedText.content });
+        totalBytes += boundedText.bytesRead;
+      } catch {
+        skipped.push(`${relativePath} (unreadable file)`);
+      } finally {
+        await handle.close();
+      }
     }
   }
 
@@ -295,10 +348,12 @@ export async function auditProjectConfiguration(input: {
         })
       );
     }
+    const unsupportedPlatform =
+      record.knowledge_state.fields.platforms !== "unknown" && !record.platforms.includes(input.platform);
     const unavailableOnPlatform =
       record.knowledge_state.fields.minimum_os_version !== "unknown" &&
       record.minimum_os_version[input.platform] === null;
-    if (unavailableOnPlatform) continue;
+    if (unsupportedPlatform || unavailableOnPlatform) continue;
     addConfigurationFindings(findings, scanned.files, record, "entitlement", record.entitlements, "entitlements");
     addConfigurationFindings(
       findings,
@@ -364,6 +419,19 @@ export async function auditProjectConfiguration(input: {
 
   const targets = deploymentTargets(scanned.files, input.platform);
   for (const record of records.filter((value): value is CapabilityRecord => Boolean(value))) {
+    if (record.knowledge_state.fields.platforms !== "unknown" && !record.platforms.includes(input.platform)) {
+      findings.push(
+        finding({
+          capability_id: record.id,
+          category: "deployment_target",
+          requirement: `${record.name} is not listed as supported on ${input.platform}`,
+          status: "incompatible",
+          severity: "error",
+          recommendation: `Remove ${record.name} from the ${input.platform} target or choose a reviewed alternative that supports this platform.`
+        })
+      );
+      continue;
+    }
     if (record.knowledge_state.fields.minimum_os_version === "unknown") continue;
     const minimum = record.minimum_os_version[input.platform];
     if (minimum === undefined) continue;
@@ -424,7 +492,7 @@ export async function auditProjectConfiguration(input: {
   );
 
   return {
-    project_root: scanned.root,
+    project_root: ".",
     scanned_files: scanned.files.map(({ path }) => path),
     skipped_entries: scanned.skipped,
     selected_capabilities: input.capability_ids,
