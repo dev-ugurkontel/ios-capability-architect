@@ -2,6 +2,22 @@
 
 All notable changes to this project are documented in this file. The project follows [Semantic Versioning](https://semver.org/) and uses Conventional Commit messages to drive release automation.
 
+## [1.0.0](https://github.com/fillbyte/skills/compare/v0.9.0...v1.0.0) (2026-09-04)
+
+
+### ⚠ BREAKING CHANGES
+
+* the Codex marketplace identity changes from ios-capability-architect to fillbyte-skills; reinstall the marketplace before upgrading.
+
+### Features
+
+* establish Fillbyte Skills collection ([#41](https://github.com/fillbyte/skills/issues/41)) ([8829a1e](https://github.com/fillbyte/skills/commit/8829a1edc8c7621bf22dcca11b915e2f4b1b3af2))
+
+
+### Bug Fixes
+
+* **test:** make server version assertion release-safe ([#43](https://github.com/fillbyte/skills/issues/43)) ([c5902c2](https://github.com/fillbyte/skills/commit/c5902c2a7f0fe36dea215ccdcd52695a5501e0b4))
+
 ## [0.9.0](https://github.com/fillbyte/skills/compare/v0.8.0...v0.9.0) (2026-08-30)
 
 
