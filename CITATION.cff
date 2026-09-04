@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: If this project supports your work, cite the software repository and the exact release you used.
-title: iOS Capability Architect
+title: "Fillbyte Skills: iOS Capability Architect"
 type: software
 authors:
   - family-names: Kontel
@@ -8,8 +8,9 @@ authors:
 repository-code: https://github.com/fillbyte/skills
 url: https://github.com/fillbyte/skills
 license: MIT
-abstract: Evidence-backed Apple-platform capability architecture, configuration auditing, and implementation planning for Codex and ChatGPT.
+abstract: A collection of production-grade agent skills and Codex plugins, currently featuring evidence-backed Apple-platform capability architecture and Xcode configuration auditing.
 keywords:
+  - agent skills
   - iOS
   - Swift
   - SwiftUI

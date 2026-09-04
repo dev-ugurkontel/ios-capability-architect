@@ -88,6 +88,25 @@ describe("iOS project configuration audit", () => {
     );
   });
 
+  it("flags a deployment target below a capability's minor-version minimum", async () => {
+    const root = await temporaryProject();
+    await writeFile(join(root, "project.yml"), "deploymentTarget:\n  iOS: '16.0'\n");
+
+    const audit = await auditProjectConfiguration({
+      project_root: root,
+      capability_ids: ["activitykit"],
+      platform: "iOS"
+    });
+
+    expect(audit.data.findings).toContainEqual(
+      expect.objectContaining({
+        category: "deployment_target",
+        requirement: "iOS 16.1 or later",
+        status: "incompatible"
+      })
+    );
+  });
+
   it("flags a reviewed null minimum as unavailable instead of silently skipping it", async () => {
     const root = await temporaryProject();
     await writeFile(join(root, "project.pbxproj"), "MACOSX_DEPLOYMENT_TARGET = 15.0;\n");
@@ -126,6 +145,32 @@ describe("iOS project configuration audit", () => {
           ["entitlement", "xcode_capability", "info_plist_key", "background_mode"].includes(category)
       )
     ).toBe(false);
+  });
+
+  it("uses each platform's native Xcode deployment-target build setting", async () => {
+    for (const fixture of [
+      { platform: "macOS", setting: "MACOSX_DEPLOYMENT_TARGET", version: "13.5", minimum: "macOS 14.0" },
+      { platform: "watchOS", setting: "WATCHOS_DEPLOYMENT_TARGET", version: "9.2", minimum: "watchOS 10.0" },
+      { platform: "tvOS", setting: "TVOS_DEPLOYMENT_TARGET", version: "16.4", minimum: "tvOS 17.0" },
+      { platform: "visionOS", setting: "XROS_DEPLOYMENT_TARGET", version: "0.9", minimum: "visionOS 1.0" }
+    ]) {
+      const root = await temporaryProject();
+      await writeFile(join(root, "project.pbxproj"), `${fixture.setting} = ${fixture.version};\n`);
+
+      const audit = await auditProjectConfiguration({
+        project_root: root,
+        capability_ids: ["swiftdata"],
+        platform: fixture.platform
+      });
+
+      expect(audit.data.findings, fixture.platform).toContainEqual(
+        expect.objectContaining({
+          category: "deployment_target",
+          requirement: `${fixture.minimum} or later`,
+          status: "incompatible"
+        })
+      );
+    }
   });
 
   it("accepts a compatible deployment target and detects a privacy manifest", async () => {

@@ -17,6 +17,8 @@ const requiredPaths = [
   "SKILL.md",
   "LICENSE",
   "manifest.json",
+  "agents/openai.yaml",
+  "assets/icon.svg",
   "scripts/ios-capability-architect.mjs",
   "data/capabilities.json",
   "data/taxonomy.json",

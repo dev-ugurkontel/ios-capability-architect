@@ -20,7 +20,7 @@ You should receive an acknowledgement within 5 business days and an initial asse
 
 ## Scope
 
-Security-relevant areas include:
+Security-relevant areas include every distributed skill and plugin, especially:
 
 - MCP input validation, tool annotations, and protocol handling;
 - skills-only CLI argument handling, archive paths, and project-audit boundaries;
@@ -34,4 +34,4 @@ Incorrect but non-security-sensitive Apple-platform facts should be reported thr
 
 ## Security expectations
 
-The bundled MCP server and skills-only CLI are designed to be local, read-only, deterministic, and free of telemetry or authentication secrets. Skills archives are built from the same reviewed engine and registry, contain no MCP server, and are checksum-protected release assets. Documentation link verification is an explicit developer action restricted to an allowlisted Apple host. Contributions that change these boundaries require a documented threat-model update and maintainer review. See [PRIVACY.md](PRIVACY.md) for the public data-handling notice.
+The current iOS Capability Architect MCP server and skills-only CLI are designed to be local, read-only, deterministic, and free of telemetry or authentication secrets. Skills archives are built from the same reviewed engine and registry, contain no MCP server, and are checksum-protected release assets. Documentation link verification is an explicit developer action restricted to an allowlisted Apple host. Contributions that change these boundaries require a documented threat-model update and maintainer review. See [PRIVACY.md](PRIVACY.md) for the public data-handling notice.

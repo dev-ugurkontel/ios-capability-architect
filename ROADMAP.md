@@ -1,9 +1,10 @@
-# Roadmap
+# Fillbyte Skills Roadmap
 
 This roadmap communicates direction, not delivery guarantees. Accepted issues and milestones are the source of truth for scheduled work.
 
 ## Completed: open-source foundation
 
+- Establish the `fillbyte/skills` collection identity with independent skill discovery and plugin packaging.
 - Establish automated type, test, registry, bundle, and documentation validation.
 - Publish contribution, governance, security, support, and release policies.
 - Make verified-registry coverage measurable and distinguish it clearly from taxonomy-only discovery entries.
@@ -30,7 +31,7 @@ Completion signal: an audit of every committed fixture identifies the correct ta
 
 ## Next: registry depth and maintainability
 
-- Expand from 18 reviewed profiles to at least 60 high-usage profiles selected by public Apple-platform workflows, not arbitrary catalog order.
+- Expand from 46 reviewed profiles to at least 60 high-usage profiles selected by public Apple-platform workflows, not arbitrary catalog order.
 - Prioritize APNs, CloudKit, Keychain, AuthenticationServices, App Attest, camera and media, maps and weather, Bluetooth and NFC, Wallet and Apple Pay, testing, accessibility, and extension families.
 - Add machine-readable provenance and change-review metadata without implying automatic factual verification.
 - Improve availability modeling for devices, hardware, regions, languages, accounts, managed entitlements, and beta SDKs.

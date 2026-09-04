@@ -14,6 +14,9 @@ const listing = await json("listing.json");
 const prompts = await json("starter-prompts.json");
 const tests = await json("test-cases.json");
 const availability = await json("availability.json");
+const pluginManifest = JSON.parse(
+  await readFile(join(root, "plugins", "ios-capability-architect", ".codex-plugin", "plugin.json"), "utf8")
+);
 
 const requiredListingFields = [
   "name",
@@ -35,6 +38,18 @@ for (const field of requiredListingFields) {
   }
 }
 if (listing.publisher !== "Fillbyte") throw new Error("Submission publisher must remain Fillbyte");
+if (listing.name !== pluginManifest.interface?.displayName) {
+  throw new Error("Submission and plugin display names must match");
+}
+if (listing.short_description !== pluginManifest.interface?.shortDescription) {
+  throw new Error("Submission and plugin short descriptions must match");
+}
+if (listing.privacy_policy_url !== pluginManifest.interface?.privacyPolicyURL) {
+  throw new Error("Submission and plugin privacy policy URLs must match");
+}
+if (listing.terms_url !== pluginManifest.interface?.termsOfServiceURL) {
+  throw new Error("Submission and plugin terms URLs must match");
+}
 if (listing.short_description.length > 100) throw new Error("Submission short description exceeds 100 characters");
 if (listing.long_description.length < 200 || listing.long_description.length > 1200) {
   throw new Error("Submission long description must contain 200 through 1200 characters");

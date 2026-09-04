@@ -132,6 +132,30 @@ describe("skills-only CLI", () => {
     expect(planResult.data.phases).toHaveLength(7);
   });
 
+  it("uses schema defaults and rejects unsupported constrained values", async () => {
+    const architecture = capture();
+    await expect(
+      runCli(["architecture", "--idea", "A health journal", "--capability", "healthkit"], architecture.streams)
+    ).resolves.toBe(0);
+    expect(JSON.parse(architecture.stdout())).toMatchObject({ data: { project_scale: "small" } });
+
+    const plan = capture();
+    await expect(runCli(["plan", "--capability", "healthkit", "--no-code-spike"], plan.streams)).resolves.toBe(0);
+    const planResult = JSON.parse(plan.stdout()) as { data: { phases: Array<{ deliverables: string[] }> } };
+    expect(planResult.data.phases[0]?.deliverables).toEqual(["Documented feasibility result"]);
+
+    for (const args of [
+      ["analyze", "--idea", "A health journal", "--platform", "android"],
+      ["architecture", "--idea", "A health journal", "--capability", "healthkit", "--scale", "production"],
+      ["availability", "--capability", "healthkit", "--minimum-os", "latest"]
+    ]) {
+      const output = capture();
+      await expect(runCli(args, output.streams)).resolves.toBe(1);
+      expect(output.stdout()).toBe("");
+      expect(output.stderr()).toContain("ios-capability-architect:");
+    }
+  });
+
   it("searches verified sources and the discovery catalog", async () => {
     const sources = capture();
     await expect(
@@ -168,6 +192,6 @@ describe("skills-only CLI", () => {
     await expect(
       runCli(["catalog", "--query", "HealthKit", "--coverage", "verified"], invalidCoverage.streams)
     ).resolves.toBe(1);
-    expect(invalidCoverage.stderr()).toContain("all, catalogued, or profiled");
+    expect(invalidCoverage.stderr()).toContain("Invalid option");
   });
 });

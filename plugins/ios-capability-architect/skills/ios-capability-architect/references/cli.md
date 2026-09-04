@@ -68,6 +68,20 @@ Measure evidence coverage:
 node <skill-directory>/scripts/ios-capability-architect.mjs coverage
 ```
 
+Generate a small-scale architecture or omit the default feasibility code spike from a plan:
+
+```bash
+node <skill-directory>/scripts/ios-capability-architect.mjs architecture \
+  --idea "A private health journal" \
+  --capability healthkit \
+  --scale small
+node <skill-directory>/scripts/ios-capability-architect.mjs plan \
+  --capability healthkit \
+  --no-code-spike
+```
+
+Constrained options are validated with the same schemas as the MCP tools. Invalid platforms, OS versions, UI frameworks, privacy levels, on-device priorities, project scales, coverage filters, or result bounds fail instead of being guessed.
+
 ## Interpretation rules
 
 - Preserve `warnings`, `knowledge_gaps`, `unknown`, and `manual_review` fields in the user-facing result.

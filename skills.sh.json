@@ -4,7 +4,7 @@
   "groupings": [
     {
       "title": "Apple Platforms",
-      "description": "Evidence-backed architecture and capability guidance for Apple-platform development.",
+      "description": "Agent skills for Apple-platform architecture, Xcode configuration, capabilities, entitlements, privacy, and App Store readiness.",
       "skills": ["ios-capability-architect"]
     }
   ]

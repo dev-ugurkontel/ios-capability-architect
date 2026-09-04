@@ -1,6 +1,6 @@
 ---
 name: ios-capability-architect
-description: Apple-platform agent skill for iOS, iPadOS, watchOS, and visionOS architecture. Analyze app ideas and Xcode projects; map requirements to documented Swift and SwiftUI frameworks, APIs, capabilities, permissions, Info.plist keys, entitlements, extensions, background modes, privacy requirements, App Store risks, implementation steps, tests, and Swift examples. Use for capability selection, configuration audits, feasibility, on-device AI, HealthKit, background location, widgets, Live Activities, and deprecated API migrations.
+description: Analyze iOS and Apple-platform app ideas or Xcode projects. Map requirements to public Apple frameworks, APIs, capabilities, permissions, Info.plist keys, entitlements, extensions, background modes, privacy and App Store risks, architecture, implementation plans, tests, and Swift examples. Use for feasibility, capability selection, configuration audits, on-device AI, HealthKit, location, widgets, Live Activities, and API migrations.
 ---
 
 # iOS Capability Architect

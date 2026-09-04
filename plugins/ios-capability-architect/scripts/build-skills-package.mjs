@@ -21,6 +21,12 @@ await cp(join(pluginRoot, "skills", "ios-capability-architect", "SKILL.md"), joi
 await cp(join(pluginRoot, "skills", "ios-capability-architect", "references"), join(skillRoot, "references"), {
   recursive: true
 });
+await cp(join(pluginRoot, "skills", "ios-capability-architect", "agents"), join(skillRoot, "agents"), {
+  recursive: true
+});
+await cp(join(pluginRoot, "skills", "ios-capability-architect", "assets"), join(skillRoot, "assets"), {
+  recursive: true
+});
 await cp(join(pluginRoot, "bundle", "cli.mjs"), join(skillRoot, "scripts", "ios-capability-architect.mjs"));
 await cp(join(pluginRoot, "data", "capabilities.json"), join(skillRoot, "data", "capabilities.json"));
 await cp(join(pluginRoot, "data", "taxonomy.json"), join(skillRoot, "data", "taxonomy.json"));

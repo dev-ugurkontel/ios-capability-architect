@@ -1,5 +1,5 @@
 name: Feature proposal
-description: Propose a new tool, workflow, integration, or substantial behavior change.
+description: Propose a skill, plugin, tool, workflow, integration, or substantial behavior change.
 title: "[Proposal]: "
 labels: ["enhancement"]
 body:

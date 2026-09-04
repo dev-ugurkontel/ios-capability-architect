@@ -6,7 +6,7 @@
 
 - `project_root`: the local directory whose configuration surfaces may be inspected;
 - `capability_ids`: one or more reviewed registry profiles;
-- `platform`: the platform used for minimum-version comparison.
+- `platform`: `iOS`, `iPadOS`, `watchOS`, `tvOS`, `visionOS`, `macOS`, or `Mac Catalyst`, used for minimum-version comparison.
 
 ## Inspected surfaces
 
@@ -29,3 +29,5 @@
 - `unknown`: the registry lacks enough reviewed evidence to conclude whether configuration is required.
 
 The result returns relative file paths and findings, not source contents. It cannot prove App ID state, signing, provisioning profiles, managed-entitlement approval, generated target membership, or runtime availability.
+
+Native Xcode deployment targets are read from the platform-appropriate build setting: `IPHONEOS_DEPLOYMENT_TARGET`, `WATCHOS_DEPLOYMENT_TARGET`, `TVOS_DEPLOYMENT_TARGET`, `XROS_DEPLOYMENT_TARGET`, or `MACOSX_DEPLOYMENT_TARGET`. XcodeGen platform keys are mapped to the same declared platform before comparison.

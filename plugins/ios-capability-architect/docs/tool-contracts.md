@@ -12,7 +12,7 @@ Every tool returns:
 }
 ```
 
-All inputs are strict Zod schemas in `src/schema.ts`; all results are available as both MCP structured content and model-readable JSON text.
+All inputs are typed and bounded with Zod schemas in `src/schema.ts`; constrained fields include model-visible descriptions and allowed values. All results are available as both MCP structured content and model-readable JSON text.
 
 | Tool                                 | Required input | Optional input                                                                | Output data                                                                                  | Failure behavior                                 |
 | ------------------------------------ | -------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------ |

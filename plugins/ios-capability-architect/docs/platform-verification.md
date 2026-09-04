@@ -1,6 +1,6 @@
 # Platform verification
 
-Verification date: 2026-08-30.
+Platform contract reviewed: 2026-09-04. Apple capability evidence retains its per-record verification dates.
 
 ## Confirmed
 
@@ -26,15 +26,16 @@ Verification date: 2026-08-30.
 - Tool annotations are hints, not replacements for authorization, validation, or confirmation.
 - Public MCP metadata and skill snapshots are reviewed and versioned; changes require a new reviewed version.
 
-## Unverified
+## Distribution interpretation
 
-The `agent-plugins.com` domain did not resolve and no separate official documentation, manifest schema, runtime API, authentication model, or publishing procedure could be verified for that domain. No domain-specific keys or APIs were invented. The safe assumption is the current OpenAI universal plugin architecture documented at `developers.openai.com/plugins`.
+The repository follows the current OpenAI skill and plugin contracts documented at `developers.openai.com`. `fillbyte/skills` is the collection and repository marketplace; `ios-capability-architect` is one independently discoverable skill and plugin inside it. No undocumented manifest fields or publishing APIs are assumed.
 
 ## Primary sources
 
-- https://developers.openai.com/plugins/concepts/plugins
-- https://developers.openai.com/plugins/plan/tools
-- https://developers.openai.com/plugins/build/plugins
+- https://developers.openai.com/codex/skills
+- https://developers.openai.com/codex/plugins
+- https://developers.openai.com/codex/plugins/build
+- https://developers.openai.com/plugins/guides/optimize-metadata
 - https://developers.openai.com/plugins/deploy/submission
 - https://developers.openai.com/plugins/guides/security-privacy
 - https://developers.openai.com/plugins/app-guidelines

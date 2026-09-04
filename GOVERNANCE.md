@@ -1,8 +1,8 @@
-# Project Governance
+# Fillbyte Skills Governance
 
 ## Mission
 
-iOS Capability Architect provides evidence-backed, conservative, and actionable mappings from Apple-platform product ideas to frameworks, permissions, entitlements, architecture, and delivery plans.
+Fillbyte Skills publishes focused, evidence-backed workflows and tools for software engineering agents. Each component owns a narrow problem and explicit trust boundary. The current iOS Capability Architect component maps Apple-platform product ideas and projects to public frameworks, permissions, entitlements, architecture, and delivery plans.
 
 The project is stewarded in the Fillbyte GitHub organization. Copyright and authorship remain attributed to their respective individual contributors.
 
@@ -22,7 +22,7 @@ Additional maintainers may be invited based on sustained, constructive contribut
 
 Routine fixes, documentation changes, and verified registry additions use normal pull-request review. Maintainers seek consensus and document material tradeoffs in the pull request.
 
-Changes to the capability schema, MCP tool contract, trust boundaries, licensing, governance, release policy, or compatibility baseline require a public proposal issue before implementation. The proposal should define the problem, alternatives, compatibility impact, migration plan, and acceptance criteria. The lead maintainer makes the final decision when consensus cannot be reached, and records the rationale publicly.
+New top-level skills or plugins, and changes to a capability schema, MCP tool contract, trust boundary, licensing, governance, release policy, or compatibility baseline, require a public proposal issue before implementation. The proposal should define the problem, alternatives, compatibility impact, migration plan, and acceptance criteria. The lead maintainer makes the final decision when consensus cannot be reached, and records the rationale publicly.
 
 Security response and conduct enforcement may be handled privately until disclosure is safe and appropriate.
 
@@ -30,7 +30,7 @@ Security response and conduct enforcement may be handled privately until disclos
 
 - Authors do not approve their own pull requests when another maintainer is available.
 - Required automated checks must pass before merge.
-- Apple-platform claims require current official evidence and human semantic review.
+- Domain claims require current primary evidence and human semantic review; Apple-platform claims require official Apple sources.
 - Breaking changes require migration notes and an appropriate release plan.
 - Generated bundle changes must be traceable to reviewed source changes.
 - Maintainers may close stale or out-of-scope proposals with a clear explanation.

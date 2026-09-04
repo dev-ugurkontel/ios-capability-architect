@@ -1,6 +1,6 @@
-# Contributing to iOS Capability Architect
+# Contributing to Fillbyte Skills
 
-Thank you for helping make Apple-platform architecture guidance more accurate, useful, and trustworthy. Contributions of code, verified capability records, tests, documentation, and review feedback are welcome.
+Thank you for helping make Fillbyte's agent skills accurate, useful, and trustworthy. Contributions of focused skills, plugin tooling, code, verified evidence, tests, documentation, and review feedback are welcome.
 
 ## Project principles
 
@@ -11,10 +11,11 @@ Every contribution should preserve these properties:
 - **Deterministic tooling.** The MCP server is read-only and must not silently mutate the registry, contact unrelated services, or depend on model-generated facts.
 - **Privacy by default.** Collect, expose, and retain no more information than the requested analysis requires.
 - **Focused changes.** Keep pull requests reviewable and avoid unrelated formatting or refactoring.
+- **One source of truth.** A skill lives inside its owning plugin; generated bundles and archives are rebuilt from reviewed source.
 
 ## Before you start
 
-Search existing issues and pull requests before opening new work. For a substantial behavior change, new tool, schema migration, or governance decision, open a proposal issue first so maintainers and contributors can agree on scope.
+Search existing issues and pull requests before opening new work. For a new skill or plugin, substantial behavior change, new tool, schema migration, or governance decision, open a proposal issue first so maintainers and contributors can agree on scope.
 
 Security vulnerabilities must follow [SECURITY.md](SECURITY.md), not the public issue tracker. General usage questions belong in the support channels described in [SUPPORT.md](SUPPORT.md).
 
@@ -37,6 +38,19 @@ npm run verify:docs
 `npm run verify` runs formatting, lint, type, registry, plugin-layout, coverage, build, and MCP smoke checks. The final documentation command accesses only the allowlisted Apple Developer documentation host. It verifies reachability, not the meaning of a source; factual changes still require human review.
 
 Verification also builds the public skills-only archive, rejects unsafe archive paths and symlinks, and runs the packaged CLI from the generated distribution. Submission-facing changes must update and validate `docs/openai-submission` without weakening the local-first privacy boundary.
+
+## Adding a skill or plugin
+
+Every new skill must:
+
+1. solve one focused job and use a unique kebab-case name;
+2. state clear positive and negative triggers in its frontmatter description;
+3. keep `SKILL.md` concise and load detailed references progressively;
+4. provide `agents/openai.yaml` with accurate display metadata, an explicit `$skill-name` starter prompt, and existing packaged assets;
+5. include tests or evaluation fixtures for direct, indirect, and out-of-scope prompts;
+6. be listed in the root catalog and `skills.sh.json` without duplicating its canonical files.
+
+A plugin that distributes skills or local tools must also have a complete `.codex-plugin/plugin.json`, a `.agents/plugins/marketplace.json` entry, public support and legal links, validated asset paths, reproducible packaging, and documented privacy and security boundaries. Update workspace automation to discover additional components rather than hard-coding copies of the first plugin's scripts.
 
 ## Adding or changing a capability record
 

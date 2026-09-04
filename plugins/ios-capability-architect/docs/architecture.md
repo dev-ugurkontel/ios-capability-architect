@@ -10,7 +10,7 @@
 6. Recommendation engine: deterministic requirement extraction, relevance scoring, availability checks, project-aware audits, architecture, and delivery plan.
 7. Registry: reviewed recommendation profiles plus a separate measured discovery catalog sourced from official Apple indexes.
 8. Developer scripts: schema validation and live link verification.
-9. Tests: registry integrity plus the seven acceptance scenarios.
+9. Tests: registry integrity, trigger fixtures, and acceptance scenarios.
 
 ## Data flow
 

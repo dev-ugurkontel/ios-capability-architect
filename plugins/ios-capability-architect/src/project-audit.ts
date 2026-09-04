@@ -3,6 +3,7 @@ import type { Dirent } from "node:fs";
 import { basename, extname, join, relative, resolve, sep } from "node:path";
 import { findRecord } from "@/registry.js";
 import type { CapabilityRecord, ProjectConfigurationAudit, ProjectConfigurationFinding } from "@/types.js";
+import { comparePlatformVersions, parsePlatformVersion } from "@/version.js";
 
 const MAX_FILES = 500;
 const MAX_DIRECTORIES = 1_000;
@@ -166,21 +167,30 @@ function parseConfigurationRequirement(value: string): { needles: string[]; cond
   };
 }
 
-function parseVersion(value: string): [number, number] | undefined {
-  const match = /^(\d+)(?:\.(\d+))?/.exec(value.trim());
-  return match ? [Number(match[1]), Number(match[2] ?? 0)] : undefined;
-}
+const deploymentTargetConfiguration: Record<string, { buildSetting: string; xcodegenPlatform: string }> = {
+  iOS: { buildSetting: "IPHONEOS_DEPLOYMENT_TARGET", xcodegenPlatform: "iOS" },
+  iPadOS: { buildSetting: "IPHONEOS_DEPLOYMENT_TARGET", xcodegenPlatform: "iOS" },
+  "Mac Catalyst": { buildSetting: "IPHONEOS_DEPLOYMENT_TARGET", xcodegenPlatform: "iOS" },
+  watchOS: { buildSetting: "WATCHOS_DEPLOYMENT_TARGET", xcodegenPlatform: "watchOS" },
+  tvOS: { buildSetting: "TVOS_DEPLOYMENT_TARGET", xcodegenPlatform: "tvOS" },
+  visionOS: { buildSetting: "XROS_DEPLOYMENT_TARGET", xcodegenPlatform: "visionOS" },
+  macOS: { buildSetting: "MACOSX_DEPLOYMENT_TARGET", xcodegenPlatform: "macOS" }
+};
 
-function compareVersions(left: [number, number], right: [number, number]): number {
-  return left[0] === right[0] ? left[1] - right[1] : left[0] - right[0];
-}
-
-function deploymentTargets(files: ScannedConfigurationFile[]): Array<{ version: string; path: string }> {
+function deploymentTargets(
+  files: ScannedConfigurationFile[],
+  platform: string
+): Array<{ version: string; path: string }> {
   const results: Array<{ version: string; path: string }> = [];
+  const configuration = deploymentTargetConfiguration[platform];
+  if (!configuration) return results;
   const patterns = [
-    /IPHONEOS_DEPLOYMENT_TARGET\s*=\s*["']?(\d+(?:\.\d+)?)/g,
-    /deploymentTarget\s*:\s*\{[^}]*iOS\s*:\s*["']?(\d+(?:\.\d+)?)/gs,
-    /^\s*iOS\s*:\s*["']?(\d+(?:\.\d+)?)["']?\s*$/gm
+    new RegExp(`${configuration.buildSetting}\\s*=\\s*["']?(\\d+(?:\\.\\d+){0,2})`, "g"),
+    new RegExp(
+      `deploymentTarget\\s*:\\s*\\{[^}]*${configuration.xcodegenPlatform}\\s*:\\s*["']?(\\d+(?:\\.\\d+){0,2})`,
+      "gs"
+    ),
+    new RegExp(`^\\s*${configuration.xcodegenPlatform}\\s*:\\s*["']?(\\d+(?:\\.\\d+){0,2})["']?\\s*$`, "gm")
   ];
   for (const file of files) {
     if (!/[.]pbxproj$|project[.]ya?ml$|[.]xcconfig$/.test(file.path)) continue;
@@ -352,7 +362,7 @@ export async function auditProjectConfiguration(input: {
     }
   }
 
-  const targets = deploymentTargets(scanned.files);
+  const targets = deploymentTargets(scanned.files, input.platform);
   for (const record of records.filter((value): value is CapabilityRecord => Boolean(value))) {
     if (record.knowledge_state.fields.minimum_os_version === "unknown") continue;
     const minimum = record.minimum_os_version[input.platform];
@@ -370,7 +380,7 @@ export async function auditProjectConfiguration(input: {
       );
       continue;
     }
-    const minimumVersion = parseVersion(minimum);
+    const minimumVersion = parsePlatformVersion(minimum);
     if (!minimumVersion) continue;
     if (targets.length === 0) {
       findings.push(
@@ -386,8 +396,8 @@ export async function auditProjectConfiguration(input: {
       continue;
     }
     const incompatible = targets.filter(({ version }) => {
-      const parsed = parseVersion(version);
-      return parsed ? compareVersions(parsed, minimumVersion) < 0 : false;
+      const parsed = parsePlatformVersion(version);
+      return parsed ? comparePlatformVersions(parsed, minimumVersion) < 0 : false;
     });
     findings.push(
       finding({

@@ -1,18 +1,18 @@
-# Terms for iOS Capability Architect
+# Terms for Fillbyte Skills
 
-Last updated: August 30, 2026
+Last updated: September 4, 2026
 
-iOS Capability Architect is open-source software published by Fillbyte under the [MIT License](LICENSE). The MIT License governs copying, modification, distribution, sublicensing, and use of the software.
+Fillbyte Skills is open-source software published by Fillbyte under the [MIT License](LICENSE). The MIT License governs copying, modification, distribution, sublicensing, and use of the software.
 
 ## Nature of the service
 
-The plugin provides technical research, architecture, configuration-audit, and implementation-planning assistance. It does not provide legal advice, guarantee App Review approval, grant Apple entitlements, replace Apple documentation, or prove behavior on a particular device, account, region, SDK, signing profile, or production build.
+The collection's current iOS Capability Architect component provides technical research, architecture, configuration-audit, and implementation-planning assistance. It does not provide legal advice, guarantee App Review approval, grant Apple entitlements, replace Apple documentation, or prove behavior on a particular device, account, region, SDK, signing profile, or production build.
 
 You are responsible for reviewing generated recommendations, verifying current official documentation, protecting project data, testing on supported devices, and complying with Apple agreements, App Store rules, privacy laws, third-party licenses, and policies applicable to your product.
 
 ## Prohibited reliance
 
-Do not use the plugin to obtain unauthorized entitlements, bypass platform security or review, use private APIs, manipulate permission consent, or conceal data practices. The plugin intentionally refuses or warns about these workflows.
+Do not use a Fillbyte skill or plugin to obtain unauthorized entitlements, bypass platform security or review, use private APIs, manipulate permission consent, or conceal data practices. The current plugin intentionally refuses or warns about these workflows.
 
 ## Third-party services
 

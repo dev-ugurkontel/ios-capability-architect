@@ -22,6 +22,7 @@ import type {
   ToolEnvelope
 } from "@/types.js";
 import { catalogOnlyUnverifiedProfileFields } from "@/types.js";
+import { comparePlatformVersions, parsePlatformVersion } from "@/version.js";
 
 const DOCUMENTATION_CUTOFF = "2026-08-30";
 
@@ -413,12 +414,6 @@ export async function compareImplementationOptions(
   return envelope({ criteria, options });
 }
 
-function parseMajor(version: string | undefined): number | undefined {
-  if (!version) return undefined;
-  const match = /\d+/.exec(version);
-  return match ? Number(match[0]) : undefined;
-}
-
 export async function checkAvailability(input: {
   capability_ids: string[];
   platform: string;
@@ -429,10 +424,10 @@ export async function checkAvailability(input: {
   allow_beta: boolean;
 }): Promise<ToolEnvelope<{ results: Array<Record<string, unknown>> }>> {
   const records = await resolveIds(input.capability_ids);
-  const requestedMajor = parseMajor(input.os_version);
+  const requestedVersion = parsePlatformVersion(input.os_version);
   const results = records.map((record) => {
     const minimum = record.minimum_os_version[input.platform];
-    const minimumMajor = parseMajor(minimum ?? undefined);
+    const minimumVersion = parsePlatformVersion(minimum ?? undefined);
     const incompatibleReasons: string[] = [];
     const conditionalReasons: string[] = [];
     if (!record.platforms.includes(input.platform))
@@ -450,7 +445,11 @@ export async function checkAvailability(input: {
       incompatibleReasons.push("This record is deprecated and is excluded from new implementation recommendations.");
     if (record.stable_or_beta === "unknown")
       conditionalReasons.push("The current lifecycle status is not verified in this record.");
-    if (requestedMajor !== undefined && minimumMajor !== undefined && requestedMajor < minimumMajor)
+    if (
+      requestedVersion !== undefined &&
+      minimumVersion !== undefined &&
+      comparePlatformVersions(requestedVersion, minimumVersion) < 0
+    )
       incompatibleReasons.push(`Requires ${input.platform} ${minimum} or later.`);
     if (record.hardware_requirements.length > 0 && !input.device)
       conditionalReasons.push("Runtime hardware eligibility must be checked.");

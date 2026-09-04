@@ -3,34 +3,53 @@
   "version": "0.9.0",
   "description": "Map Apple-platform ideas and existing projects to verified capabilities, configuration evidence, architecture, and implementation plans.",
   "author": {
-    "name": "Fillbyte"
+    "name": "Fillbyte",
+    "email": "support@fillbyte.com",
+    "url": "https://fillbyte.com"
   },
+  "homepage": "https://github.com/fillbyte/skills/tree/main/plugins/ios-capability-architect",
+  "repository": "https://github.com/fillbyte/skills",
   "license": "MIT",
   "keywords": [
+    "agent-skills",
+    "apple",
+    "apple-platform",
+    "app-store",
+    "architecture",
+    "capabilities",
+    "codex",
+    "developer-tools",
+    "entitlements",
     "ios",
+    "mcp",
+    "plugin",
+    "privacy",
     "swift",
     "swiftui",
-    "apple",
-    "architecture",
-    "capabilities"
+    "xcode",
+    "xcodegen"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "iOS Capability Architect",
-    "shortDescription": "Plan and audit iOS capabilities with verified evidence.",
+    "shortDescription": "Plan Apple capabilities and audit Xcode projects",
     "longDescription": "Analyze an Apple-platform app idea or existing project, map requirements to documented technologies, separate permissions from capabilities and entitlements, audit source configuration without modifying it, identify privacy and App Store risks, and produce a practical SwiftUI-first architecture and delivery plan.",
     "developerName": "Fillbyte",
     "category": "Developer Tools",
     "capabilities": [
       "Read"
     ],
+    "websiteURL": "https://skills.sh/fillbyte/skills/ios-capability-architect",
+    "privacyPolicyURL": "https://github.com/fillbyte/skills/blob/main/PRIVACY.md",
+    "termsOfServiceURL": "https://github.com/fillbyte/skills/blob/main/TERMS.md",
     "defaultPrompt": [
-      "Architect my iOS app idea with verified Apple APIs.",
-      "Audit my existing iOS project's capabilities and configuration.",
-      "Audit this iOS design's permissions and entitlements.",
-      "Compare on-device Apple technologies for this feature."
+      "Architect my iOS app with verified Apple APIs.",
+      "Audit this Xcode project's capability setup.",
+      "Review permissions, entitlements, and App Store risks."
     ],
-    "brandColor": "#0A84FF"
+    "brandColor": "#0A84FF",
+    "composerIcon": "./skills/ios-capability-architect/assets/icon.svg",
+    "logo": "./skills/ios-capability-architect/assets/icon.svg"
   },
   "mcpServers": "./.mcp.json"
 }

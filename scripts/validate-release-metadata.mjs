@@ -36,14 +36,14 @@ if (!write) {
   );
 }
 
-const [rootPackage, pluginPackage, packageLock, releaseManifest, releasePleaseConfig, skillsConfig, rootReadme] =
+const [rootPackage, pluginPackage, packageLock, releaseManifest, skillsConfig, marketplaceConfig, rootReadme] =
   await Promise.all([
     readJson("package.json"),
     readJson("plugins/ios-capability-architect/package.json"),
     readJson("package-lock.json"),
     readJson(".release-please-manifest.json"),
-    readJson("release-please-config.json"),
     readJson("skills.sh.json"),
+    readJson(".agents/plugins/marketplace.json"),
     readFile("README.md", "utf8")
   ]);
 
@@ -87,12 +87,64 @@ for (const [surface, surfaceUrl] of repositorySurfaces) {
 }
 
 assert(
+  JSON.stringify([...manifest.keywords].sort()) === JSON.stringify([...pluginPackage.keywords].sort()),
+  "Plugin manifest and package discovery keywords must match"
+);
+for (const keyword of ["agent-skills", "codex", "developer-tools", "mcp", "skills"]) {
+  assert(rootPackage.keywords?.includes(keyword), `package.json must include the ${keyword} discovery keyword`);
+}
+
+assert(
   skillsConfig.$schema === "https://skills.sh/schemas/skills.sh.schema.json",
   "skills.sh.json must use the canonical schema"
 );
 assert(
+  Object.keys(skillsConfig).every((key) => ["$schema", "schema", "notGrouped", "groupings"].includes(key)),
+  "skills.sh.json contains a field outside the published schema"
+);
+assert(["top", "bottom"].includes(skillsConfig.notGrouped), "skills.sh.json notGrouped value is invalid");
+assert(
+  Array.isArray(skillsConfig.groupings) && skillsConfig.groupings.length >= 1 && skillsConfig.groupings.length <= 50,
+  "skills.sh.json must contain one through fifty groupings"
+);
+for (const [index, grouping] of skillsConfig.groupings.entries()) {
+  assert(
+    Object.keys(grouping).every((key) => ["title", "description", "skills"].includes(key)),
+    `skills.sh.json grouping ${index} contains an unsupported field`
+  );
+  assert(
+    typeof grouping.title === "string" && grouping.title.length >= 1 && grouping.title.length <= 120,
+    `skills.sh.json grouping ${index} title is invalid`
+  );
+  assert(
+    grouping.description === undefined ||
+      (typeof grouping.description === "string" && grouping.description.length <= 500),
+    `skills.sh.json grouping ${index} description is invalid`
+  );
+  assert(
+    Array.isArray(grouping.skills) && grouping.skills.length >= 1 && grouping.skills.length <= 500,
+    `skills.sh.json grouping ${index} skills are invalid`
+  );
+  assert(
+    grouping.skills.every((skill) => typeof skill === "string" && skill.length >= 1 && skill.length <= 120),
+    `skills.sh.json grouping ${index} contains an invalid skill name`
+  );
+}
+assert(
   skillsConfig.groupings?.some((group) => group.skills?.includes("ios-capability-architect")),
   "skills.sh.json must feature ios-capability-architect"
+);
+assert(marketplaceConfig.name === "fillbyte-skills", "Repository marketplace name must remain fillbyte-skills");
+assert(
+  marketplaceConfig.interface?.displayName === "Fillbyte Skills",
+  "Repository marketplace display name must remain Fillbyte Skills"
+);
+const marketplacePlugin = marketplaceConfig.plugins?.find((plugin) => plugin.name === "ios-capability-architect");
+assert(marketplacePlugin?.source?.path === "./plugins/ios-capability-architect", "Marketplace plugin path is invalid");
+assert(marketplacePlugin?.category === "Developer Tools", "Marketplace plugin category is missing");
+assert(
+  marketplacePlugin?.policy?.installation === "AVAILABLE" && marketplacePlugin?.policy?.authentication === "ON_INSTALL",
+  "Marketplace plugin policy is incomplete"
 );
 const readmeLines = new Set(rootReadme.split("\n"));
 assert(
@@ -108,15 +160,13 @@ assert(
   "README.md must link to the canonical skills.sh page"
 );
 
-const installReference = rootReadme.match(
-  /codex plugin marketplace add fillbyte\/skills --ref v(\d+\.\d+\.\d+) # x-release-please-version/
-);
-assert(installReference, "README.md must contain the release-managed marketplace installation reference");
-assert(installReference[1] === version, `README.md install reference ${installReference[1]} does not match ${version}`);
-const extraFiles = releasePleaseConfig.packages?.["."]?.["extra-files"] ?? [];
 assert(
-  extraFiles.some((entry) => entry?.type === "generic" && entry.path === "README.md"),
-  "release-please-config.json must update README.md through the generic updater"
+  readmeLines.has("codex plugin marketplace add fillbyte/skills"),
+  "README.md must contain the canonical Codex marketplace installation command"
+);
+assert(
+  readmeLines.has("codex plugin add ios-capability-architect@fillbyte-skills"),
+  "README.md must contain the canonical Codex plugin installation command"
 );
 
 const changelog = await readFile("CHANGELOG.md", "utf8");

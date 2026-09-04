@@ -48,6 +48,25 @@ describe("read-only architecture tools", () => {
     expect(incompatible.data.results[0]?.determination).toBe("incompatible");
   });
 
+  it("compares minor and patch OS versions instead of only their major version", async () => {
+    const tooOld = await checkAvailability({
+      capability_ids: ["activitykit"],
+      platform: "iOS",
+      os_version: "16.0",
+      allow_beta: false
+    });
+    const minimum = await checkAvailability({
+      capability_ids: ["activitykit"],
+      platform: "iOS",
+      os_version: "16.1.0",
+      allow_beta: false
+    });
+
+    expect(tooOld.data.results[0]).toMatchObject({ determination: "incompatible" });
+    expect(tooOld.data.results[0]?.reasons).toContain("Requires iOS 16.1 or later.");
+    expect(minimum.data.results[0]).toMatchObject({ determination: "verified_compatible" });
+  });
+
   it("treats a reviewed null platform minimum as unavailable rather than unknown", async () => {
     for (const capabilityId of ["app-attest", "apptrackingtransparency"]) {
       const result = await checkAvailability({

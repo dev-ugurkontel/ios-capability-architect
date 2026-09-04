@@ -44,6 +44,11 @@ const knowledgeStateSchema = z.object({
   fields: z.record(z.enum(knowledgeTrackedFields), z.enum(knowledgeStates))
 });
 
+const osVersionSchema = z
+  .string()
+  .trim()
+  .regex(/^\d+(?:\.\d+){0,2}(?:\s+(?:beta|rc)(?:\s+\d+)?)?$/i, "Use a numeric OS version such as 18 or 18.1");
+
 export const capabilityRecordSchema = z
   .object({
     id: z.string().regex(/^[a-z0-9]+(?:[._-][a-z0-9]+)*$/),
@@ -135,12 +140,24 @@ export const capabilityRegistrySchema = z
   });
 
 export const analyzeIdeaInputSchema = z.object({
-  idea: z.string().min(10).max(10_000),
-  target_platform: z.enum(["iOS", "iPadOS", "watchOS", "visionOS", "multi-platform"]).default("iOS"),
-  minimum_os_version: z.string().optional(),
-  preferred_ui_framework: z.enum(["SwiftUI", "UIKit", "unspecified"]).default("SwiftUI"),
-  on_device_priority: z.enum(["required", "preferred", "neutral"]).default("preferred"),
-  privacy_level: z.enum(["standard", "sensitive", "regulated"]).default("standard")
+  idea: z.string().min(10).max(10_000).describe("Natural-language Apple-platform product idea or feature request."),
+  target_platform: z
+    .enum(["iOS", "iPadOS", "watchOS", "visionOS", "multi-platform"])
+    .default("iOS")
+    .describe("Primary Apple platform or multi-platform scope."),
+  minimum_os_version: osVersionSchema.optional().describe("Deployment target such as 18 or 18.1."),
+  preferred_ui_framework: z
+    .enum(["SwiftUI", "UIKit", "unspecified"])
+    .default("SwiftUI")
+    .describe("Preferred presentation framework; choose unspecified when no preference exists."),
+  on_device_priority: z
+    .enum(["required", "preferred", "neutral"])
+    .default("preferred")
+    .describe("Whether local and offline processing is mandatory, preferred, or neutral."),
+  privacy_level: z
+    .enum(["standard", "sensitive", "regulated"])
+    .default("standard")
+    .describe("Highest expected data-sensitivity and compliance level.")
 });
 
 export const resolveCapabilitiesInputSchema = z.object({
@@ -166,17 +183,29 @@ export const resolveCapabilitiesInputSchema = z.object({
         confidence: z.enum(["explicit", "inferred"]).default("explicit")
       })
     )
-    .min(1),
-  include_beta: z.boolean().default(false),
-  maximum_results_per_requirement: z.number().int().min(1).max(10).default(4)
+    .min(1)
+    .describe("Structured requirements returned by analyze_app_idea or prepared with the same fields."),
+  include_beta: z.boolean().default(false).describe("Allow prerelease capability profiles in matches."),
+  maximum_results_per_requirement: z
+    .number()
+    .int()
+    .min(1)
+    .max(10)
+    .default(4)
+    .describe("Maximum reviewed matches returned for each requirement.")
 });
 
 export const getProfileInputSchema = z.object({
-  capability_id_or_name: z.string().min(1)
+  capability_id_or_name: z.string().min(1).describe("Exact or recognizable reviewed capability ID or name.")
 });
 
 export const getAppleTechnologyInputSchema = z.object({
-  technology_id_or_name: z.string().trim().min(1).max(200)
+  technology_id_or_name: z
+    .string()
+    .trim()
+    .min(1)
+    .max(200)
+    .describe("Exact Apple technology catalog ID or name, such as HealthKit or technology.arkit.")
 });
 
 export const technologyCatalogEntrySchema = z.object({
@@ -210,7 +239,7 @@ export const getAppleTechnologyResultSchema = z.discriminatedUnion("kind", [
 ]);
 
 export const compareOptionsInputSchema = z.object({
-  capability_ids: z.array(z.string()).min(2).max(6),
+  capability_ids: z.array(z.string()).min(2).max(6).describe("Two through six reviewed capability IDs to compare."),
   criteria: z
     .array(
       z.enum([
@@ -228,54 +257,87 @@ export const compareOptionsInputSchema = z.object({
       ])
     )
     .default(["complexity", "minimum_os", "on_device", "privacy", "app_review", "testability"])
+    .describe("Decision criteria to emphasize in the comparison.")
 });
 
 export const checkAvailabilityInputSchema = z.object({
-  capability_ids: z.array(z.string()).min(1).max(30),
-  platform: z.string().default("iOS"),
-  os_version: z.string().optional(),
-  device: z.string().optional(),
-  region: z.string().optional(),
-  language: z.string().optional(),
-  allow_beta: z.boolean().default(false)
+  capability_ids: z.array(z.string()).min(1).max(30).describe("Reviewed capability IDs to check."),
+  platform: z
+    .enum(["iOS", "iPadOS", "macOS", "watchOS", "tvOS", "visionOS", "Mac Catalyst"])
+    .default("iOS")
+    .describe("Apple platform whose compatibility should be evaluated."),
+  os_version: osVersionSchema.optional().describe("Target OS version such as 18 or 18.1."),
+  device: z.string().optional().describe("Declared device family or model when hardware constraints matter."),
+  region: z.string().optional().describe("Deployment region when regional availability matters."),
+  language: z.string().optional().describe("User or feature language when language availability matters."),
+  allow_beta: z.boolean().default(false).describe("Treat prerelease profiles as conditional candidates.")
 });
 
 export const auditInputSchema = z.object({
-  capability_ids: z.array(z.string()).min(1).max(30)
+  capability_ids: z.array(z.string()).min(1).max(30).describe("Reviewed capability IDs included in the audit.")
 });
 
 export const projectConfigurationAuditInputSchema = z.object({
-  project_root: z.string().trim().min(1).max(4096),
-  capability_ids: z.array(z.string()).min(1).max(30),
-  platform: z.enum(["iOS", "iPadOS", "watchOS", "tvOS", "visionOS", "macOS"]).default("iOS")
+  project_root: z
+    .string()
+    .trim()
+    .min(1)
+    .max(4096)
+    .describe("Local project directory explicitly placed in scope for a bounded read-only scan."),
+  capability_ids: z
+    .array(z.string())
+    .min(1)
+    .max(30)
+    .describe("Reviewed capability IDs whose configuration requirements should be checked."),
+  platform: z
+    .enum(["iOS", "iPadOS", "watchOS", "tvOS", "visionOS", "macOS", "Mac Catalyst"])
+    .default("iOS")
+    .describe("Target platform used to evaluate the reviewed availability requirements.")
 });
 
 export const architectureInputSchema = z.object({
-  idea: z.string().min(10),
-  capability_ids: z.array(z.string()).min(1).max(30),
-  project_scale: z.enum(["prototype", "small", "medium", "large"]).default("small")
+  idea: z.string().min(10).describe("Apple-platform app or feature being architected."),
+  capability_ids: z.array(z.string()).min(1).max(30).describe("Selected reviewed capability IDs."),
+  project_scale: z
+    .enum(["prototype", "small", "medium", "large"])
+    .default("small")
+    .describe("Expected product scale used to keep the architecture proportionate.")
 });
 
 export const implementationPlanInputSchema = z.object({
-  capability_ids: z.array(z.string()).min(1).max(30),
-  include_code_spike: z.boolean().default(true)
+  capability_ids: z.array(z.string()).min(1).max(30).describe("Selected reviewed capability IDs."),
+  include_code_spike: z
+    .boolean()
+    .default(true)
+    .describe("Include a small feasibility implementation before the MVP phases.")
 });
 
 export const officialDocsSearchInputSchema = z.object({
-  query: z.string().min(2).max(200),
-  capability_ids: z.array(z.string()).max(20).default([]),
-  maximum_results: z.number().int().min(1).max(20).default(10)
+  query: z.string().min(2).max(200).describe("Terms to match against the verified local Apple source index."),
+  capability_ids: z
+    .array(z.string())
+    .max(20)
+    .default([])
+    .describe("Optional reviewed capability IDs that bound the source search."),
+  maximum_results: z.number().int().min(1).max(20).default(10).describe("Maximum source references to return.")
 });
 
 export const technologyCatalogSearchInputSchema = z.object({
-  query: z.string().trim().min(2).max(200),
-  coverage_status: z.enum(["all", "catalogued", "profiled"]).default("all"),
-  maximum_results: z.number().int().min(1).max(50).default(20)
+  query: z.string().trim().min(2).max(200).describe("Apple technology name or discovery terms."),
+  coverage_status: z
+    .enum(["all", "catalogued", "profiled"])
+    .default("all")
+    .describe("Return every catalog entry, catalog-only entries, or reviewed-profile entries."),
+  maximum_results: z.number().int().min(1).max(50).default(20).describe("Maximum catalog entries to return.")
 });
 
 export const registryCoverageInputSchema = z.object({});
 
 export const refreshRegistryInputSchema = z.object({
-  dry_run: z.boolean().default(true),
-  source_urls: z.array(z.url()).max(50).default([])
+  dry_run: z.boolean().default(true).describe("Must remain true because runtime registry mutation is disabled."),
+  source_urls: z
+    .array(z.url())
+    .max(50)
+    .default([])
+    .describe("Optional official source URLs to include in the non-mutating refresh plan.")
 });
